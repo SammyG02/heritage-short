@@ -1,0 +1,29 @@
+# Secrets
+.env
+.env.*
+!.env.example
+kaggle.json
+.kaggle/
+*.pem
+*.key
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# Node
+node_modules/
+
+# Scratch files (outputs/ and runs.jsonl are deliberately committed)
+tmp/
+*.tmp
+*.part
+
+# Editor and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
