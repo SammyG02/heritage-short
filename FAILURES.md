@@ -46,3 +46,10 @@ What broke, what was tried, what fixed it. Times are EAT, 25 Nov 2026.
 ## Kaggle GPU queue
 - **Broke:** both T4 jobs were still queued about 45 minutes after submission, with 0 of 30 GPU hours used.
 - **Worked around:** the film is already complete with Ken Burns moves and a placeholder score; clips replace them when they arrive.
+
+## Wan 2.2 out of memory on a T4 (17:53)
+- **Broke:** the first Wan job (one clip, s01 vertical, 480x832, 121 frames) failed before the first step: `CUDA out of memory`, 13.93 GiB allocated by PyTorch on GPU 0 of 14.56 GiB. Loading had taken 309 s.
+- **Layout at the time:** fp16 transformer and a float32 VAE both on GPU 0; a second float32 VAE on GPU 1 for decoding.
+- **Not tried yet:** moving the encoding VAE off GPU 0 or encoding first and freeing it, fewer frames, CPU or group offload, a quantised transformer, `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True`.
+- **Worked around for now:** Ken Burns.
+- **Queue:** both jobs started at 17:47, a little over an hour after submission.

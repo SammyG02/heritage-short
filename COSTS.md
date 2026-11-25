@@ -9,8 +9,8 @@ Money spent: **0**. Measured from `runs.jsonl` up to 16:50 EAT, 25 Nov 2026 (92 
 | Narration, English | gemini-3.8-flash-lite-tts | 11 | 6.7 s | 1 (network), plus 1 quota on 3.8 | $0.0124 (a) |
 | Reference sheets | FLUX.2 klein 4B | 16 | 11.0 s | 0 | $0.0184 |
 | Keyframes | FLUX.2 klein 4B | 42 | 20.0 s | 0 | $0.0747 |
-| Moving shots | Wan 2.2 TI2V-5B | 0 | not measured yet | | |
-| Score | ACE-Step 1.5 | 0 | not measured yet | | |
+| Moving shots | Wan 2.2 TI2V-5B | 0 | none: 309 s loading, then out of memory | 1 | not priced |
+| Score | ACE-Step 1.5 | 3 | 8.0 s per 90 s track (11.8, 7.9, 8.0); 343 s whole job, including install and load | 0 | not priced |
 | Assembly | FFmpeg | | 317 s for the radio cut and both first exports, including all 22 Ken Burns renders | | no model |
 
 (a) Priced at the 3.8 Flash or 3.8 Flash TTS rate, which is not the model that ran. Approximate.

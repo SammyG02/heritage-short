@@ -1,0 +1,35 @@
+[{"stream_name":"stderr","time":12.656574044,"data":"ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.\n"}
+,{"stream_name":"stderr","time":12.656630136,"data":"moviepy 1.0.3 requires decorator\u003c5.0,\u003e=4.0.2, but you have decorator 5.3.1 which is incompatible.\n"}
+,{"stream_name":"stderr","time":24.374708328,"data":"Disabling torchao because diffusers requires `torchao\u003e=0.15.0` but found version 0.10.0. Upgrade it with `pip install -U 'torchao\u003e=0.15.0'`.\n"}
+,{"stream_name":"stdout","time":42.204748177,"data":"GPUs 2 Tesla T4 torch 2.11.0+cu130\n"}
+,{"stream_name":"stderr","time":42.205053156,"data":"/usr/local/lib/python3.13/dist-packages/diffusers/utils/deprecation_utils.py:23: FutureWarning: `torch_dtype` is deprecated and will be removed in version 1.0.0. Please use `dtype` instead.\n"}
+,{"stream_name":"stderr","time":42.205064281,"data":"  deprecate(\"torch_dtype\", \"1.0.0\", _TORCH_DTYPE_DEPRECATION_MESSAGE)\n"}
+,{"stream_name":"stderr","time":42.671964703,"data":"Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.\n"}
+,{"stream_name":"stderr","time":97.471889034,"data":"\rFetching 11 files:   0%|          | 0/11 [00:00\u003c?, ?it/s]\rFetching 11 files:  18%|█▊        | 2/11 [00:00\u003c00:00, 17.13it/s]\rFetching 11 files:  55%|█████▍    | 6/11 [00:00\u003c00:00, 15.79it/s]\rFetching 11 files:  73%|███████▎  | 8/11 [00:04\u003c00:02,  1.41it/s]\rFetching 11 files:  82%|████████▏ | 9/11 [00:33\u003c00:12,  6.31s/it]\rFetching 11 files:  91%|█████████ | 10/11 [00:54\u003c00:09,  9.65s/it]\rFetching 11 files: 100%|██████████| 11/11 [00:54\u003c00:00,  4.97s/it]\n"}
+,{"stream_name":"stderr","time":99.250587043,"data":"\rLoading pipeline components...:   0%|          | 0/3 [00:00\u003c?, ?it/s]\rLoading pipeline components...:  33%|███▎      | 1/3 [00:01\u003c00:03,  1.60s/it]\n"}
+,{"stream_name":"stderr","time":99.348418907,"data":"\rLoading weights:   0%|          | 0/242 [00:00\u003c?, ?it/s]\u001b[A\rLoading weights: 100%|██████████| 242/242 [00:00\u003c00:00, 2499.42it/s]\n"}
+,{"stream_name":"stderr","time":101.277598958,"data":"\rLoading pipeline components...:  67%|██████▋   | 2/3 [00:01\u003c00:00,  1.21it/s]\rLoading pipeline components...: 100%|██████████| 3/3 [00:03\u003c00:00,  1.32s/it]\rLoading pipeline components...: 100%|██████████| 3/3 [00:03\u003c00:00,  1.27s/it]\n"}
+,{"stream_name":"stderr","time":108.226255075,"data":"/usr/local/lib/python3.13/dist-packages/huggingface_hub/utils/_validators.py:206: UserWarning: The `local_dir_use_symlinks` argument is deprecated and ignored in `hf_hub_download`. Downloading to a local directory does not use symlinks anymore.\n"}
+,{"stream_name":"stderr","time":108.226285215,"data":"  warnings.warn(\n"}
+,{"stream_name":"stderr","time":125.608764591,"data":"The config attributes {'clip_output': False} were passed to AutoencoderKLWan, but are not expected and will be ignored. Please verify your config.json configuration file.\n"}
+,{"stream_name":"stderr","time":220.04417841,"data":"\rFetching 9 files:   0%|          | 0/9 [00:00\u003c?, ?it/s]\rFetching 9 files:  33%|███▎      | 3/9 [00:00\u003c00:00, 25.62it/s]\rFetching 9 files:  56%|█████▌    | 5/9 [00:11\u003c00:00, 25.62it/s]\rFetching 9 files:  67%|██████▋   | 6/9 [01:34\u003c00:55, 18.45s/it]\rFetching 9 files: 100%|██████████| 9/9 [01:34\u003c00:00, 10.46s/it]\n"}
+,{"stream_name":"stderr","time":220.1701556,"data":"\rLoading pipeline components...:   0%|          | 0/3 [00:00\u003c?, ?it/s]\n"}
+,{"stream_name":"stderr","time":234.771203892,"data":"\rLoading checkpoint shards:   0%|          | 0/5 [00:00\u003c?, ?it/s]\u001b[A\n"}
+,{"stream_name":"stderr","time":253.951493245,"data":"\rLoading checkpoint shards:  20%|██        | 1/5 [00:14\u003c00:58, 14.60s/it]\u001b[A\n"}
+,{"stream_name":"stderr","time":273.759441192,"data":"\rLoading checkpoint shards:  40%|████      | 2/5 [00:33\u003c00:51, 17.29s/it]\u001b[A\n"}
+,{"stream_name":"stderr","time":293.148625324,"data":"\rLoading checkpoint shards:  60%|██████    | 3/5 [00:53\u003c00:36, 18.44s/it]\u001b[A\n"}
+,{"stream_name":"stderr","time":294.56285424,"data":"\rLoading checkpoint shards:  80%|████████  | 4/5 [01:12\u003c00:18, 18.82s/it]\u001b[A\n"}
+,{"stream_name":"stderr","time":294.564051493,"data":"\rLoading checkpoint shards: 100%|██████████| 5/5 [01:14\u003c00:00, 12.54s/it]\u001b[A\rLoading checkpoint shards: 100%|██████████| 5/5 [01:14\u003c00:00, 14.88s/it]\n"}
+,{"stream_name":"stderr","time":294.569709675,"data":"\rLoading pipeline components...:  67%|██████▋   | 2/3 [01:14\u003c00:37, 37.26s/it]\rLoading pipeline components...: 100%|██████████| 3/3 [01:14\u003c00:00, 24.84s/it]\n"}
+,{"stream_name":"stderr","time":309.068721287,"data":"The config attributes {'clip_output': False} were passed to AutoencoderKLWan, but are not expected and will be ignored. Please verify your config.json configuration file.\n"}
+,{"stream_name":"stdout","time":309.823820557,"data":"{'event': 'loaded', 'seconds': 309.1}\n"}
+,{"stream_name":"stderr","time":313.276458057,"data":"\r  0%|          | 0/30 [00:00\u003c?, ?it/s]\r  0%|          | 0/30 [00:00\u003c?, ?it/s]\n"}
+,{"stream_name":"stdout","time":313.276510373,"data":"{'event': 'clip', 'item': 's01_9x16', 'key': 'd2184c28552b8568e89dc9711e3ab89639c5bbf8b601fb5f61461c3469ba7bbb', 'status': 'error', 'seconds': 3.5, 'error': 'OutOfMemoryError: CUDA out of memory. Tried to allocate 332.00 MiB. GPU 0 has a total capacity of 14.56 GiB of which 124.81 MiB is free. Including non-PyTorch memory, this process has 14.44 GiB memory in use. Of the allocated memory 13.93 GiB is allocated by PyTorch, and 391.56 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https'}\n"}
+,{"stream_name":"stdout","time":313.54452704,"data":"{'event': 'done', 'seconds': 312.8}\n"}
+,{"stream_name":"stderr","time":320.921517359,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":320.921549444,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":321.141510448,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":321.141538093,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":322.088871546,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":322.974576071,"data":"[NbConvertApp] Writing 297092 bytes to __results__.html\n"}
+]

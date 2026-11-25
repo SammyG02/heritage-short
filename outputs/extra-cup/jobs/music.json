@@ -61,5 +61,12 @@
     }
    }
   ]
- }
+ },
+ "logged": [
+  "done",
+  "loaded",
+  "score_101",
+  "score_202",
+  "score_303"
+ ]
 }
