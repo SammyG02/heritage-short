@@ -81,3 +81,8 @@ What broke, what was tried, what fixed it. Times are EAT, 25 Nov 2026.
 ## Our own story was inside the tool
 - **Found by the applicant:** a new film copied its defaults (voice style, music and video settings) from this repository's storyboard, and new stories and their call logs were saved inside the repository.
 - **Fixed:** neutral `pipeline/defaults.json`; personal films and logs in `my-films/`, ignored by Git. A test searches the code for words of our story.
+
+## Addis AI refused every line, and our test said it worked (26 Nov, 01:22)
+- **Broke:** the first real call (one neutral word) came back `HTTP 422 CLIENT_REQUEST_ID_REQUIRED`. The code had only ever been tested with a stand-in for the service, which accepted anything.
+- **Fixed:** each line now sends one id, the same on every retry, so a retry cannot be charged twice. The second call returned real audio and cost 0.04 Birr.
+- **Lesson:** the studio now offers a service only after it has really produced something.

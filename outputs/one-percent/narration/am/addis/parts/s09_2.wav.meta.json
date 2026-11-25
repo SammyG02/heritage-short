@@ -1,0 +1,12 @@
+{
+ "key": "8a722dc06189f43ed92fe3013ff073be070e5684c382441019882d380c6cca0e",
+ "sha256": "a451d244769e9bacd6d50a9e4f00bc5a4e85bf49f2dc68a5ae91fe22a046f3a7",
+ "inputs": {
+  "stage": "narration/1",
+  "model": "addis-voices-2",
+  "text": "ሌሎች ሴቶች በዘጠኝ ወር ይወልዳሉ፤ እኔ ግን በዘጠኝ ዓመት ወለድኩ።",
+  "voice": "am-nejat",
+  "style": "a mother, warm and heartfelt, speaking gently to her family"
+ },
+ "model_used": "addis-voices-2"
+}

@@ -4,13 +4,14 @@ A failing picture is drawn again with another seed, up to MAX_TRIES and EXTRA_PE
 available the picture is kept and marked unchecked, so a quota never stops a film but also never hides.
 """
 from . import keyframes
-from .core import budget, providers
+from .core import budget, config, providers, settings
 
 MAX_TRIES = 2
 EXTRA_PER_RUN = 6  # redraws allowed in one run, whatever the checker thinks
 PASS = 7
 SEED_STEP = 101
 MODELS = ["gemini-3.8-flash", "gemini-3.6-flash", "gemini-3.5-flash-lite"]
+GROQ_SEES, GROQ_IMAGES = "qwen/qwen3.8-27b", 3  # Groq's vision page, 26 Nov 2026
 PROMPT = """You check one frame of an animated film before it is used. The first {n} image(s) are the approved character references, in this order: {names}.
 The last image is the new frame. It should show: {shot}
 Expected emotion: {emotion}
@@ -25,13 +26,17 @@ def check(sb, shot, ratio, png, refs):
     """Return scores, or None when no vision model answers."""
     text = PROMPT.format(n=len(refs), names=", ".join(shot["references"]) or "no references", shot=shot["image_prompt"],
                          emotion=shot.get("emotion", "not specified"), style=sb["style_block"])
-    for model in MODELS:
+    choice = settings.load()["writer"]
+    images = [p.read_bytes() for p in refs] + [png]
+    if choice.startswith("groq:") and (choice != "groq:" + GROQ_SEES or len(images) > GROQ_IMAGES):
+        return None
+    for one in ([choice] if choice != "auto" else ["gemini:" + m for m in MODELS]):
         try:
-            r = providers.gemini_json("qa", f"{shot['id']}_{ratio}", text, model, temperature=0, images=[p.read_bytes() for p in refs] + [png])
+            r, model = providers.write_json("qa", f"{shot['id']}_{ratio}", text, one, MODELS, temperature=0, images=images)
             scores = {k: float(r[k]) for k in KEYS}
             return {**scores, "worst": min(scores.values()), "problem": str(r.get("problem", ""))[:200], "model": model}
-        except (providers.ProviderError, KeyError, TypeError, ValueError) as e:
-            print(f"    check by {model} unavailable: {type(e).__name__}")
+        except (config.PipelineError, KeyError, TypeError, ValueError) as e:
+            print(f"    check by {one} unavailable: {type(e).__name__}")
     return None
 
 

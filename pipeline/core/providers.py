@@ -6,8 +6,10 @@ import random
 import re
 import tempfile
 import time
+import uuid
 import wave
 from pathlib import Path
+from urllib.parse import urlparse
 
 import requests
 from PIL import Image
@@ -89,6 +91,62 @@ def gemini_json(stage, item, prompt, model, seed=None, temperature=0.8, images=(
             except (KeyError, IndexError, ValueError) as e:
                 raise ProviderError(f"Model did not return usable JSON: {e}", retryable=True)
     return retry(go)
+
+
+def gemini_models():
+    """{model id: name, description and sizes} for every model this key lists. Not a model call."""
+    found, token = {}, None
+    while True:
+        r = _check(requests.get(f"{GEMINI}/models", headers=_headers(), params={"pageSize": 200, **({"pageToken": token} if token else {})}, timeout=20)).json()
+        for m in r.get("models", []):
+            found[m["name"].removeprefix("models/")] = {"name": m.get("displayName") or m["name"], "about": (m.get("description") or "").strip()[:200], "in": m.get("inputTokenLimit"), "out": m.get("outputTokenLimit")}
+        token = r.get("nextPageToken")
+        if not token:
+            return found
+
+
+GROQ = "https://api.groq.com/openai/v1"
+
+
+def groq_models():
+    """Models this key may use. Not a model call."""
+    return [m["id"] for m in _check(requests.get(f"{GROQ}/models", headers={"Authorization": "Bearer " + config.secret("GROQ_API_KEY")}, timeout=20)).json()["data"] if m.get("active", True)]
+
+
+def groq_json(stage, item, prompt, model, temperature=0.8, images=()):
+    """Groq, for writing and for looking at pictures. It has no model that draws or speaks Amharic."""
+    content = [{"type": "text", "text": prompt}] + [{"type": "image_url", "image_url": {"url": "data:image/jpeg;base64," + _small_jpeg(d)}} for d in images]
+    body = {"model": model, "temperature": temperature, "response_format": {"type": "json_object"}, "messages": [{"role": "user", "content": content if images else prompt}]}
+
+    def go(attempt):
+        with runlog.call(stage, item, "groq", model, {"prompt": prompt, "temperature": temperature}, None, attempt) as rec:
+            got = _check(requests.post(f"{GROQ}/chat/completions", headers={"Authorization": "Bearer " + config.secret("GROQ_API_KEY")}, json=body, timeout=180))
+            try:
+                rec["output"] = {"limits": {"limit": int(got.headers["x-ratelimit-limit-requests"]), "left": int(got.headers["x-ratelimit-remaining-requests"])}}
+            except (KeyError, ValueError):
+                pass
+            r = got.json()
+            u = r.get("usage", {})
+            rec["usage"] = {"in": u.get("prompt_tokens", 0), "out": u.get("completion_tokens", 0)}
+            try:
+                return json.loads(r["choices"][0]["message"]["content"])
+            except (KeyError, IndexError, ValueError, TypeError) as e:
+                raise ProviderError(f"Model did not return usable JSON: {e}", retryable=True)
+    return retry(go)
+
+
+def write_json(stage, item, prompt, choice, default_models, temperature=0.8, images=()):
+    """One request to the chosen writing model. 'auto' tries Google's in order; any other choice is used alone."""
+    if choice.startswith("groq:"):
+        return groq_json(stage, item, prompt, choice[5:], temperature, images), choice[5:]
+    models, error = [choice[7:]] if choice.startswith("gemini:") else default_models, None
+    for model in models:
+        try:
+            return gemini_json(stage, item, prompt, model, temperature=temperature, images=images), model
+        except ProviderError as e:
+            error = e
+            print(f"    {model} unavailable" + (", trying the next model" if model != models[-1] else ""))
+    raise error
 
 
 def _tts_generate_content(text, voice, style, model, speech=None):
@@ -194,16 +252,44 @@ def addis_voices(language):
     r = _check(requests.get(f"{ADDIS}/voices", params={"language": language}, headers=_addis_headers(), timeout=30)).json()
     rows = r.get("data", r)
     rows = rows.get("voices", rows.get("items", [])) if isinstance(rows, dict) else rows
-    return [{"id": str(v.get("voice_id") or v.get("id")), "name": str(v.get("name") or v.get("voice_id") or v.get("id")), "gender": str(v.get("gender") or "")}
-            for v in rows if isinstance(v, dict)]
+    return [{"id": str(v.get("voice_id") or v.get("id")), "name": str(v.get("name") or v.get("voice_id") or v.get("id")), "gender": str(v.get("gender") or ""), "about": str(v.get("descriptor") or ""),
+             "sample": str(v.get("preview_audio_url") or "")}
+            for v in rows if isinstance(v, dict) and v.get("is_available", True)]
+
+
+_samples: dict = {}
+
+
+def addis_sample(language, voice):
+    """Addis AI's own recording of a voice: free, and nothing of the film is sent. Returns (bytes, media type)."""
+    if (language, voice) not in _samples:
+        link = next((v["sample"] for v in addis_voices(language) if v["id"] == voice), "")
+        host = urlparse(link).hostname or ""
+        if not link.startswith("https://") or not (host == "addisassistant.com" or host.endswith(".addisassistant.com")):
+            raise ProviderError("This voice has no sample.")
+        got = requests.get(link, timeout=30, allow_redirects=False)  # a public file: the key is not sent
+        if not got.ok or got.is_redirect or len(got.content) > 5_000_000:
+            raise ProviderError("The sample could not be loaded.")
+        _samples[language, voice] = (got.content, "audio/wav" if got.content[:4] == b"RIFF" else "audio/mpeg")
+    return _samples[language, voice]
+
+
+def addis_usage():
+    """Credit left on the account, as Addis AI reports it. Not a model call."""
+    d = _check(requests.get(f"{ADDIS}/usage", headers=_addis_headers(), timeout=20)).json()["data"]
+    p = d.get("pricing") or {}
+    return {"balance": float(d["balance"]), "spent": float(d.get("total_spend") or 0), "start": float(d.get("credit_baseline_amount") or d["balance"]),
+            "currency": {"ETB": "Birr"}.get(d.get("currency"), str(d.get("currency") or "")), "per_minute": float(p.get("price_per_minute") or 0)}
 
 
 def addis_tts(stage, item, text, voice, language) -> bytes:
     """Addis AI Voices 2. Returns a 16-bit mono 24 kHz WAV. Uses signup credit, not a daily quota; style instructions are not supported."""
+    request_id = str(uuid.uuid4())  # the same on every retry, so one line is never charged twice
+
     def go(attempt):
         with runlog.call(stage, item, "addis-ai", "addis-voices-2", {"text": text, "voice": voice, "language": language}, None, attempt) as rec:
             r = _check(requests.post(f"{ADDIS}/generations", headers=_addis_headers(), timeout=180, json={
-                "text": text, "voice_id": voice, "language": language, "output_format": "wav_44100"})).json()
+                "client_request_id": request_id, "text": text, "voice_id": voice, "language": language, "output_format": "wav_44100"})).json()
             d = r.get("data", r)
             inline = next((d[k] for k in ("audio", "audio_data", "audio_base64") if isinstance(d.get(k), str)), None)
             if inline:

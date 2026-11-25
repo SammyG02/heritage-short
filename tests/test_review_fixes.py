@@ -10,11 +10,12 @@ from PIL import Image
 from pipeline import __main__ as cli
 from pipeline import assemble, gpu, keyframes, narration, qa, script, shots, web
 from pipeline.core import approvals, cache, config, providers
+from tests.conftest import BOARD
 
 
 @pytest.fixture
 def sb(monkeypatch, tmp_path):
-    data = json.loads((config.ROOT / "storyboard.json").read_text(encoding="utf-8"))
+    data = json.loads(BOARD.read_text(encoding="utf-8"))
     monkeypatch.setattr(config, "OUTPUTS", tmp_path / "outputs")
     monkeypatch.setattr(narration, "estimate_s", lambda *a: 80)
     data["people"]["consent"] = "recorded"
@@ -225,7 +226,7 @@ def test_films_made_before_approvals_are_still_open(sb):
 
 
 def test_the_approvals_already_given_still_count():
-    sb = json.loads((config.ROOT / "storyboard.json").read_text(encoding="utf-8"))
+    sb = json.loads(BOARD.read_text(encoding="utf-8"))
     for sid in sb["approvals"]["voice"]:
         s = next(x for x in sb["shots"] if x["id"] == sid)
         if cache.fresh(narration.path(sb, s, "am"), narration.inputs(sb, s, "am")):

@@ -1,0 +1,12 @@
+{
+ "key": "ad83c66336cf05d1582ee179e2117b6d396c20c564ebc069ddbce8b5bc360bf5",
+ "sha256": "e8e4c21b9b55febe750b1238708e62890a272bf996206fa29ea83e690fea2669",
+ "inputs": {
+  "stage": "narration/1",
+  "model": "addis-voices-2",
+  "text": "ሆኖም አንድ ዓመት አለፈ። ከዚያም ሁለት። ከዚያም አምስት።",
+  "voice": "am-amanuel",
+  "style": "a young man, warm, calm and unhurried, like telling a family story at night"
+ },
+ "model_used": "addis-voices-2"
+}

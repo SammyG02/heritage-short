@@ -1,0 +1,474 @@
+{
+ "id": "one-percent",
+ "version": 29,
+ "status": "draft",
+ "title": {
+  "am": "አንድ በመቶ",
+  "en": "One Percent"
+ },
+ "logline": "A young Ethiopian couple, told their chance of a child is under one percent, refuse to stop; only at the birth do we learn who is telling the story.",
+ "theme": "Family and perseverance",
+ "language": "am",
+ "audience": "Draft, to be confirmed by the applicant: families and couples in Ethiopia and the diaspora who are waiting for something they have been told is unlikely",
+ "intent": "Feel that a small chance is still a chance, and want to keep trying",
+ "style_block": "3D animated film frame with a painted look, sculpted rounded characters with expressive faces, hand-painted textures and visible soft brush strokes on 3D forms, painterly background, warm amber and terracotta palette with deep indigo shadows, gentle cinematic light, subject centred in frame, full-bleed picture reaching every edge",
+ "people": {
+  "real_people": false,
+  "based_on_real_people": true,
+  "consent": "recorded",
+  "statement": "Based on the applicant's own family story. Faces are invented drawings made from text and the narrator is a stock synthetic voice. Nobody's photograph or recording is used. Consent is recorded in ETHICS.md."
+ },
+ "models": {
+  "tts": "gemini-3.8-flash-tts",
+  "image": "@cf/black-forest-labs/flux-2-klein-4b",
+  "video": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+  "music": "ACE-Step/ACE-Step-1.5 acestep-v15-turbo",
+  "tts_fallbacks": [
+   "gemini-3.8-flash-lite-tts",
+   "gemini-3.8-flash-tts"
+  ]
+ },
+ "voices": {
+  "am": {
+   "voice": "Algieba",
+   "style": "a young man, warm, calm and unhurried, like telling a family story at night",
+   "characters": {
+    "mother": {
+     "voice": "Sulafat",
+     "style": "a mother, warm and heartfelt, speaking gently to her family"
+    }
+   },
+   "model": "gemini-3.1-flash-tts-preview"
+  },
+  "en": {
+   "voice": "Algieba",
+   "style": "a young man, warm, calm and unhurried, like telling a family story at night",
+   "characters": {
+    "mother": {
+     "voice": "Sulafat",
+     "style": "a mother, warm and heartfelt, speaking gently to her family"
+    }
+   },
+   "model": "gemini-3.8-flash-lite-tts"
+  }
+ },
+ "references": {
+  "mother": {
+   "prompt": "Character portrait of an invented young Ethiopian woman in her twenties, oval face, warm brown skin, dark hair parted in the centre and drawn back under a thin white cotton netela shawl with a narrow green and gold woven border, long white handwoven cotton dress, small plain round silver stud earrings, hopeful calm expression, facing the viewer, plain warm background, upper body",
+   "seeds": [
+    11,
+    22,
+    33,
+    44
+   ],
+   "chosen_seed": 11,
+   "reason": "Chosen by the filmmaker in the studio",
+   "look": "young Ethiopian woman in her twenties, oval face, warm brown skin, dark centre-parted hair under a thin white netela shawl with a green and gold border, long white cotton dress, small round silver stud earrings"
+  },
+  "father": {
+   "prompt": "Character portrait of an invented young Ethiopian man in his late twenties, slim face, warm brown skin, short dark hair, trimmed short beard, white handwoven cotton collared shirt, kind steady expression, facing the viewer, plain warm background, upper body",
+   "seeds": [
+    11,
+    22,
+    33,
+    44
+   ],
+   "chosen_seed": 22,
+   "reason": "Chosen by the filmmaker in the studio",
+   "look": "young Ethiopian man in his late twenties, slim face, warm brown skin, short dark hair, trimmed short beard, white cotton collared shirt"
+  },
+  "mother_older": {
+   "prompt": "The same woman as in the reference image: same oval face, same large dark eyes, same deep warm brown skin tone, same smooth skin, same shawl, dress and earrings. Change only this: about fifteen years older, hair still black with two or three thin grey strands at the temples, very faint smile lines beside the eyes. Upper body, facing the viewer, plain warm background",
+   "seeds": [
+    11,
+    22
+   ],
+   "chosen_seed": 22,
+   "reason": "Not chosen yet",
+   "look": "the same woman about fifteen years older, same oval face and large dark eyes, deep warm brown skin, black hair with two or three thin grey strands under a thin white netela shawl with a green and gold border, long white cotton dress, small round silver stud earrings",
+   "from": "mother"
+  },
+  "father_older": {
+   "prompt": "The same man as in the reference image, now in his fifties: same slim face and eyes, short hair and beard with some grey, white cotton collared shirt, kind smile lines, upper body, facing the viewer, plain warm background",
+   "seeds": [
+    11,
+    22
+   ],
+   "chosen_seed": 22,
+   "reason": "Chosen by the filmmaker in the studio",
+   "look": "the same man in his fifties, slim face, warm brown skin, short dark hair and trimmed beard with some grey, white cotton collared shirt",
+   "from": "father"
+  }
+ },
+ "video": {
+  "fps": 24,
+  "frames": 121,
+  "steps": 30,
+  "guidance": 5.0,
+  "negative_prompt": "text, letters, subtitles, watermark, extra fingers, deformed hands, distorted face, morphing, flicker, fast motion, camera shake, blurry, low quality"
+ },
+ "music": {
+  "caption": "Instrumental, intimate Ethiopian highland mood, solo krar lyre plucked gently, soft washint flute answering far away, warm low drone, sparse and tender, pentatonic, acoustic, close room sound, no drums, no vocals",
+  "bpm": 72,
+  "key": "D minor",
+  "duration_s": 90,
+  "seeds": [
+   101,
+   202,
+   303
+  ],
+  "chosen_seed": 101,
+  "reason": "Not chosen yet",
+  "cues": [
+   {
+    "shot": "s01",
+    "action": "start",
+    "note": "A few gentle plucked notes under the couple"
+   },
+   {
+    "shot": "s04",
+    "action": "lower",
+    "note": "Near silence for the doctor"
+   },
+   {
+    "shot": "s07",
+    "action": "lift",
+    "note": "Warmth returns with the birth"
+   },
+   {
+    "shot": "s12",
+    "action": "end",
+    "note": "The opening notes return, then fade on the end card"
+   }
+  ]
+ },
+ "mix": {
+  "duck_threshold": 0.02,
+  "duck_ratio": 6,
+  "duck_attack_ms": 300,
+  "duck_release_ms": 1500,
+  "target_lufs": -14,
+  "true_peak_db": -1,
+  "music_lufs": -20
+ },
+ "shots": [
+  {
+   "id": "s01",
+   "size": "medium",
+   "duration_s": 6.5,
+   "seed": 2002,
+   "ken_burns": "out",
+   "references": [
+    "mother",
+    "father"
+   ],
+   "reason": "Meets a husband and wife as strangers, so the later reveal is a surprise",
+   "image_prompt": "The woman and the man as young newlyweds standing side by side in white handwoven cotton clothes with green and gold borders, shoulders touching, smiling at each other, warm afternoon garden behind",
+   "motion_prompt": "She smiles warmly at him, their clothes stir in a light breeze, the camera is fixed",
+   "narration": {
+    "am": "ሁለት በወጣትነታቸው የተጋቡ ባልና ሚስት ነበሩ፤ ልጅ እንደሚወልዱም እርግጠኛ ነበሩ።",
+    "en": "There were a husband and a wife who married young. They were sure they would have children."
+   },
+   "tts_model": "gemini-3.8-flash-lite-tts",
+   "emotion": "young love, shining eyes, easy open smiles",
+   "transition": {
+    "type": "cut",
+    "reason": "Opening"
+   }
+  },
+  {
+   "id": "s02",
+   "reason": "Time passes on the couple themselves: the same two people, the same step, no one else",
+   "duration_s": 6,
+   "size": "wide",
+   "references": [
+    "mother",
+    "father"
+   ],
+   "image_prompt": "The woman and the man sitting close together on the stone doorstep of a small house, looking out over an empty quiet yard, dry leaves falling from a tree, late afternoon light",
+   "motion_prompt": "Dry leaves fall slowly, she gently rests her head on his shoulder, the camera is fixed",
+   "seed": 2013,
+   "ken_burns": "in",
+   "narration": {
+    "am": "ሆኖም አንድ ዓመት አለፈ። ከዚያም ሁለት። ከዚያም አምስት።",
+    "en": "But one year passed. Then two. Then five."
+   },
+   "emotion": "hope slowly turning to quiet worry, tired eyes, still close to each other",
+   "transition": {
+    "type": "dissolve",
+    "reason": "Years pass on the same two people",
+    "seconds": 0.6
+   }
+  },
+  {
+   "id": "s03",
+   "size": "medium close-up",
+   "duration_s": 3.5,
+   "seed": 2004,
+   "ken_burns": "in",
+   "references": [
+    "mother"
+   ],
+   "reason": "Their waiting is active: prayer and patience",
+   "image_prompt": "The woman seated by candlelight at night, white shawl over her hair, eyes closed, hands pressed together near her chest, quiet prayer, dark room",
+   "motion_prompt": "Her lips move softly in prayer, the candle flame flickers, the camera is fixed",
+   "narration": {
+    "am": "ጸለዩ። ጠበቁ።",
+    "en": "They prayed. They waited."
+   },
+   "emotion": "deep longing and faith, brows slightly drawn, eyes closed",
+   "transition": {
+    "type": "fadeblack",
+    "reason": "Night falls on their waiting",
+    "seconds": 0.8
+   }
+  },
+  {
+   "id": "s04",
+   "size": "medium",
+   "duration_s": 6,
+   "seed": 2005,
+   "ken_burns": "in",
+   "references": [
+    "mother",
+    "father"
+   ],
+   "reason": "The bad news, held on the couple rather than the doctor",
+   "image_prompt": "The woman and the man seated close together in a plain consulting room, holding hands tightly, heads lowered, cool daylight from a high window",
+   "motion_prompt": "He slowly turns his face toward her, the camera is fixed",
+   "narration": {
+    "am": "ከዚያም ሐኪሙ፦ በኢትዮጵያ የመውለድ ዕድላቸው ከአንድ በመቶ በታች መሆኑን ነገራቸው።",
+    "en": "Then the doctor told them that in Ethiopia, their chance of having a child was less than one percent."
+   },
+   "emotion": "shock and grief held in, eyes lowered, lips pressed together",
+   "transition": {
+    "type": "cut",
+    "reason": "The news lands without warning"
+   },
+   "motion": "camera"
+  },
+  {
+   "id": "s05",
+   "size": "medium close-up",
+   "duration_s": 6,
+   "seed": 2006,
+   "ken_burns": "left",
+   "references": [
+    "mother",
+    "father"
+   ],
+   "reason": "The turn: the couple choose a question over an ending",
+   "image_prompt": "The woman lifting her face with a determined look toward the man beside her, warm lamp light on both faces, night window behind",
+   "motion_prompt": "She speaks gently, her lips moving naturally, the camera is fixed",
+   "narration": {
+    "am": "ብዙ ሰው እዚህ ጋር ተስፋ ይቆርጥ ነበር። እነሱ ግን ጠየቁ፦ «ሌላ የት እንሞክር?»",
+    "en": "Many people would have lost hope here. But they asked: “Where else can we try?”"
+   },
+   "quote_voice": "mother",
+   "emotion": "fear giving way to determination, steady eyes, lifted chin",
+   "transition": {
+    "type": "dissolve",
+    "reason": "One feeling grows out of the other",
+    "seconds": 0.6
+   }
+  },
+  {
+   "id": "s06",
+   "size": "wide",
+   "duration_s": 6.5,
+   "seed": 2007,
+   "ken_burns": "up",
+   "references": [
+    "mother",
+    "father"
+   ],
+   "reason": "Distance made visible: far from home, the same two people",
+   "image_prompt": "The woman and the man seen from behind, walking hand in hand along a sunlit pale stone hillside street with olive trees, one small suitcase, morning light ahead of them",
+   "motion_prompt": "They walk slowly forward hand in hand, her shawl moves in the wind, the camera is fixed",
+   "narration": {
+    "am": "መልሱ ሩቅ ነበር፤ እስራኤል። አዲስ ሃገር፣ አዲስ ሐኪሞች፣ አዲስ ቋንቋ፣ አራት አመት።",
+    "en": "The answer was far away: Israel. A new country, new doctors, a new language. Four years."
+   },
+   "emotion": "courage and hope, upright steady walk",
+   "transition": {
+    "type": "smoothleft",
+    "reason": "They travel",
+    "seconds": 0.6
+   }
+  },
+  {
+   "id": "s07",
+   "size": "close-up",
+   "duration_s": 3.5,
+   "seed": 2008,
+   "ken_burns": "in",
+   "references": [],
+   "reason": "The birth, in a hand rather than a face; it does not say yet whose life this is",
+   "image_prompt": "Extreme close view of a newborn baby hand with tiny fingers wrapped around one adult finger, white blanket, soft golden morning light",
+   "motion_prompt": "The tiny fingers slowly close around the finger, the camera is fixed",
+   "narration": {
+    "am": "እና ከዚያ… ሕፃን ተወለደ።",
+    "en": "And then… a baby was born."
+   },
+   "emotion": "peace and wonder in a tender touch, nobody's face visible",
+   "transition": {
+    "type": "fadewhite",
+    "reason": "A birth arrives as light",
+    "seconds": 0.8
+   },
+   "motion": "camera"
+  },
+  {
+   "id": "s08",
+   "reason": "The reveal: the narrator was the baby all along",
+   "duration_s": 4,
+   "size": "medium close-up",
+   "references": [
+    "mother",
+    "father"
+   ],
+   "image_prompt": "The woman holding a newborn baby wrapped in a white blanket against her chest, the man leaning in beside her, both looking down at the baby with tears of joy, soft golden window light",
+   "motion_prompt": "She smiles and gently rocks the baby, the camera is fixed",
+   "seed": 2014,
+   "ken_burns": "in",
+   "narration": {
+    "am": "ያ ሕፃን እኔ ነበርኩ።",
+    "en": "That baby was me."
+   },
+   "emotion": "overwhelming joy, tears and wide smiles",
+   "transition": {
+    "type": "dissolve",
+    "reason": "The small hand becomes the reveal",
+    "seconds": 0.6
+   }
+  },
+  {
+   "id": "s09",
+   "size": "close-up",
+   "duration_s": 7,
+   "seed": 2009,
+   "ken_burns": "in",
+   "references": [
+    "mother_older"
+   ],
+   "reason": "The emotional peak: the line she still says, on her face",
+   "image_prompt": "The woman, a little older now, face filling the frame, joyful eyes, mouth open speaking warmly toward the viewer, golden window light",
+   "motion_prompt": "She speaks warmly, her lips and jaw moving naturally, she blinks and smiles, the camera is fixed",
+   "narration": {
+    "am": "እናቴ ዛሬም ትላለች፦ «ሌሎች ሴቶች በዘጠኝ ወር ይወልዳሉ፤ እኔ ግን በዘጠኝ ዓመት ወለድኩ።»",
+    "en": "My mother still says: “Other women give birth in nine months. But I gave birth in nine years.”"
+   },
+   "quote_voice": "mother",
+   "emotion": "proud joy with the memory of hardship, warm laughing eyes",
+   "transition": {
+    "type": "dissolve",
+    "reason": "Many years later, the same woman",
+    "seconds": 0.6
+   }
+  },
+  {
+   "id": "s10",
+   "reason": "The family keeps growing: one child becomes three",
+   "duration_s": 5,
+   "size": "wide",
+   "references": [],
+   "image_prompt": "An older boy, a younger girl and a small boy seen from behind running together across a sunny green field, holding hands, white cotton clothes, warm golden light",
+   "motion_prompt": "The children run slowly forward, grass moves in the wind, the camera is fixed",
+   "seed": 2015,
+   "ken_burns": "right",
+   "narration": {
+    "am": "ከዚያ ታናሽ እህቴ፣ ከዚያም ታናሽ ወንድሜ ተወለዱ።",
+    "en": "Then my little sister was born. Then my little brother."
+   },
+   "emotion": "carefree happiness in the children's running bodies",
+   "transition": {
+    "type": "smoothright",
+    "reason": "The children run into the story",
+    "seconds": 0.6
+   },
+   "motion": "camera"
+  },
+  {
+   "id": "s11",
+   "size": "wide",
+   "duration_s": 4,
+   "seed": 2011,
+   "ken_burns": "out",
+   "references": [
+    "mother_older",
+    "father_older"
+   ],
+   "reason": "The same doorstep that was empty is now full",
+   "image_prompt": "The woman and the man, older, sitting on the stone doorstep of a small house with two boys and one girl seen from behind around them, all close together, warm golden light",
+   "motion_prompt": "The family laugh softly, shoulders moving slightly, the camera is fixed",
+   "narration": {
+    "am": "ያ አንድ በመቶ እኔ ነበርኩ። ሁላችንም ነን።",
+    "en": "I was that one percent. We all are."
+   },
+   "emotion": "deep contentment, everyone smiling",
+   "transition": {
+    "type": "dissolve",
+    "reason": "The family gathers where two people once sat",
+    "seconds": 0.6
+   }
+  },
+  {
+   "id": "s12",
+   "reason": "Turns to the viewer with the light still ahead",
+   "duration_s": 7,
+   "size": "extreme wide",
+   "references": [],
+   "image_prompt": "A family of five seen from far behind as small figures walking together up a green hill toward a huge golden sunrise, long soft shadows, open sky",
+   "motion_prompt": "The family walk slowly up the hill, grass sways, sunlight grows brighter, the camera is fixed",
+   "seed": 2016,
+   "ken_burns": "up",
+   "narration": {
+    "am": "ዕድላችሁ አንድ በመቶ ነው ቢሏችሁ፣ አስታውሱ፦ አንድ በመቶ ዜሮ አይደለም። ተስፋ አትቁረጡ።",
+    "en": "If they tell you your chance is one percent, remember: one percent is not zero. Never give up."
+   },
+   "emotion": "calm hope, shoulders relaxed, walking toward light",
+   "transition": {
+    "type": "fadewhite",
+    "reason": "The light of the birth returns for the viewer",
+    "seconds": 0.8
+   },
+   "motion": "camera"
+  }
+ ],
+ "end_card": {
+  "duration_s": 3,
+  "lines": [
+   "አንድ በመቶ",
+   "One Percent",
+   "Pictures, voice and music made with AI",
+   "A true family story. All faces are invented."
+  ]
+ },
+ "approvals": {
+  "voice": {
+   "s01": "c2794cf92b2cfd3692c70a42b214874ee5dd0a9b22cc8f4f666e101960f9762b:44d8ca32456d46eee3e140f35024a1f2b7e09a07b9fc652ac5fa94e1169791cf",
+   "s02": "37087865cf154dc6ee18e1fb6bde05db4043a817420d65e9a452ab269d252e24:56a5770f062f735d39668010830f00d201ea4f2caedad83816436d3ccf877ab0",
+   "s03": "54f957360036a37bfb6d5eff02c286cb035584fd4b56e7a4cedf554c006c2004:474d98ec9d28d2ad5e278bcc6b10283314ecedba2d9e94cd7b997079cdfffc01",
+   "s04": "2ffa18e2e000b32c336d36150043a2992dac23e4c70f778ca8e0e3301e95aecf:a55a43132f261b74b56ea337392ac3ad11abb06e8b6ddfcd491b88a2846042bd",
+   "s05": "b7d58e57f792bcb2cbee8e3fb2212dd2d86d4a6b0f0aa5faa4994ef21afffeef:230099d225ca5ff6f7352993d7459fc2da5f5fa0a43e6f9ff555218f159451c8",
+   "s06": "bbc0e1a53512f2329a6ac43bcf2852466d0fb63c6c62aaa41b50d5bc2a290371:dbad433bb62809e721739c3db75e6a45d92f69762e0180f7377738fc487e175c",
+   "s07": "9b0a0a1a65f12e61963b7e5d08ca1217d536519dd6427c5e441e1b95cdf02eea:042a4a85f72646f776daed36cc8a88b2cdfdfd1226b29df004130a0e1b90fc36",
+   "s08": "02efaaab61c2efbb4f81f69c7f8c14a15eeb5ebac50f19a2e474c2c9fb0da2d6:b614fd47a669f0596d61b97938042299c039cf81e68568a6f3929be2fb41b482",
+   "s09": "a551b9e4bc03990cf3c5d9a2557d0442f8d3501c5e0c0a1fdbd13c943a453b5a:dc58576657c480853e7078c4279c453a0c916b4b58c6e904f8e768da5a6b9284"
+  },
+  "script": {
+   "s01": "c03513bd5964b46e1ef52bce6443a2eae61211fe772225c30df6cab38412eec4",
+   "s02": "e8f415a45200bd2f825cc8796075a2eb5b527094fa8794d3e389984dcb7512f4",
+   "s03": "51c93ff065a6ee87afdf6e0435ab9916a1821fc164f01cce78f4da82dba223c2",
+   "s04": "9cf384890157d364228181aa8d71cb773b42cb0e5a60a5ddf096885411071926",
+   "s05": "37e00fd3deb6d5a92de83e0c2704c2fba182afafca8eb06aeff694970dcb2ae7",
+   "s06": "e44de54233b06f6dcff072474f2ee8f4667766a9d11eea07cb62bcc8663ffa11",
+   "s07": "ba1c6b48b12c656440cf2a016a3de28691c8c85304ca620142f7453953a64955",
+   "s08": "d27a7594d2fdd19dd3b46dc26c9b7751858efde552af4ade7ba7fffa29493d4d",
+   "s09": "2bf0011d199924524c7dae9ad5ffd049650161862cbd2b83e5de96f883cfe39c",
+   "s10": "e812a1e24d476f5395b46955e065b6ff4296d3d22a1b166ffdb2146de0679004",
+   "s11": "4aa8613b952107f3cb61fa71b62e0eb485bea68c6b64537ef739df589ce3f20a",
+   "s12": "a7c7da303f2cff066aa388c135924ea99117a5659f8cc22293501565d380006b"
+  }
+ }
+}

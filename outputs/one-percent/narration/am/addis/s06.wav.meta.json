@@ -1,0 +1,12 @@
+{
+ "key": "eeef4ce1040f0391c83eae865f647a49708fa26cddc7216c40030949df13773d",
+ "sha256": "62d68e177b71b468a20b830b98620e834ae8f0e7ae09d8e79349120808c55588",
+ "inputs": {
+  "stage": "narration/1",
+  "model": "addis-voices-2",
+  "text": "መልሱ ሩቅ ነበር፤ እስራኤል። አዲስ ሃገር፣ አዲስ ሐኪሞች፣ አዲስ ቋንቋ፣ አራት አመት።",
+  "voice": "am-amanuel",
+  "style": "a young man, warm, calm and unhurried, like telling a family story at night"
+ },
+ "model_used": "addis-voices-2"
+}

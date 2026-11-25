@@ -1,0 +1,24 @@
+{
+ "key": "ec09d9e6eaabbf2fc63b49582d43702d65435f4c6f1b3185959da4184c178670",
+ "sha256": "bef03666c36b0f2c4552007fa8849b3ac66f41589960afe9c7383e1d800308a2",
+ "inputs": {
+  "stage": "narration/2",
+  "gap_s": 0.2,
+  "parts": [
+   {
+    "stage": "narration/1",
+    "model": "addis-voices-2",
+    "text": "ብዙ ሰው እዚህ ጋር ተስፋ ይቆርጥ ነበር። እነሱ ግን ጠየቁ፦",
+    "voice": "am-amanuel",
+    "style": "a young man, warm, calm and unhurried, like telling a family story at night"
+   },
+   {
+    "stage": "narration/1",
+    "model": "addis-voices-2",
+    "text": "ሌላ የት እንሞክር?",
+    "voice": "am-nejat",
+    "style": "a mother, warm and heartfelt, speaking gently to her family"
+   }
+  ]
+ }
+}

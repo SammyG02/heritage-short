@@ -1,0 +1,12 @@
+{
+ "key": "44a5f7f39c8ccae9751f8ee11f7ce0e5658da98de24073958fda47a272648025",
+ "sha256": "93d12921bebeae078cd27f7b34206b0f1a8ea827e4d5420617f07d183df66989",
+ "inputs": {
+  "stage": "narration/1",
+  "model": "addis-voices-2",
+  "text": "ሁለት በወጣትነታቸው የተጋቡ ባልና ሚስት ነበሩ፤ ልጅ እንደሚወልዱም እርግጠኛ ነበሩ።",
+  "voice": "am-amanuel",
+  "style": "a young man, warm, calm and unhurried, like telling a family story at night"
+ },
+ "model_used": "addis-voices-2"
+}

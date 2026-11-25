@@ -1,0 +1,12 @@
+{
+ "key": "a55927588f748c807fd8ab5d3bdb3f1ed078eb4b4c33c96a5473b37257cf46ad",
+ "sha256": "666327d9e7fa2faea42b32abf7ae0cf0d57b5513ed2acca8eb6561e2528f36b2",
+ "inputs": {
+  "stage": "narration/1",
+  "model": "addis-voices-2",
+  "text": "እናቴ ዛሬም ትላለች፦",
+  "voice": "am-amanuel",
+  "style": "a young man, warm, calm and unhurried, like telling a family story at night"
+ },
+ "model_used": "addis-voices-2"
+}

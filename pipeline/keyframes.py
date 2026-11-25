@@ -13,6 +13,11 @@ FRAMING = {"9x16": "tall vertical scene, subject large in the middle third, the 
            "16x9": "horizontal composition, subject in the centre, calm empty space near the bottom"}
 
 
+def service(sb):
+    """Where this film's shots are drawn: 'cloudflare' or 'kaggle'. The same model either way."""
+    return (sb.get("services") or {}).get("pictures", "cloudflare")
+
+
 def ref_path(sb, name, seed):
     return out(sb, "references", f"{name}_{seed}.png")
 

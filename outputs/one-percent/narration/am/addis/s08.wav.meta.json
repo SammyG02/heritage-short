@@ -1,0 +1,12 @@
+{
+ "key": "45d71e46f16cba81358c342910756cd8c5808f401f245efbc6be58d202cfa9f9",
+ "sha256": "81c1d8ded92698fd5a5bd648d6bc40823b99be7f28d0047e2514bec0f7ef9363",
+ "inputs": {
+  "stage": "narration/1",
+  "model": "addis-voices-2",
+  "text": "ያ ሕፃን እኔ ነበርኩ።",
+  "voice": "am-amanuel",
+  "style": "a young man, warm, calm and unhurried, like telling a family story at night"
+ },
+ "model_used": "addis-voices-2"
+}

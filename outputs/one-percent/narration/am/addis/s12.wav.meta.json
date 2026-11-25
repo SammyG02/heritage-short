@@ -1,0 +1,12 @@
+{
+ "key": "2d20031fbab806f81f4de4bf70c3829df56f160a241b20c430881a8710c31799",
+ "sha256": "56c69fa9d3e25425d83c087356531c83c722590dd3a2038e14d2e0cf56046850",
+ "inputs": {
+  "stage": "narration/1",
+  "model": "addis-voices-2",
+  "text": "ዕድላችሁ አንድ በመቶ ነው ቢሏችሁ፣ አስታውሱ፦ አንድ በመቶ ዜሮ አይደለም። ተስፋ አትቁረጡ።",
+  "voice": "am-amanuel",
+  "style": "a young man, warm, calm and unhurried, like telling a family story at night"
+ },
+ "model_used": "addis-voices-2"
+}

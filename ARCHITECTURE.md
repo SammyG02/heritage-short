@@ -48,6 +48,14 @@ Each model output has a `.meta.json` with a SHA-256 key over its exact inputs (m
 
 Every attempt, including failures, is one line in `runs.jsonl`: run id, stage, item, provider, model, parameters, seed, attempt, status, latency, GPU seconds, cost, list-price equivalent. Secret values are replaced before writing.
 
+## Services are choices
+
+`services.py` lists a service only if its key is set, it has already produced something here (from the call log) and its limit is known; `GET /api/services/<film>` calls no model. Limits come from the service when it answers (Addis AI credit, Kaggle GPU hours, Groq's response headers), otherwise they are counted from the logs. Google reports no limits, so a daily limit is known only once one of its refusals states it. Cloudflare's use is counted by us, because the token in use is not allowed to read it. A service not proven yet (OmniVoice, pictures on Kaggle) can be tried from the command line and appears once it has worked.
+
+- Voice and picture service: per film, in the storyboard. A film uses one voice service. Changing the Google model pins finished lines to the model that made them, so only new lines change.
+- New films start with Addis AI when its key is present. A true story starts with Google, because Addis AI may train on what it is sent; choosing Addis AI needs `people.addis_consent`.
+- Writing model (scripts, proofreading, picture checks): per person, in `my-films/settings.json`. Groq can be chosen here only: the models it lists do not draw pictures or speak Amharic. Never called so far; tested with a stand-in.
+
 ## Decision: two keyframes per shot
 
 Each shot has its own vertical and horizontal picture rather than one picture cropped twice. It doubles image calls but keeps faces and hands whole in both. The cost is that the two versions are not identical.
@@ -60,7 +68,7 @@ Each shot has its own vertical and horizontal picture rather than one picture cr
 | Emotion fits the moment | `emotion` per shot goes into the picture and motion prompts; `voice_emotion` into the voice style | New drafts without an emotion are rejected (`script.lint`) |
 | Meaningful transitions | `transition` per shot with a reason; shots still start exactly on their beat | Default is a cut |
 | Pictures are checked | `qa.py`: a vision model scores identity, emotion, content, anatomy and style; below 7 is redrawn with another seed, at most 3 tries, best kept | No vision model available: kept and marked `unchecked`, never `passed` |
-| Voices | Quota or outage: the next model in `models.tts_fallbacks` with the same voice name; the model used is stored beside the file | All exhausted: the run stops and resumes later; no half-voiced film is exported |
+| Voices | The person chooses the service and model on the Services page. Each service keeps its own files, so switching back loses nothing. A film made before that choice may still list `models.tts_fallbacks`, tried in order; the model used is stored beside the file | All exhausted: the run stops and resumes later; no half-voiced film is exported |
 | Motion | Wan clip | Slow camera move on the same picture |
 | Music | Chosen ACE-Step score | Placeholder made in code |
 

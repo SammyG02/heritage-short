@@ -181,6 +181,8 @@ def submit_voice(sb, lang):
 
 
 def _join_voices(sb, job):
+    if narration.engine(sb, job["lang"]) != "omnivoice":
+        return  # the film has moved to another service since; the parts are kept
     for s in sb["shots"]:
         turns = narration.parts(sb, s, job["lang"])
         files = [narration.part_path(sb, s, job["lang"], i) for i in range(1, len(turns) + 1)]
@@ -217,7 +219,7 @@ def fetch(sb, kind):
             items[c["item"]] = (c["key"], c["inputs"], out(sb, "keyframes", c["item"] + ".png"), c["seed"])
     elif kind == "voice":
         for c in state["job"]["lines"]:
-            items[c["item"]] = (c["key"], c["inputs"], out(sb, "narration", state["job"]["lang"], "parts", c["item"] + ".wav"), 7)
+            items[c["item"]] = (c["key"], c["inputs"], out(sb, "narration", state["job"]["lang"], "omnivoice", "parts", c["item"] + ".wav"), 7)
     else:
         for c in state["job"]["candidates"]:
             items[f"score_{c['seed']}"] = (c["cache_key"], c["inputs"], music.path(sb, c["seed"]), c["seed"])

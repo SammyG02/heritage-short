@@ -1,0 +1,12 @@
+{
+ "key": "cc4796a194b6e24a479ade10a43d546aca454f13fef616c0ed68467491ff07cd",
+ "sha256": "d888c29d24b46614091ee952a99b0e0c417f4fc508cbfd74d5b1ccaad39699b6",
+ "inputs": {
+  "stage": "narration/1",
+  "model": "addis-voices-2",
+  "text": "ሌላ የት እንሞክር?",
+  "voice": "am-nejat",
+  "style": "a mother, warm and heartfelt, speaking gently to her family"
+ },
+ "model_used": "addis-voices-2"
+}

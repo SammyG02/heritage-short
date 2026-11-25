@@ -7,6 +7,7 @@ import pytest
 
 from pipeline import gpu, keyframes, narration, script, shots, web
 from pipeline.core import budget, cache, config, providers, runlog, storyboard
+from tests.conftest import BOARD
 
 
 def draft(title="Two Rivers", people=("ana", "tom"), quoted=None, older=False):
@@ -35,7 +36,7 @@ def make(monkeypatch, **k):
 
 
 def test_the_code_knows_nothing_about_any_one_story():
-    sb = json.loads((config.ROOT / "storyboard.json").read_text(encoding="utf-8"))
+    sb = json.loads(BOARD.read_text(encoding="utf-8"))
     words = {sb["id"], sb["title"]["en"], sb["title"]["am"], "Israel", "እስራኤል", *sb["references"]} - {"mother", "father"}
     for f in [*config.ROOT.glob("pipeline/**/*.py"), *config.ROOT.glob("pipeline/**/*.js"), *config.ROOT.glob("pipeline/*.json"), *config.ROOT.glob("schema/*")]:
         text = f.read_text(encoding="utf-8")
@@ -76,7 +77,7 @@ def test_two_stories_share_no_characters_music_voices_or_style(monkeypatch):
     assert a["id"] != b["id"] and not set(a["references"]) & set(b["references"])
     for s in a["shots"]:
         assert set(s["references"]) <= set(a["references"])
-    mine = json.loads((config.ROOT / "storyboard.json").read_text(encoding="utf-8"))
+    mine = json.loads(BOARD.read_text(encoding="utf-8"))
     for key in ("style_block", "references", "title", "audience"):
         assert a[key] != mine[key]
     assert a["music"]["caption"] != mine["music"]["caption"] and a["voices"]["am"]["style"] != mine["voices"]["am"]["style"]
@@ -121,7 +122,7 @@ def test_moving_shots_are_drawn_small_and_still_shots_full(monkeypatch):
 
 
 def test_films_made_before_this_keep_their_picture_size():
-    sb = json.loads((config.ROOT / "storyboard.json").read_text(encoding="utf-8"))
+    sb = json.loads(BOARD.read_text(encoding="utf-8"))
     assert keyframes.size(sb, sb["shots"][0], "9x16") == (768, 1344)
 
 
@@ -174,7 +175,7 @@ def test_gpu_pictures_are_sent_and_collected(monkeypatch, tmp_path):
 
 
 def test_several_jobs_can_wait_and_be_cancelled(monkeypatch):
-    sb = json.loads((config.ROOT / "storyboard.json").read_text(encoding="utf-8"))
+    sb = json.loads(BOARD.read_text(encoding="utf-8"))
     for r in sb["references"].values():
         r["reason"] = "chosen"
     monkeypatch.setattr(web, "open_board", lambda fid: (None, sb))
@@ -188,3 +189,10 @@ def test_several_jobs_can_wait_and_be_cancelled(monkeypatch):
 
 def test_ids_cannot_leave_the_films_folder():
     assert re.fullmatch(r"[a-z0-9][a-z0-9-]{1,60}", "../secret") is None
+
+
+def test_a_film_can_be_started_without_saying_who_it_is_for(monkeypatch):
+    calls = []
+    monkeypatch.setattr(providers, "gemini_json", lambda *a, **k: calls.append(1) or draft())
+    _, sb = script.new("word " * 20, "am", "home", "", " ")
+    assert (sb["audience"], sb["intent"], len(calls)) == ("my family", "close to home", 1)

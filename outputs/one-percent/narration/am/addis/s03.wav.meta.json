@@ -1,0 +1,12 @@
+{
+ "key": "d1429fb07d134778616aeb62411c3d3c1a4a1ab0ad7c87e0f306868607977a1e",
+ "sha256": "4bc4cd459a29285187a0f064aac7f8837bdcfdf730eff0a23880a9b1ddd4b1ee",
+ "inputs": {
+  "stage": "narration/1",
+  "model": "addis-voices-2",
+  "text": "ጸለዩ። ጠበቁ።",
+  "voice": "am-amanuel",
+  "style": "a young man, warm, calm and unhurried, like telling a family story at night"
+ },
+ "model_used": "addis-voices-2"
+}

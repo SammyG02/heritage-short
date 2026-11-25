@@ -122,7 +122,7 @@ Or start it yourself and open <http://localhost:8765>:
 .venv\Scripts\python -m pipeline web
 ```
 
-The studio has one page for each step. Nothing runs until you press a button, and each button that uses a free limit first shows what it will use.
+The studio opens on your films. **Services** (top right) shows every voice, picture, motion and writing service, what is left of each limit, and lets you choose. The studio has one page for each step. Nothing runs until you press a button, and each button that uses a free limit first shows what it will use.
 
 1. **New film:** tell your story, choose the language and theme. You get a draft storyboard.
 2. **Story:** edit every line, picture, emotion and transition. For a true story, record consent here; everything stays locked until you do.

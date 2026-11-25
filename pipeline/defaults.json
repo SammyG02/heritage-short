@@ -15,6 +15,16 @@
   "boy": "Puck",
   "girl": "Leda"
  },
+ "addis_voices": {
+  "am": {
+   "man": ["am-amanuel", "am-dawit"],
+   "woman": ["am-sara", "am-loza"]
+  },
+  "en": {
+   "man": ["en-ethan", "en-oliver"],
+   "woman": ["en-grace", "en-emma"]
+  }
+ },
  "picture_size": "light",
  "video": {
   "fps": 24,

@@ -6,15 +6,17 @@ import pytest
 
 from pipeline import assemble, gpu, keyframes, narration, qa, script, shots
 from pipeline.core import approvals, budget, cache, config, providers, runlog, storyboard
+from tests.conftest import BOARD
 
 
 @pytest.fixture
 def sb():
-    return json.loads((config.ROOT / "storyboard.json").read_text(encoding="utf-8"))
+    return json.loads(BOARD.read_text(encoding="utf-8"))
 
 
 def test_storyboard_is_valid(sb):
     assert storyboard.validate(sb) == []
+    assert storyboard.validate(json.loads((config.ROOT / "storyboard.json").read_text(encoding="utf-8"))) == []
 
 
 @pytest.mark.parametrize("change", [
@@ -399,6 +401,10 @@ def test_addis_is_chosen_never_automatic_and_makes_every_line_again(sb, monkeypa
     assert asked == []
     sb["voices"]["am"].update(engine="addis", voice="am-yohannes")
     sb["voices"]["am"]["characters"]["mother"]["voice"] = "am-hamen"
+    with pytest.raises(config.PipelineError, match="may train"):  # a true story needs its own yes
+        narration.run(sb, "am")
+    assert asked == []
+    sb["people"]["addis_consent"] = "The people in it agreed in person that it may go there."
     assert all(cache.key(narration.inputs(sb, s, "am")) != before[s["id"]] for s in sb["shots"])
     narration.run(sb, "am")
     assert len(asked) == 14 and set(asked) == {"am-yohannes", "am-hamen"}

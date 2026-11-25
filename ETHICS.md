@@ -2,7 +2,7 @@
 
 ## Consent
 
-**Status: mother, father, sister and brother all agreed, as reported by the applicant. Recorded before anything of the story was generated. Nothing of "One Percent" has been generated.** The pipeline refuses to call a model for it until `people.consent` in `storyboard.json` is `recorded` (`require_consent` in `pipeline/core/storyboard.py`, with a test).
+**Status: mother, father, sister and brother all agreed, as reported by the applicant. Recorded before anything of the story was generated; voices, character pictures and one shot have been made since.** The pipeline refuses to call a model for it until `people.consent` in `storyboard.json` is `recorded` (`require_consent` in `pipeline/core/storyboard.py`, with a test).
 
 "One Percent" is the applicant's true family story. It tells private medical history and quotes their mother.
 
@@ -17,6 +17,8 @@
 | Father | Invented drawing | Approved; wants to see the final result. Agreed to public posting | Same |
 | Sister, adult (22) | Mentioned, seen from behind | Said yes; agreed to public posting | Same |
 | Brother, adult (20) | Mentioned, seen from behind | Said yes; agreed to public posting | Same |
+
+**Addis AI (26 Nov 2026, recorded in the studio before the first line was sent at 01:32 EAT).** Addis AI's privacy policy says content may be used to train by default. The applicant wrote: "My Mother,father,brother and sister all agreed that i can use them as characters in my ai video and share data with addis AI and any other AI..." The studio refuses to send a true story to Addis AI without such a record (`people.addis_consent`).
 
 The earlier sample, "The Extra Cup", was invented: no real person was shown or voiced.
 
@@ -39,7 +41,8 @@ Google states that free-tier Gemini content is used to improve its products. For
 | Wan 2.2 TI2V-5B | Apache 2.0 | Model card, 25 Nov 2026 |
 | ACE-Step 1.5 | MIT | Repository README, 25 Nov 2026 |
 | Gemini 3.1 Flash TTS preview | Google API terms, as above | Model page, 25 Nov 2026 |
-| Addis AI Voices 2 (optional, not used in this film) | Its terms allow use in your own products, no resale. Its privacy policy says content may be used to train by default, so a true story needs fresh consent before choosing it | Terms and privacy pages, 25 Nov 2026 |
+| Addis AI Voices 2 (used for this film's Amharic voices from 26 Nov) | Its terms allow use in your own products, no resale. Its privacy policy says content may be used to train by default, so a true story needs fresh consent before choosing it | Terms and privacy pages, 25 Nov 2026 |
+| Groq (optional, never used) | Terms not checked yet; check them before sending a true story | Model list only, 26 Nov 2026 |
 | OmniVoice Amharic (optional last resort, not used) | Amharic card: Apache 2.0. Base model card: code Apache 2.0, weights CC-BY-NC. Treated as non-commercial. No recording of a person is used | Model cards, 25 Nov 2026 |
 | Geist | SIL Open Font License 1.1 | Bundled in assets/fonts with its licence |
 | Noto Sans Ethiopic | SIL Open Font License 1.1 | Bundled in assets/fonts with its licence |

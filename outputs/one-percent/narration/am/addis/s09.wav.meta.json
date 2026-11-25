@@ -1,0 +1,24 @@
+{
+ "key": "e2e01e2f85ee1ba92c7d5593df6f7bd88c042b301a2464949ccb29f6ee69958f",
+ "sha256": "75f1dc94aacc3c7ee70eac3d23b24c64c83ccffe86b7d3e93dd7429cb111634e",
+ "inputs": {
+  "stage": "narration/2",
+  "gap_s": 0.2,
+  "parts": [
+   {
+    "stage": "narration/1",
+    "model": "addis-voices-2",
+    "text": "እናቴ ዛሬም ትላለች፦",
+    "voice": "am-amanuel",
+    "style": "a young man, warm, calm and unhurried, like telling a family story at night"
+   },
+   {
+    "stage": "narration/1",
+    "model": "addis-voices-2",
+    "text": "ሌሎች ሴቶች በዘጠኝ ወር ይወልዳሉ፤ እኔ ግን በዘጠኝ ዓመት ወለድኩ።",
+    "voice": "am-nejat",
+    "style": "a mother, warm and heartfelt, speaking gently to her family"
+   }
+  ]
+ }
+}

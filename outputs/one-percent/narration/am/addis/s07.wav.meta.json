@@ -1,0 +1,12 @@
+{
+ "key": "b8416b55206db0fba30464443180f7e6c6e919f8ffa9a1600ea54e8a044bf17b",
+ "sha256": "f657ab87597960e08c307a38922ed16110328960227028506db6fecf812a5be0",
+ "inputs": {
+  "stage": "narration/1",
+  "model": "addis-voices-2",
+  "text": "እና ከዚያ… ሕፃን ተወለደ።",
+  "voice": "am-amanuel",
+  "style": "a young man, warm, calm and unhurried, like telling a family story at night"
+ },
+ "model_used": "addis-voices-2"
+}

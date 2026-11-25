@@ -1,6 +1,6 @@
 {
  "id": "extra-cup",
- "version": 1,
+ "version": 7,
  "status": "sample",
  "title": {
   "am": "ትርፍ ሲኒ",
@@ -174,7 +174,8 @@
    "narration": {
     "am": "ፈገግ ብላ፣ «መንገድ ላይ ላለው ሰው ነው» አለችኝ።",
     "en": "She smiled and said, “It is for the one still on the road.”"
-   }
+   },
+   "motion": "camera"
   },
   {
    "id": "s05",
@@ -223,7 +224,8 @@
    "narration": {
     "am": "በዝናብ የራሰ መንገደኛ ነበር። ስሙን እንኳ ሳትጠይቅ፣ ቡናውን ሰጠችው።",
     "en": "It was a traveller, soaked by the rain. Without even asking his name, she gave him the coffee."
-   }
+   },
+   "motion": "camera"
   },
   {
    "id": "s08",

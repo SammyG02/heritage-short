@@ -1,6 +1,6 @@
 {
  "id": "one-percent",
- "version": 29,
+ "version": 31,
  "status": "draft",
  "title": {
   "am": "አንድ በመቶ",
@@ -16,7 +16,8 @@
   "real_people": false,
   "based_on_real_people": true,
   "consent": "recorded",
-  "statement": "Based on the applicant's own family story. Faces are invented drawings made from text and the narrator is a stock synthetic voice. Nobody's photograph or recording is used. Consent is recorded in ETHICS.md."
+  "statement": "Based on the applicant's own family story. Faces are invented drawings made from text and the narrator is a stock synthetic voice. Nobody's photograph or recording is used. Consent is recorded in ETHICS.md.",
+  "addis_consent": "My Mother,father,brother and sister all agreed that i can use them as characters in my ai video and share data with addis AI and any other AI..."
  },
  "models": {
   "tts": "gemini-3.8-flash-tts",
@@ -30,15 +31,16 @@
  },
  "voices": {
   "am": {
-   "voice": "Algieba",
+   "voice": "am-amanuel",
    "style": "a young man, warm, calm and unhurried, like telling a family story at night",
    "characters": {
     "mother": {
-     "voice": "Sulafat",
+     "voice": "am-nejat",
      "style": "a mother, warm and heartfelt, speaking gently to her family"
     }
    },
-   "model": "gemini-3.1-flash-tts-preview"
+   "model": "gemini-3.1-flash-tts-preview",
+   "engine": "addis"
   },
   "en": {
    "voice": "Algieba",

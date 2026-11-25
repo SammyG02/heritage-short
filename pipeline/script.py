@@ -6,7 +6,7 @@ from datetime import datetime
 from pathlib import Path
 
 from . import narration
-from .core import budget, config, providers, runlog
+from .core import budget, config, providers, runlog, settings
 from .core.storyboard import require_consent, validate
 
 LANGUAGES = {"am": "Amharic", "en": "English"}
@@ -58,20 +58,16 @@ shots: array of {{id, size (one of: extreme wide, wide, medium, medium close-up,
 
 
 def _generate(prompt):
-    error = None
-    for model in MODELS:
-        try:
-            return providers.gemini_json("script", "storyboard", prompt, model)
-        except providers.ProviderError as e:
-            error = e
-            print(f"    {model} unavailable, trying the next model")
-    raise error
+    return providers.write_json("script", "storyboard", prompt, settings.load()["writer"], MODELS)[0]
 
 
 def build(draft, *, language, theme, audience, intent, base, narrator="man", people=None):
     """Fill the parts that are ours to decide (models, seeds, mix) around the model's draft. Nothing comes from another film."""
     title = draft["title"].get("en") or next(iter(draft["title"].values()))
     slug = re.sub(r"[^a-z0-9]+", "-", title.lower()).strip("-")[:28] or "story"
+    people = people or {"real_people": False, "statement": "All characters are invented. The voices are stock synthetic voices."}
+    # A true story starts with Google: Addis AI may train on what it is sent, and that needs its own yes.
+    engine = "gemini" if people.get("based_on_real_people") else narration.default_engine(language)
     by_gender = base["voice_by_gender"]
     voice = {"voice": by_gender.get(narrator, by_gender["man"]), "style": draft.get("narrator_style") or "warm and natural, fitting the story", "model": base["models"]["tts"]}
     speakers = {k: {"voice": by_gender.get(v.get("gender"), by_gender["woman"]), "style": v.get("style") or "natural, fitting the moment"}
@@ -87,14 +83,13 @@ def build(draft, *, language, theme, audience, intent, base, narrator="man", peo
             prompt = f"The same person as in the reference image: same face shape, same eyes, same skin tone. Change only this: {prompt}"
         references[k] = {"prompt": prompt, "seeds": [11, 22], "chosen_seed": 11, "reason": "Not chosen yet", **{x: v[x] for x in ("look", "from") if v.get(x)}}
     ids = [s["id"] for s in draft["shots"]]
-    people = people or {"real_people": False, "statement": "All characters are invented. The voices are stock synthetic voices."}
     shots = [{**s, "seed": 1000 + i, "narration": {k: s["narration"][k] for k in langs if k in s["narration"]}} for i, s in enumerate(draft["shots"], 1)]
     for s in shots:
         if not s.get("quote_voice"):
             s.pop("quote_voice", None)
     return {"id": f"{slug}-{datetime.now():%m%d%H%M%S}", "version": 1, "status": "draft", "title": draft["title"], "logline": draft["logline"], "theme": theme,
             "language": language, "audience": audience, "intent": intent, "style_block": draft["style_block"], "people": people,
-            "models": copy.deepcopy(base["models"]), "voices": {k: {**voice, **({"characters": copy.deepcopy(speakers)} if speakers else {})} for k in langs},
+            "models": copy.deepcopy(base["models"]), "voices": {k: addis_cast(base, k, narrator, draft, v) if engine == "addis" else v for k, v in ((k, {**copy.deepcopy(voice), **({"characters": copy.deepcopy(speakers)} if speakers else {})}) for k in langs)},
             "references": references, "video": copy.deepcopy(base["video"]), "picture_size": base["picture_size"],
             "music": {**base["music"], "caption": draft["music"]["caption"], "bpm": int(draft["music"]["bpm"]), "key": draft["music"]["key"],
                       "chosen_seed": base["music"]["seeds"][0], "reason": "Not chosen yet",
@@ -102,6 +97,17 @@ def build(draft, *, language, theme, audience, intent, base, narrator="man", peo
             "mix": copy.deepcopy(base["mix"]), "approvals": {}, "shots": shots,
             "end_card": {"duration_s": base["end_card_seconds"], "lines": [*dict.fromkeys(draft["title"].values())][:2] + ["Pictures, voice and music made with AI",
                          "A true story. All faces are invented" if people.get("based_on_real_people") else "All characters are invented"]}}
+
+
+def addis_cast(base, lang, narrator, draft, voice):
+    """The same people with Addis AI's voices. Nobody quoted sounds like the narrator."""
+    kinds = {"boy": "man", "girl": "woman"}
+    pool = {k: list(v) for k, v in base["addis_voices"][lang].items()}
+    take = lambda who: pool[kinds.get(who, who) if kinds.get(who, who) in pool else "woman"].pop(0)  # noqa: E731
+    out = {**voice, "engine": "addis", "voice": take(narrator if narrator in pool else "man")}
+    for name, c in (out.get("characters") or {}).items():
+        c["voice"] = take((draft.get("speakers") or {}).get(name, {}).get("gender", "woman"))
+    return out
 
 
 def lint(sb):
@@ -150,6 +156,7 @@ def new(story, language, theme, audience, intent, true_story=False, consent_reco
         raise config.PipelineError("Please tell the story in at least a few sentences.")
     if true_story and len(consent_record.split()) < 8:
         raise config.PipelineError("This is about real people, and the story is sent to an AI service to write the script. Record consent first: who agreed, when, how and to what.")
+    audience, intent = audience.strip() or "my family", intent.strip() or "close to home"
     theme_text = THEMES.get(theme, theme)
     base = json.loads((Path(__file__).parent / "defaults.json").read_text(encoding="utf-8"))
     people = None

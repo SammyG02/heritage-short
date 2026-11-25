@@ -15,8 +15,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import unquote, urlparse
 
-from . import keyframes, music, narration, script, shots
-from .core import approvals, budget, cache, config, providers, runlog
+from . import keyframes, music, narration, script, services, shots
+from .core import approvals, budget, cache, config, providers, runlog, settings
 from .core.storyboard import out, root, validate
 
 PORT = 8765
@@ -117,13 +117,34 @@ def film_state(fid):
     chosen, left_out, wait, hours = shots.plan(sb)
     todo = narration.stale(sb, lang)
     return {"problems": narration.text_problems(sb, lang), "length": round(narration.estimate_s(sb, lang)), "voice_calls": narration.calls_needed(sb, lang, todo),
-            "engine": narration.engine(sb, lang), "addis_key": bool(os.environ.get("ADDIS_API_KEY", "").strip()),
+            "engine": narration.engine(sb, lang), "draw_with": keyframes.service(sb), "true_story": bool(sb["people"].get("based_on_real_people")), "addis_agreed": bool(sb["people"].get("addis_consent")), "addis_key": bool(os.environ.get("ADDIS_API_KEY", "").strip()),
             "plan": {"clips": [f"{s['id']}_{r}" for s, r in chosen], "left_out": len(left_out), "waiting": len(wait), "hours": round(hours, 1)},
             "storyboard": sb, "main": p.name == "storyboard.json", "rows": rows, "references": refs, "scores": scores, "gpu_jobs": gpu_jobs,
             "film": {r: url(folder / f"film_{r}.mp4") for r in keyframes.SIZES}, "radio_latest": url(max((folder / n for n in ("radio_cut.mp4", "radio_cut_partial.mp4")), key=lambda f: f.stat().st_mtime if f.exists() else 0)),
             "report": json.loads(report.read_text(encoding="utf-8")) if report.exists() else None,
             "feedback": [json.loads(x) for x in fb.read_text(encoding="utf-8").splitlines() if x.strip()] if fb.exists() else [],
             "locked": bool(sb["people"].get("based_on_real_people") and sb["people"].get("consent") != "recorded")}
+
+
+def card(fid, p):
+    """One film on the home page: its picture, how far it is, and the step that is next."""
+    sb = json.loads(p.read_text(encoding="utf-8"))
+    lang, n = sb["language"], len(sb["shots"])
+    base = {"id": fid, "title": sb["title"].get(lang) or next(iter(sb["title"].values())), "english": sb["title"].get("en", ""), "poster": None, "done": [], "step": "script", "film": False}
+    try:
+        voice = [cache.fresh(narration.path(sb, s, lang), narration.inputs(sb, s, lang)) for s in sb["shots"]]
+        heard = [v and approvals.ok(sb, "voice", s["id"], narration.approval_key(sb, s, lang)) for v, s in zip(voice, sb["shots"])]
+        pics = [cache.fresh(keyframes.path(sb, s, r), keyframes.inputs(sb, s, r)) for r in keyframes.SIZES for s in sb["shots"]]
+        clips = [shots.has_wan(sb, s, r) for r in keyframes.SIZES for s in sb["shots"] if s.get("motion", "clip") == "clip"]
+        decided = all(keyframes.cast_ready(sb, s) for s in sb["shots"])
+        images = [keyframes.path(sb, s, "9x16") for s in sb["shots"]] + [keyframes.ref_path(sb, k, r["chosen_seed"]) for k, r in sb["references"].items()]
+        base["poster"] = url(next((i for i in images if i.exists()), images[0]))
+        base["done"] = [["Voices", sum(voice), n], ["Pictures", sum(pics), len(pics)], ["Moving shots", sum(clips), len(clips)]]
+        base["film"] = any((out(sb, "film", lang) / f"film_{r}.mp4").exists() for r in keyframes.SIZES)
+        base["step"] = "script" if not all(heard) else "cast" if not decided else "shots" if not all(pics) else "film"
+    except (OSError, ValueError, KeyError, TypeError) as e:  # one damaged film must not hide the others
+        print("home:", fid, type(e).__name__)
+    return base
 
 
 def feedback_path(fid):
@@ -308,6 +329,8 @@ def edit(fid, body):
             set_voice(sb, body["voice"])
         for kind, names in (body.get("approve") or {}).items():
             approve(sb, kind, names, body.get("value") is not False)
+        if "services" in body:
+            set_service(sb, body["services"])
         if "consent" in body:
             text = str(body["consent"]).strip()
             if len(text.split()) < 8:
@@ -334,21 +357,48 @@ def choose_face(sb, name, seed, reason):
                 other["reason"] = "Not chosen yet"
 
 
+def set_service(sb, choice):
+    if "pictures" in choice:
+        if choice["pictures"] not in ("cloudflare", "kaggle"):
+            raise Refused("Unknown picture service.")
+        sb.setdefault("services", {})["pictures"] = choice["pictures"]
+    if "motion" in choice:
+        if choice["motion"] not in ("clip", "camera"):
+            raise Refused("Unknown motion.")
+        for s in sb["shots"]:
+            s["motion"] = choice["motion"]
+
+
 def set_voice(sb, v):
-    """Choose who speaks. A film uses one service; switching it makes every line out of date."""
+    """Choose who speaks. A film uses one service and each service keeps its own recordings, so switching back finds them again."""
     lang = sb["language"]
     if v["engine"] not in narration.ENGINES:
         raise Refused("Unknown voice service.")
     now = sb["voices"][lang]
+    model = str(v.get("model") or "")
+    if model and (v["engine"] != "gemini" or not re.fullmatch(r"gemini-[a-z0-9.\-]{1,60}-tts(-[a-z0-9.\-]{1,30})?", model)):
+        raise Refused("That is not a Google voice model.")
+    if v["engine"] == "addis" and sb["people"].get("based_on_real_people") and not sb["people"].get("addis_consent"):
+        text = str(v.get("agreed") or "").strip()
+        if len(text.split()) < 8:
+            raise Refused("This is a true story and Addis AI may train on it. Write who agreed to that, when and how.")
+        sb["people"]["addis_consent"] = text
+    old_model = now.get("model", sb["models"]["tts"])
     now["engine"] = v["engine"]
     now["voice"] = str(v["narrator"]).strip()
     for name, voice in (v.get("characters") or {}).items():
         if name not in now.get("characters", {}):
             raise Refused("Unknown character.")
         now["characters"][name]["voice"] = str(voice).strip()
-    if v["engine"] != "gemini":
-        for s in sb["shots"]:
-            s.pop("tts_model", None)
+    if v["engine"] == "gemini" and model and model != old_model:
+        for s in sb["shots"]:  # lines already made stay as they are; only the others use the new model
+            if cache.fresh(narration.path(sb, s, lang), narration.inputs(sb, s, lang)):
+                s.setdefault("tts_model", old_model)
+            else:
+                s.pop("tts_model", None)
+    if model:
+        now["model"] = model
+        sb["models"]["tts_fallbacks"] = []  # the person chose a model, so nothing else steps in
 
 
 def approve(sb, kind, names, yes):
@@ -479,14 +529,21 @@ class Handler(BaseHTTPRequestHandler):
                 return self.media(path[7:])
             if path == "/api/films":
                 return self.json([{"id": i, "title": json.loads(p.read_text(encoding="utf-8"))["title"], "main": p.name == "storyboard.json"} for i, p in index().items()])
+            if path == "/api/home":
+                return self.json([card(i, p) for i, p in index().items()])
             if path == "/api/options":
-                return self.json({"languages": script.LANGUAGES, "soon": script.COMING_SOON, "themes": script.THEMES})
+                return self.json({"languages": script.LANGUAGES, "soon": script.COMING_SOON, "themes": script.THEMES, "writer": "Groq" if settings.load()["writer"].startswith("groq:") else "Google"})
             if path == "/geist.ttf":
                 return self.send((config.ROOT / "assets" / "fonts" / "Geist.ttf").read_bytes(), kind="font/ttf")
             if path == "/api/voices/gemini":
                 return self.json([{"id": n, "name": n, "gender": g} for n, g in GEMINI_VOICES])
             if m := re.fullmatch(r"/api/voices/addis/([a-z]{2,3})", path):
-                return self.json(providers.addis_voices(m[1]))
+                return self.json([{**v, "sample": bool(v["sample"])} for v in providers.addis_voices(m[1])])
+            if m := re.fullmatch(r"/api/voices/addis/([a-z]{2,3})/([a-z0-9-]{2,60})", path):
+                data, kind = providers.addis_sample(m[1], m[2])
+                return self.send(data, kind=kind, extra=[("Cache-Control", "max-age=86400")])
+            if m := re.fullmatch(r"/api/services/([a-z0-9-]+)", path):
+                return self.json(services.state(open_board(m[1])[1], fresh="fresh" in urlparse(self.path).query))
             if path == "/api/job":
                 return self.json(job_state())
             if path == "/api/limits":
@@ -510,6 +567,10 @@ class Handler(BaseHTTPRequestHandler):
             if self.path == "/api/draft":
                 args = (str(body.get(k, "")).strip() for k in ("story", "language", "theme", "audience", "intent"))
                 return self.json({"id": script.new(*args, true_story=body.get("true_story") is True, consent_record=str(body.get("consent") or ""), narrator=body.get("narrator") if body.get("narrator") in ("man", "woman") else "man")[1]["id"]})
+            if self.path == "/api/settings":
+                services.check_writer(str(body.get("writer")))
+                settings.save(writer=str(body["writer"]))
+                return self.json({"ok": True})
             if self.path == "/api/plan/cancel":
                 cancel_plan()
                 return self.json({"ok": True})

@@ -10,13 +10,14 @@ import pytest
 
 from pipeline import web
 from pipeline.core import config
+from tests.conftest import BOARD
 
 
 @pytest.fixture
 def studio(tmp_path, monkeypatch):
     for name in ("outputs", "storyboards"):
         (tmp_path / name).mkdir()
-    shutil.copy(config.ROOT / "storyboard.json", tmp_path / "storyboard.json")
+    shutil.copy(BOARD, tmp_path / "storyboard.json")
     (tmp_path / "secret.png").write_bytes(b"no")
     folder = tmp_path / "outputs" / "one-percent"
     folder.mkdir()
@@ -66,6 +67,20 @@ def test_pages_and_state_load(studio):
     for path in ("/", "/app.js", "/style.css", "/api/films", "/api/options", "/api/limits", "/api/job", "/api/film/one-percent"):
         assert studio(path)[0] == 200, path
     assert studio("/api/film/nope")[0] == 400
+
+
+def test_home_shows_every_film_and_its_next_step(studio):
+    cards = json.loads(studio("/api/home")[1])
+    assert [c["id"] for c in cards] == ["one-percent"]
+    assert cards[0]["step"] == "script" and cards[0]["film"] is False and cards[0]["poster"] is None
+    assert cards[0]["done"][0] == ["Voices", 0, 12]
+
+
+def test_a_damaged_film_does_not_hide_the_others(studio):
+    sb = board(studio)
+    sb.update(id="broken-film", references={"x": {}})
+    (studio.root / "storyboards" / "b.json").write_text(json.dumps(sb), encoding="utf-8")
+    assert [c["id"] for c in json.loads(studio("/api/home")[1])] == ["one-percent", "broken-film"]
 
 
 def test_edit_saves_one_shot_and_raises_the_version(studio):

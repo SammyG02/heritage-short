@@ -1,0 +1,12 @@
+{
+ "key": "6dadc5b1f454781675d8513e29e580e1ac619694343019272af8aedacc95edf1",
+ "sha256": "1414472bbcd0632ca52ad060cf1f2eef1e94002b25c04adb3d5fc76ef9a27c60",
+ "inputs": {
+  "stage": "narration/1",
+  "model": "addis-voices-2",
+  "text": "ከዚያ ታናሽ እህቴ፣ ከዚያም ታናሽ ወንድሜ ተወለዱ።",
+  "voice": "am-amanuel",
+  "style": "a young man, warm, calm and unhurried, like telling a family story at night"
+ },
+ "model_used": "addis-voices-2"
+}

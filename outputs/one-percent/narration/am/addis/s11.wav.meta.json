@@ -1,0 +1,12 @@
+{
+ "key": "e430cbd9b4d596aa9c701409f4f2386d2173f5f4e843944af661afd76fd54e59",
+ "sha256": "0cf03f4a0dcfb7821974f4c0f723e20b72dfe0b089bfc04cb28a1ea45170027b",
+ "inputs": {
+  "stage": "narration/1",
+  "model": "addis-voices-2",
+  "text": "ያ አንድ በመቶ እኔ ነበርኩ። ሁላችንም ነን።",
+  "voice": "am-amanuel",
+  "style": "a young man, warm, calm and unhurried, like telling a family story at night"
+ },
+ "model_used": "addis-voices-2"
+}

@@ -12,7 +12,7 @@ from . import config
 
 RUN_ID = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ") + "-" + uuid.uuid4().hex[:4]
 _SECRET_NAMES = ("GEMINI_API_KEY", "CLOUDFLARE_API_TOKEN", "CLOUDFLARE_ACCOUNT_ID",
-                 "KAGGLE_API_TOKEN", "KAGGLE_KEY", "HF_TOKEN", "ADDIS_API_KEY")
+                 "KAGGLE_API_TOKEN", "KAGGLE_KEY", "HF_TOKEN", "ADDIS_API_KEY", "GROQ_API_KEY")
 
 
 _private: ContextVar[bool] = ContextVar("private", default=False)
@@ -35,7 +35,7 @@ def redact(text: str) -> str:
         value = os.environ.get(name, "").strip()
         if value:
             text = text.replace(value, f"<{name}>")
-    return re.sub(r"AIza[\w-]{20,}", "<key>", text)
+    return re.sub(r"AIza[\w-]{20,}|gsk_\w{20,}", "<key>", text)
 
 
 def write(record: dict) -> None:

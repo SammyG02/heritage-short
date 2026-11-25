@@ -1,0 +1,12 @@
+{
+ "key": "ccb0499f7236cc7c30d3674e20c948449d534233d578148ffda9426f67ad9bff",
+ "sha256": "1381007b45522c722bdfb73adea8b8ccb9477178674eda7ce4a67c387a856d8a",
+ "inputs": {
+  "stage": "narration/1",
+  "model": "addis-voices-2",
+  "text": "ከዚያም ሐኪሙ፦ በኢትዮጵያ የመውለድ ዕድላቸው ከአንድ በመቶ በታች መሆኑን ነገራቸው።",
+  "voice": "am-amanuel",
+  "style": "a young man, warm, calm and unhurried, like telling a family story at night"
+ },
+ "model_used": "addis-voices-2"
+}

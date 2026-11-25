@@ -3,7 +3,7 @@ const $ = s => document.querySelector(s);
 const V = '9x16', W = '16x9', RATIOS = [V, W];
 const CLIP_MIN = 20;
 let films = [], S = null, L = null, J = { running: false }, at = 0, ratio = V, show = null, dirty = null, wasRunning = false, busy = false;
-let face = null, heard = new Audio();
+let face = null, heard = new Audio(), SV = null, svPick = {};
 
 /* Elements are built from data only: text is never parsed as HTML. */
 function h(tag, props, ...kids) {
@@ -37,12 +37,13 @@ function dialog(title, body, choices) {
 const ask = (title, text, yes) => dialog(title, h('p', {}, text), [['', 'Cancel'], ['yes', yes, true]]).then(v => v === 'yes');
 const id = () => S.storyboard.id, lang = () => S.storyboard.language, shots = () => S.storyboard.shots;
 const clock = t => new Date(t).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+const ENGINE = { gemini: 'Google', addis: 'Addis AI', omnivoice: 'OmniVoice' }, DRAW = { cloudflare: 'Cloudflare', kaggle: 'Kaggle GPU' };
 const n = (x, w) => `${x} ${w}${x === 1 ? '' : 's'}`;
-const page = () => location.hash.split('/')[2] || 'script';
+const page = () => location.hash.split('/')[2] || 'script', home = () => !location.hash.split('/')[1];
 const btn = (text, onclick, o = {}) => h('button', { type: 'button', class: o.go ? 'go' : '', disabled: o.off || (o.job && J.running), 'aria-pressed': o.on === undefined ? null : String(o.on), 'aria-label': o.label, onclick }, text);
 
 /* ---------------- actions ---------------- */
-async function reload() { [S, L] = await Promise.all([api('/api/film/' + (S ? id() : films[0].id)), api('/api/limits')]); }
+async function reload() { if (home() || !S) return; [S, L] = await Promise.all([api('/api/film/' + (S ? id() : films[0].id)), api('/api/limits')]); }
 async function edit(body, done) {
   if (busy) return false;
   busy = true;
@@ -79,9 +80,8 @@ function sendAgain(action, body, fetchAction, what) {
 
 /* ---------------- top bar ---------------- */
 function topBar() {
-  const pick = h('select', { class: 'title', 'aria-label': 'Film', onchange: e => { const v = e.target.value; if (v === '+') { e.target.value = id(); newFilm(); } else location.hash = `#/${v}/script`; } },
-    films.map(f => h('option', { value: f.id, selected: f.id === id() }, f.title[Object.keys(f.title)[0]])), h('option', { value: '+' }, 'New film'));
-  $('#top').replaceChildren(h('div', {}, pick), h('nav', { 'aria-label': 'Steps' }, [['script', 'Script'], ['cast', 'Cast'], ['shots', 'Shots'], ['film', 'Film']].map(([k, t]) => h('a', { href: `#/${id()}/${k}`, 'aria-current': page() === k ? 'page' : null }, t))), h('div', { class: 'end' }, page() !== 'film' && h('a', { class: 'btn', href: `#/${id()}/film` }, 'Preview')));
+  const t = S.storyboard.title;
+  $('#top').replaceChildren(h('div', { class: 'where' }, h('a', { href: '#/' }, 'Films'), h('strong', {}, t[lang()] || Object.values(t)[0])), h('nav', { 'aria-label': 'Steps' }, [['script', 'Script'], ['cast', 'Cast'], ['shots', 'Shots'], ['film', 'Film']].map(([k, t]) => h('a', { href: `#/${id()}/${k}`, 'aria-current': page() === k ? 'page' : null }, t))), h('div', { class: 'end' }, page() !== 'film' && h('a', { class: 'btn preview', href: `#/${id()}/film` }, 'Preview'), h('a', { class: 'btn' + (page() === 'services' ? ' on' : ''), href: `#/${id()}/services`, 'aria-current': page() === 'services' ? 'page' : null }, 'Services')));
 }
 
 /* ---------------- script ---------------- */
@@ -93,7 +93,7 @@ function scriptPage() {
   const footer = h('div', { class: 'foot' });
   function foot() {
     const over = S.length > 90 || S.length < 60, kids = [h('div', { class: 'between' }, h('span', {}, 'Film length'), h('span', { class: over ? 'bad' : 'soft' }, `${S.length} s, limit 60 to 90`)), h('div', { class: 'meter' }, h('div', { class: over ? 'over' : '', style: `width:${Math.min(100, S.length / 90 * 100)}%` }))];
-    const voice = btn('Change voice', voiceSettings);
+    const voice = h('div', { class: 'between mid' }, h('span', { class: 'soft' }, ENGINE[S.engine]), btn('Change voice', () => voiceSettings()), h('a', { class: 'btn', href: `#/${id()}/services` }, 'Service'));
     if (dirty) kids.push(btn('Save', () => edit({ shots: { [s.id]: values() } }, 'Saved'), { go: true }));
     else if (S.locked) kids.push(btn('Record consent', consent, { go: true }), h('p', {}, 'This is a true story. Nothing is made before consent.'));
     else if (S.problems.length) { const k = shots().findIndex(x => S.problems[0].startsWith(x.id)); kids.push(btn(`Fix line ${k + 1}`, () => { at = k; draw(); }, { go: true }), h('p', {}, S.problems[0].slice(5))); }
@@ -119,42 +119,51 @@ function makeVoices(todo) {
     const g = S.gpu_jobs.voice;
     return g && !g.fetched ? [btn('Collect voices', () => run('voice_fetch'), { go: true, job: true }), sendAgain('voice_submit', {}, 'voice_fetch', 'It uses GPU time again.'), h('p', {}, 'Sent to the Kaggle GPU')] : [btn(label, async () => { if (await ask('Use OmniVoice?', 'Last resort: neutral tone, no emotion, quality untested. It runs on your free GPU hours.', 'Send')) run('voice_submit'); }, { go: true, job: true }), h('p', {}, 'Runs on your GPU hours')];
   }
-  if (S.engine === 'addis') return [btn(label, () => run('voice'), { go: true, job: true, off: !S.addis_key }), h('p', {}, S.addis_key ? 'Uses your Addis AI credit' : 'Add ADDIS_API_KEY to .env, then restart')];
+  if (S.engine === 'addis') return [btn(label, async () => { if (await ask('Make the voices?', `About ${Math.max(1, Math.round(S.length * todo.length / S.rows.length / 60 * 10) / 10)} minutes of speech from your Addis AI credit. Services shows what is left.`, 'Make voices')) run('voice'); }, { go: true, job: true, off: !S.addis_key }), h('p', {}, S.addis_key ? 'Uses your Addis AI credit' : 'Add ADDIS_API_KEY to .env, then restart')];
   const models = [...new Set([S.storyboard.voices[lang()].model || S.storyboard.models.tts, ...(S.storyboard.models.tts_fallbacks || [])])];
   const free = models.reduce((a, m) => a + (L.tts[m] ? (L.tts[m].blocked ? 0 : Math.max(0, L.tts_free - L.tts[m].used)) : L.tts_free), 0);
   if (free < S.voice_calls) return [btn(`${label} at ${clock(L.tts_reset)}`, () => later('voice', {}, L.tts_reset), { go: true }), h('p', {}, 'No free calls left today')];
   return [btn(label, async () => { if (await ask('Make the voices?', `${S.voice_calls === 1 ? 'One call' : n(S.voice_calls, 'call')} if all goes well. If the recording cannot be cut safely, it uses a few more. About ${free} are free today.`, 'Make voices')) run('voice'); }, { go: true, job: true }), h('p', {}, `Uses ${n(S.voice_calls, 'call')}, about ${free} free today`)];
 }
-async function voiceSettings() {
-  if (!await settle()) return;
+/* Choose the people who speak. The service itself is chosen on the Services page. Resolves true when something was saved. */
+async function voiceSettings(engine, model) {
+  if (!await settle()) return false;
+  engine = engine || S.engine;
   const v = S.storyboard.voices[lang()], chars = Object.keys(v.characters || {});
-  const service = h('select', {}, [['gemini', 'Google (recommended, has emotion)'], ['addis', 'Addis AI'], ['omnivoice', 'OmniVoice on GPU (last resort)']].map(([k, t]) => h('option', { value: k, selected: S.engine === k }, t)));
   const slots = h('div', { class: 'stack' }), note = h('p', {});
   let picks = {};
   async function fill() {
-    const e = service.value; picks = {}; slots.replaceChildren(); note.textContent = '';
+    const e = engine; picks = {}; slots.replaceChildren(); note.textContent = '';
     if (e === 'omnivoice') { note.textContent = 'Neutral tone and no choice of voice. The base model is listed as non-commercial. Never tested here.'; for (const c of ['narrator', ...chars]) picks[c] = { value: c }; return; }
     let list = [];
     try { list = await api(e === 'gemini' ? '/api/voices/gemini' : '/api/voices/addis/' + lang()); } catch (err) { note.textContent = /ADDIS_API_KEY/.test(err.message) ? 'Add ADDIS_API_KEY to the .env file, then restart the studio.' : err.message; }
-    if (e === 'addis') note.textContent += (note.textContent ? '\n' : '') + 'Addis AI says it may train on what you send. Everyone in a true story should agree to that first. It has no emotion setting.';
-    if (e !== service.value) return;
+    if (e === 'addis' && list.length) note.textContent = 'Choosing a voice plays its sample. Samples are free.';
     for (const c of ['narrator', ...chars]) {
       const now = c === 'narrator' ? v.voice : v.characters[c].voice;
-      const known = list.some(x => x.id === now);
-      picks[c] = list.length ? h('select', {}, !known && e === S.engine ? h('option', { value: now }, now) : null, list.map(x => h('option', { value: x.id, selected: x.id === now }, x.name + (x.gender ? `, ${x.gender}` : '')))) : h('input', { value: e === S.engine ? now : '', placeholder: e === 'addis' ? 'Voice id, for example am-hamen' : '' });
-      slots.append(h('label', {}, c[0].toUpperCase() + c.slice(1), picks[c]));
+      const known = list.some(x => x.id === now), start = c === 'narrator' ? Math.max(0, list.findIndex(x => /^(male|man)$/.test(x.gender))) : Math.max(0, list.findIndex(x => /^(female|woman)$/.test(x.gender)));
+      picks[c] = list.length ? h('select', {}, !known && e === S.engine ? h('option', { value: now }, now) : null, list.map((x, k) => h('option', { value: x.id, selected: x.id === now || (!known && e !== S.engine && k === start) }, x.name + (x.gender ? `, ${{ male: 'man', female: 'woman' }[x.gender] || x.gender}` : '') + (x.about ? `: ${x.about}` : '')))) : h('input', { value: e === S.engine ? now : '', placeholder: e === 'addis' ? 'Voice id, for example am-hamen' : '' });
+      const p = picks[c], url = () => `/api/voices/addis/${lang()}/${p.value}`;
+      if (e === 'addis' && list.length) {
+        const b = btn('Play', () => { if (!heard.paused && heard.src.endsWith(url())) heard.pause(); else hear(); }, { label: `Hear the ${c} voice` });
+        const hear = () => { play(url()); const now = heard, done = () => { if (heard === now) b.textContent = 'Play'; }; document.querySelectorAll('#ask .hear').forEach(x => { x.textContent = 'Play'; }); b.textContent = 'Stop'; now.onpause = done; now.onended = done; now.onerror = () => { done(); toast('This sample could not be loaded.'); }; };
+        b.classList.add('hear');
+        p.onchange = () => { if (list.find(x => x.id === p.value && x.sample)) hear(); };
+        slots.append(h('div', { class: 'pick' }, h('label', {}, c[0].toUpperCase() + c.slice(1), p), b));
+      } else slots.append(h('label', {}, c[0].toUpperCase() + c.slice(1), p));
     }
   }
-  service.onchange = fill; fill();
-  const choice = await dialog('Voice', [h('label', {}, 'Service', service), slots, note], [['', 'Cancel'], ['yes', 'Use these voices', true]]);
-  if (choice !== 'yes') return;
-  const body = { engine: service.value, narrator: picks.narrator.value, characters: Object.fromEntries(chars.map(c => [c, picks[c].value])) };
-  if (!body.narrator) return toast('Choose a voice for the narrator.');
+  fill();
+  const agreed = h('textarea', { rows: 3, placeholder: 'My mother and father agreed in person on 26 November that the story may go to Addis AI.' }), needs = engine === 'addis' && S.true_story && !S.addis_agreed;
+  const choice = await dialog(`Voices by ${ENGINE[engine]}`, [slots, note, needs ? h('label', {}, 'Addis AI may train on what it is sent. Who in this true story agreed to that, when and how?', agreed) : null].filter(Boolean), [['', 'Cancel'], ['yes', 'Use these voices', true]]);
+  heard.pause();
+  if (choice !== 'yes') return false;
+  const body = { engine, narrator: picks.narrator.value, characters: Object.fromEntries(chars.map(c => [c, picks[c].value])), ...(model ? { model } : {}), ...(needs ? { agreed: agreed.value } : {}) };
+  if (!body.narrator) { toast('Choose a voice for the narrator.'); return false; }
   const made = S.rows.filter(r => r.voice.fresh).length;
-  const same = body.engine === S.engine && body.narrator === v.voice && chars.every(c => body.characters[c] === v.characters[c].voice);
-  if (same) return;
-  if (made && !await ask('Change the voice?', `${n(made, 'finished line')} will need making again, and pictures wait until the new voices are approved.`, 'Change')) return;
-  edit({ voice: body }, 'Voice changed');
+  const people = body.narrator === v.voice && chars.every(c => body.characters[c] === v.characters[c].voice);
+  if (engine === S.engine && people && !model) return false;
+  if (made && engine === S.engine && !people && !await ask('Change the voice?', `${n(made, 'finished line')} will need making again, and pictures wait until the new voices are approved.`, 'Change')) return false;
+  return edit({ voice: body }, 'Voice changed');
 }
 async function consent() {
   const box = h('textarea', { rows: 4, placeholder: 'My mother agreed in person on 25 November to the story, the public film and her quoted line.' });
@@ -199,10 +208,12 @@ function shotsPage() {
   const drawOne = async () => {
     if (!castReady) return toast('Choose the cast for this shot first.');
     if (!row.voice_ok) return toast('Approve this shot’s voice first.');
+    if (S.draw_with === 'kaggle') { const body = { shots: [s.id], ratios: [ratio] }; if (S.gpu_jobs.pictures && !S.gpu_jobs.pictures.fetched) return toast('Collect the pictures already on the GPU first.'); if (!await ask('Draw on the Kaggle GPU?', 'One picture, plus the queue and loading time. It comes back unchecked. Sending every missing picture together is much faster.', 'Send')) return; if (pic.fresh && !await edit({ shots: { [s.id]: { redraw: ratio } } })) return; return run('pictures_submit', body); }
     if (picturesLeft() < pic.cost) return toast(`No pictures left today. The limit resets at ${clock(L.flux_reset)}.`);
     if (pic.fresh) { if (await ask('Draw it again?', `Only the ${ratio === V ? 'vertical' : 'wide'} picture. The current one is kept in versions. ${spend(1, pic.cost)}.`, 'Redraw') && await edit({ shots: { [s.id]: { redraw: ratio } } })) run('pictures', { shots: [s.id], ratios: [ratio] }); } else run('pictures', { shots: [s.id], ratios: [ratio] });
   };
-  const motion = s.motion === 'camera' ? 'Camera move' : clip.fresh ? 'Moving' : S.gpu_jobs.wan && !S.gpu_jobs.wan.fetched ? 'On the GPU' : pic.ok ? 'Ready to send' : 'After the picture';
+  const camera = s.motion === 'camera', motion = camera ? 'Free' : clip.fresh ? 'Moving' : S.gpu_jobs.wan && !S.gpu_jobs.wan.fetched ? 'On the GPU' : `About ${CLIP_MIN * 2} GPU minutes`;
+  const setMotion = async m => { if ((s.motion || 'clip') === m) return; const drawn = S.storyboard.picture_size === 'light' && RATIOS.some(k => row['picture_' + k].fresh); if (!drawn || await ask('Change the motion?', 'This shot\u2019s picture must be drawn again: moving shots are drawn smaller than still ones.', 'Change')) edit({ shots: { [s.id]: { motion: m } } }); };
   const check = pic.qa && pic.fresh && pic.qa.tries && pic.qa.tries.length ? pic.qa.tries.find(t => t.seed === pic.qa.seed_used) : null;
   return [h('div', { class: 'split' },
     h('div', { class: 'stage' }, pic.versions.length ? h('div', { class: 'versions' }, pic.versions.slice().reverse().map(v => h('button', { type: 'button', 'aria-label': 'Earlier version', 'aria-current': show === v.name ? 'true' : null, onclick: () => { show = show === v.name ? null : v.name; draw(); } }, h('img', { src: v.url, alt: '' })))) : null, h('div', { class: 'frame' + (ratio === W ? ' wide' : '') }, media)),
@@ -211,7 +222,7 @@ function shotsPage() {
       h('div', { class: 'rows' },
         h('div', {}, h('b', {}, 'Voice'), h('span', { class: 'soft' }, row.voice.fresh ? `${row.voice.seconds} s` : 'Not made'), row.voice.fresh ? btn('Play', () => play(row.voice.url)) : h('a', { class: 'btn', href: `#/${id()}/script` }, 'Script')),
         h('div', {}, h('b', {}, 'Picture'), h('span', { class: 'soft' }, shown ? 'Earlier version' : pic.fresh ? (pic.qa && /below/.test(pic.qa.status) ? 'Look closely' : 'Ready') : pic.url ? 'Out of date' : 'Not drawn'), shown ? btn('Use this', async () => { try { await api(`/api/film/${id()}/restore`, { shot: s.id, ratio, name: show }); show = null; await reload(); draw(); } catch (e) { toast(e.message); } }, { job: true }) : pic.ok && pic.fresh ? null : btn(pic.fresh ? 'Redraw' : 'Draw', drawOne, { job: true, off: S.locked })),
-        h('div', {}, h('b', {}, 'Motion'), h('span', { class: 'soft' }, motion), btn(s.motion === 'camera' ? 'Animate' : 'Camera', () => edit({ shots: { [s.id]: { motion: s.motion === 'camera' ? 'clip' : 'camera' } } }), { label: s.motion === 'camera' ? 'Animate this shot' : 'Use a camera move instead', off: clip.fresh }))),
+        h('div', { class: 'tall' }, h('div', { class: 'between' }, h('b', {}, 'Motion'), h('span', { class: 'soft' }, motion)), h('div', { class: 'seg', role: 'group', 'aria-label': 'Motion' }, btn('Camera move', () => setMotion('camera'), { on: camera, off: clip.fresh }), btn('Real movement', () => setMotion('clip'), { on: !camera, off: clip.fresh })))),
       check && check.check && check.check.problem && check.check.problem !== 'none' && /below/.test(pic.qa.status) ? h('p', { class: 'soft' }, check.check.problem) : null,
       h('div', { class: 'between' }, btn('Edit picture', editPicture)),
       h('div', { class: 'foot' }, shotsFoot()))), h('div', { class: 'strip' }, strip)];
@@ -244,9 +255,10 @@ function shotsNext() {
       for (const r of need) { left -= r['picture_' + x].cost; if (left >= 0) fit += 1; }
       const g = S.gpu_jobs.pictures;
       if (g && !g.fetched) return [btn('Collect pictures', () => run('pictures_fetch'), { go: true, job: true }), h('p', {}, `${n(g.items, 'picture')} on the GPU`), sendAgain('pictures_submit', body, 'pictures_fetch', 'It uses GPU time again.')];
-      if (!fit) return [btn(`Draw ${words} at ${clock(L.flux_reset)}`, () => later('pictures', body, L.flux_reset), { go: true }), h('p', {}, 'Today\u2019s free pictures are used up'),
-        btn('Draw on the GPU instead', async () => { if (await ask('Use the Kaggle GPU?', 'The same picture model, using your free GPU hours instead of the picture limit. It has not been tried here yet, and pictures come back unchecked. Finishing the film\u2019s motion needs about 3 of the same hours.', 'Send')) run('pictures_submit', body); }, { job: true })];
-      return [btn(`Draw ${words}`, () => run('pictures', body), { go: true, job: true }), h('p', {}, fit < need.length ? `Free limit: ${fit} now, ${need.length - fit} after ${clock(L.flux_reset)}` : spend(need.length, total))];
+      const by = h('div', { class: 'between mid' }, h('span', { class: 'soft' }, 'Draw with ' + DRAW[S.draw_with]), h('a', { class: 'btn', href: `#/${id()}/services` }, 'Change'));
+      if (S.draw_with === 'kaggle') return [by, btn(`Draw ${words}`, async () => { if (await ask('Draw on the Kaggle GPU?', 'The same picture model, using your free GPU hours. It has not been tried here yet, and pictures come back unchecked.', 'Send')) run('pictures_submit', body); }, { go: true, job: true }), h('p', {}, 'Uses your GPU hours')];
+      if (!fit) return [by, btn(`Draw ${words} at ${clock(L.flux_reset)}`, () => later('pictures', body, L.flux_reset), { go: true }), h('p', {}, 'Today\u2019s free pictures are used up')];
+      return [by, btn(`Draw ${words}`, () => run('pictures', body), { go: true, job: true }), h('p', {}, fit < need.length ? `Free limit: ${fit} now, ${need.length - fit} after ${clock(L.flux_reset)}` : spend(need.length, total))];
     }
     const look = S.rows.filter(r => r['picture_' + x].fresh && !r['picture_' + x].ok);
     if (look.length) { const i = S.rows.indexOf(look[0]); return [i === at && ratio === x ? btn('Approve this shot', async () => { if (await edit({ approve: { picture: [`${look[0].id}_${x}`] } })) { const k = S.rows.findIndex(r => r['picture_' + x].fresh && !r['picture_' + x].ok); if (k >= 0) go(k); } }, { go: true }) : btn(`Check ${n(look.length, x === V ? 'vertical picture' : 'wide picture')}`, () => { ratio = x; go(i); }, { go: true }), h('p', {}, 'Same face, right emotion, good hands?')]; }
@@ -319,41 +331,144 @@ function preview(frame, bar) {
 }
 function stopPreview() { if (player) { player.halt(); player = null; } }
 
-/* ---------------- new film ---------------- */
-let lastStory = '';
-async function newFilm() {
-  if (S && !await settle()) return;
-  const o = await api('/api/options');
-  const story = h('textarea', { rows: 6, value: lastStory, oninput: e => { lastStory = e.target.value; } }), language = h('select', {}, Object.entries(o.languages).map(([k, v]) => h('option', { value: k }, v))), narrator = h('select', {}, h('option', { value: 'man' }, 'A man'), h('option', { value: 'woman' }, 'A woman')), theme = h('select', {}, Object.entries(o.themes).map(([k, v]) => h('option', { value: k }, v.split(':')[0]))), who = h('input', { placeholder: 'My cousins abroad' }), feel = h('input', { placeholder: 'Close to home' });
-  const agreed = h('textarea', { rows: 3, placeholder: 'My mother agreed in person on 25 November to the story and the public film.' }), agreedBox = h('label', { hidden: true }, 'Who agreed, when, how and to what? Roles, not names', agreed), real = h('input', { type: 'checkbox', onchange: e => { agreedBox.hidden = !e.target.checked; } });
-  if (await dialog('New film', [h('p', {}, 'Leave out names and private details: the story goes to Google’s free text model, which may learn from it.'), h('label', {}, 'Your story', story), h('div', { class: 'two' }, h('label', {}, 'Language', language), h('label', {}, 'Theme', theme)), h('label', {}, 'Narrator', narrator), h('label', {}, 'Who is it for?', who), h('label', {}, 'What should they feel?', feel), h('label', { class: 'row' }, real, 'It is about real people'), agreedBox], [['', 'Cancel'], ['yes', 'Write the script', true]]) !== 'yes') return;
-  toast('Writing the script. This can take a few minutes.');
-  try { const r = await api('/api/draft', { story: story.value, language: language.value, theme: theme.value, audience: who.value, intent: feel.value, true_story: real.checked, consent: agreed.value, narrator: narrator.value }); lastStory = ''; films = await api('/api/films'); location.hash = `#/${r.id}/script`; } catch (e) { toast(e.message); }
+/* ---------------- services ---------------- */
+async function loadServices(fresh) {
+  const want = id();
+  if (!SV || SV.film !== want || fresh) { SV = null; svPick = {}; if (page() === 'services') draw(); }
+  try { const d = await api(`/api/services/${want}${fresh ? '?fresh' : ''}`); if (S && id() === want) { SV = { ...d, film: want }; if (page() === 'services') draw(); } } catch (e) { toast(e.message); }
+}
+const when = t => { const d = new Date(t), day = d.toDateString() === new Date().toDateString() ? '' : d.toLocaleDateString([], { weekday: 'short' }) + ' '; return day + clock(t); };
+const num = x => Number(x).toLocaleString('en-US', { maximumFractionDigits: 1 });
+function left(o) {
+  const m = o.meter;
+  if (!m) return [h('span', { class: 'bar0' }), h('span', { class: 'left' })];
+  const rest = m.full ? 0 : Math.max(0, m.limit - m.used), tip = `${num(m.used)} of ${num(m.limit)} ${m.unit} used${m.source === 'live' ? '' : ', counted here'}${m.reset ? `, resets ${when(m.reset)}` : ''}`;
+  return [h('span', { class: 'bar0', title: tip }, h('span', { class: 'meter' }, h('div', { class: rest ? '' : 'over', style: `width:${rest ? Math.min(100, m.used / m.limit * 100) : 100}%` }))),
+    h('span', { class: 'left', title: tip }, `${num(o.wait ? 0 : rest)} of ${num(m.limit)} ${m.unit} left`, m.reset ? h('small', {}, `${o.wait ? 'Free again' : 'Resets'} ${when(m.reset)}`) : null)];
+}
+/* What changes if this option is chosen, said before it happens. */
+function consequence(g, o) {
+  const done = S.rows.filter(r => r.voice.fresh).length;
+  if (g.id === 'voice') {
+    const engine = o.id.split(':')[0];
+    if (engine === 'gemini' && S.engine === 'gemini') return done ? `${n(done, 'finished line')} stay as they are. The others use ${o.name}.` : `Every line uses ${o.name}.`;
+    return `The whole film uses ${engine === 'gemini' ? o.name : ENGINE[engine]}.${done ? ` Your ${n(done, 'finished line')} are kept for if you switch back.` : ''}${engine === 'addis' && S.true_story && !S.addis_agreed ? ' Addis AI may train on it, so the people in this true story must agree first.' : ''}`;
+  }
+  if (g.id === 'pictures') return 'Finished pictures stay. New ones are drawn here.';
+  if (g.id === 'motion') return `Every shot changes to ${o.name.toLowerCase()}. You can still change one shot at a time.${S.storyboard.picture_size === 'light' ? ' Pictures of the shots that change must be drawn again.' : ' Finished clips are kept.'}`;
+  return 'Used for new scripts, proofreading and picture checks in every film.';
+}
+async function chooseService(g, o) {
+  let ok = false;
+  if (g.id === 'voice') { const [engine, model] = o.id.split(':'); ok = await voiceSettings(engine, model); }
+  else if (g.id === 'writing') { try { await api('/api/settings', { writer: o.id }); ok = true; toast('Changed'); } catch (e) { toast(e.message); } }
+  else ok = await edit({ services: { [g.id]: o.id } }, 'Changed');
+  if (ok) { svPick = {}; loadServices(true); }
+}
+function servicesPage() {
+  if (!SV || SV.film !== id()) return h('div', { class: 'empty' }, h('p', {}, 'Checking your limits'));
+  const groups = SV.groups.map(g => {
+    const cur = g.options.find(o => o.on), picked = svPick[g.id] ? g.options.find(o => o.id === svPick[g.id]) : null, changed = picked && picked !== cur, chosen = changed ? picked : cur;
+    return h('section', { class: 'svc' }, h('h2', {}, g.title), h('div', {}, g.options.map(o => [
+      h('button', { type: 'button', class: 'opt', 'aria-pressed': String(o === chosen), onclick: () => { svPick[g.id] = o.id; draw(); } }, h('i', { 'aria-hidden': 'true' }), h('span', { class: 'name' }, o.name, h('small', {}, o.note)), left(o)),
+      changed && o === picked ? h('div', { class: 'note' }, h('span', {}, consequence(g, o)), btn('Cancel', () => { delete svPick[g.id]; draw(); }), btn('Switch', () => chooseService(g, o), { on: true, job: true })) : null])));
+  });
+  return h('div', { class: 'page' }, h('div', { class: 'inner' }, h('div', { class: 'head' }, h('h1', {}, 'Services'), btn('Refresh', () => loadServices(true))), groups));
 }
 
-function welcome() {
-  $('#top').replaceChildren(h('div', {}, h('strong', {}, 'Heritage Studio')));
-  $('#view').replaceChildren(h('div', { class: 'empty' }, h('h1', {}, 'Make your first film'), h('p', {}, 'Tell a story. Everything you make stays on this computer.'), btn('New film', newFilm, { go: true })));
+/* ---------------- new film ---------------- */
+const creating = () => location.hash === '#/new';
+const newFilm = () => { location.hash = '#/new'; };
+/* Kept while the studio is open, so going back or an error never loses the story. */
+let story = { story: '', language: '', theme: '', audience: '', intent: '', narrator: 'man', true_story: false, consent: '' }, writing = false;
+async function goNew() {
+  if (dirty && !await settle()) return;
+  heard.pause(); stopPreview(); S = null; SV = null;
+  const o = await api('/api/options');
+  if (creating()) drawNew(o);
+}
+function drawNew(o) {
+  document.title = 'New film | Heritage Studio';
+  $('#top').replaceChildren(h('div', { class: 'where' }, h('a', { href: '#/' }, 'Films'), h('strong', {}, 'New film')), h('nav'), h('div'));
+  story.language = story.language || Object.keys(o.languages)[0]; story.theme = story.theme || Object.keys(o.themes)[0];
+  const keep = (k, e) => { e.addEventListener('input', () => { story[k] = e.type === 'checkbox' ? e.checked : e.value; ready(); }); return e; };
+  const list = (k, rows) => keep(k, h('select', {}, rows.map(([v, x]) => h('option', { value: v, selected: story[k] === v }, x))));
+  const words = () => story.story.trim().split(/\s+/).filter(Boolean).length;
+  const count = h('span', { class: 'soft' }), agreed = h('label', { hidden: !story.true_story }, 'Who agreed, when, how and to what? Roles, not names', keep('consent', h('textarea', { rows: 3, value: story.consent, placeholder: 'My mother agreed in person on 25 November to the story and the public film.' })));
+  const write = btn('Write the script', async () => {
+    writing = true; ready();
+    try {
+      const r = await api('/api/draft', story);
+      Object.assign(story, { story: '', audience: '', intent: '', true_story: false, consent: '' });
+      films = await api('/api/films');
+      if (creating()) location.hash = `#/${r.id}/script`; else toast('Your new script is ready.');
+    } catch (e) { toast(e.message); } finally { writing = false; if (creating()) drawNew(o); }
+  }, { go: true }), hint = h('p');
+  function ready() {
+    const few = words() < 12, who = story.true_story && story.consent.trim().split(/\s+/).filter(Boolean).length < 8;
+    agreed.hidden = !story.true_story;
+    count.textContent = `${words()} words`;
+    write.disabled = writing || few || who;
+    write.textContent = writing ? 'Writing the script' : 'Write the script';
+    hint.textContent = writing ? 'This can take a few minutes. You can leave this page.' : few ? 'Tell the story in a few sentences first' : who ? 'Write who agreed, in one sentence' : 'You read and change every line before anything is made';
+  }
+  $('#view').replaceChildren(h('div', { class: 'split new' },
+    h('div', { class: 'tell' }, h('div', { class: 'between mid' }, h('h1', {}, 'Your story'), count), keep('story', h('textarea', { value: story.story, 'aria-label': 'Your story', placeholder: 'Tell it as you would tell a friend. What happened, to whom, and what changed?' })),
+      h('p', { class: 'soft' }, `Leave out names and private details: the story goes to ${o.writer}\u2019s free text model${o.writer === 'Google' ? ', which may learn from it' : ''}.`)),
+    h('div', { class: 'side' }, h('div', { class: 'two' }, h('label', {}, 'Language', list('language', Object.entries(o.languages))), h('label', {}, 'Narrator', list('narrator', [['man', 'A man'], ['woman', 'A woman']]))),
+      h('label', {}, 'Theme', list('theme', Object.entries(o.themes).map(([k, v]) => [k, v.split(':')[0]]))),
+      h('label', {}, 'Who is it for?', keep('audience', h('input', { value: story.audience, placeholder: 'My cousins abroad' }))), h('label', {}, 'What should they feel?', keep('intent', h('input', { value: story.intent, placeholder: 'Close to home' }))),
+      h('label', { class: 'row' }, keep('true_story', h('input', { type: 'checkbox', checked: story.true_story })), 'It is about real people'), agreed,
+      h('div', { class: 'foot' }, write, hint))));
+  ready();
+}
+
+/* ---------------- home ---------------- */
+const STEP = { script: 'Script', cast: 'Cast', shots: 'Shots', film: 'Film' };
+let cards = [];
+async function goHome() {
+  if (dirty && !await settle()) return;
+  heard.pause(); stopPreview(); S = null; SV = null;
+  [cards, films] = await Promise.all([api('/api/home'), api('/api/films')]);
+  if (home()) drawHome();
+}
+function drawHome() {
+  stopPreview();
+  document.title = 'Heritage Studio';
+  $('#top').replaceChildren(h('div', {}, h('strong', { class: 'brand' }, 'Heritage Studio')), h('nav'), h('div', { class: 'end' }, cards.length ? h('button', { type: 'button', class: 'white', onclick: newFilm }, 'New film') : null));
+  if (!cards.length) { $('#view').replaceChildren(h('div', { class: 'empty' }, h('h1', {}, 'Make your first film'), h('p', {}, 'Tell a story. Everything you make stays on this computer.'), btn('New film', newFilm, { go: true }))); return; }
+  $('#view').replaceChildren(h('div', { class: 'page' }, h('div', { class: 'inner wide' }, h('h1', {}, 'Your films'), h('div', { class: 'cards' }, cards.map(c => h('a', { class: 'card', href: `#/${c.id}/${c.step}` },
+    h('div', { class: 'poster' }, c.poster ? h('img', { src: c.poster, alt: '' }) : null),
+    h('div', { class: 'about' }, h('h2', {}, c.title), c.english && c.english !== c.title ? h('span', { class: 'soft' }, c.english) : null,
+      h('div', { class: 'stats' }, c.done.filter(d => d[2]).map(([k, a, b]) => h('div', {}, h('div', { class: 'between' }, h('span', { class: 'soft' }, k), h('span', {}, `${a} of ${b}`)), h('div', { class: 'meter' }, h('div', { style: `width:${a / b * 100}%` }))))),
+      h('span', { class: 'next' }, c.step === 'film' ? (c.film ? 'Watch the film' : 'Build the film') : `Continue: ${STEP[c.step]}`))))))));
 }
 /* ---------------- shell ---------------- */
 async function go(i) { if (i === at && page() !== 'shots') return; if (!await settle()) return; at = i; show = null; draw(); const a = document.querySelector('.strip [aria-current],.lines [aria-current]'); if (a) a.scrollIntoView({ block: 'nearest', inline: 'nearest' }); }
 function draw() {
+  if (creating()) return;
+  if (home()) return drawHome();
+  if (!S) return;
   stopPreview();
   at = Math.min(at, shots().length - 1);
-  const keep = document.querySelector('.lines') ? document.querySelector('.lines').scrollTop : 0, side = document.querySelector('.side') ? document.querySelector('.side').scrollTop : 0;
+  const keep = document.querySelector('.lines') ? document.querySelector('.lines').scrollTop : 0, side = document.querySelector('.side') ? document.querySelector('.side').scrollTop : 0, down = document.querySelector('.page') ? document.querySelector('.page').scrollTop : 0;
   topBar();
-  const made = { script: scriptPage, cast: castPage, shots: shotsPage, film: filmPage }[page()] || scriptPage;
+  const made = { script: scriptPage, cast: castPage, shots: shotsPage, film: filmPage, services: servicesPage }[page()] || scriptPage;
   $('#view').replaceChildren(...[made()].flat());
   if (document.querySelector('.lines')) document.querySelector('.lines').scrollTop = keep;
   if (document.querySelector('.side')) document.querySelector('.side').scrollTop = side;
+  if (document.querySelector('.page')) document.querySelector('.page').scrollTop = down;
   document.title = `${Object.values(S.storyboard.title).pop()} | Heritage Studio`;
 }
 async function route() {
-  if (!films.length) return welcome();
-  const fid = location.hash.split('/')[1], want = films.some(f => f.id === fid) ? fid : films[0].id;
+  if (home()) return goHome();
+  if (creating()) return goNew();
+  const want = location.hash.split('/')[1];
+  if (!films.some(f => f.id === want)) { location.hash = '#/'; return; }
   if (dirty && !await settle()) return;
   if (!S || id() !== want) { [S, L] = await Promise.all([api('/api/film/' + want), api('/api/limits')]); at = 0; face = null; show = null; }
   heard.pause(); draw(); window.scrollTo(0, 0);
+  if (page() === 'services') loadServices();
 }
 function work() {
   const w = $('#work'), p = J.planned;
@@ -371,7 +486,7 @@ async function poll() {
     j.seen = J.seen && J.label === j.label && J.started === j.started && !j.running;
     const change = J.running !== j.running;
     J = j;
-    if (wasRunning && !j.running) { await reload(); if (!dirty && !(player && player.on)) draw(); if (j.ok) toast(`${j.label}: done`); } else if (change && S && !dirty && !(player && player.on)) draw();
+    if (wasRunning && !j.running) { await reload(); if (home()) goHome(); else if (!dirty && !(player && player.on)) draw(); if (j.ok) toast(`${j.label}: done`); } else if (change && S && !dirty && !(player && player.on)) draw();
     wasRunning = j.running; work();
   } catch (e) { /* the studio may be restarting */ }
   timer = setTimeout(poll, J.running ? 2000 : 8000);

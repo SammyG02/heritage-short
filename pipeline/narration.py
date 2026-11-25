@@ -5,11 +5,12 @@ A shot with `quote_voice` speaks its quoted words in that character's stock voic
 import array
 import io
 import math
+import os
 import re
 import wave
 
 from . import voice_take
-from .core import approvals, budget, cache, config, providers
+from .core import approvals, budget, cache, config, providers, settings
 from .core.storyboard import out, require_consent
 
 QUOTED = re.compile(r"(«[^»]*»|“[^”]*”)")
@@ -21,6 +22,12 @@ PAUSES_S = 0.6  # lead and tail added to every line when the film is edited
 
 def engine(sb, lang):
     return sb["voices"][lang].get("engine", "gemini")
+
+
+def default_engine(lang):
+    """The voice service a new film starts with: the person's choice when its key is there, otherwise Google."""
+    want = settings.load()["voice"]
+    return "addis" if want == "addis" and lang in ("am", "en") and os.environ.get("ADDIS_API_KEY", "").strip() else "gemini"
 
 
 def text_problems(sb, lang):
@@ -53,12 +60,18 @@ def estimate_s(sb, lang):
     return total
 
 
+def folder(sb, lang):
+    """Each service keeps its own files, so switching service never loses a voice already made."""
+    eng = engine(sb, lang)
+    return out(sb, "narration", lang, *([] if eng == "gemini" else [eng]))
+
+
 def path(sb, shot, lang):
-    return out(sb, "narration", lang, f"{shot['id']}.wav")
+    return folder(sb, lang) / f"{shot['id']}.wav"
 
 
 def part_path(sb, shot, lang, i):
-    return out(sb, "narration", lang, "parts", f"{shot['id']}_{i}.wav")
+    return folder(sb, lang) / "parts" / f"{shot['id']}_{i}.wav"
 
 
 def parts(sb, shot, lang):
@@ -144,6 +157,7 @@ def _speak(sb, item, inp, turns=1):
     require_consent(sb)
     lang = item.split("/")[0]
     if engine(sb, lang) == "addis":
+        addis_consent(sb, lang)
         return providers.addis_tts("narration", item, inp["text"], inp["voice"], lang), inp["model"]
     error = None
     for model in _order(sb, inp["model"], turns):
@@ -179,9 +193,9 @@ def take(sb, lang, todo):
             error = e
             print(f"    {model} unavailable: {str(e)[:120]}")
             continue
-        folder = out(sb, "narration", lang, "takes")
-        folder.mkdir(parents=True, exist_ok=True)
-        kept = folder / f"{todo[0]['id']}-{todo[-1]['id']}_{cache.key({'t': turns, 'v': voices, 'm': model})[:8]}_{len(list(folder.glob('*.wav'))) + 1}.wav"
+        takes = out(sb, "narration", lang, "takes")
+        takes.mkdir(parents=True, exist_ok=True)
+        kept = takes / f"{todo[0]['id']}-{todo[-1]['id']}_{cache.key({'t': turns, 'v': voices, 'm': model})[:8]}_{len(list(takes.glob('*.wav'))) + 1}.wav"
         kept.write_bytes(wav)  # paid for: keep it even if it cannot be cut
         pieces = voice_take.split(wav, [s["narration"][lang] for s in todo])
         return {s["id"]: (w, model) for s, w in zip(todo, pieces)}
@@ -202,9 +216,16 @@ def calls_needed(sb, lang, todo):
     return (1 if one_call(sb, lang, together) else count(together)) + count(alone)
 
 
+def addis_consent(sb, lang):
+    """Addis AI may train on what it is sent, so a true story needs a yes to that as well."""
+    if engine(sb, lang) == "addis" and sb["people"].get("based_on_real_people") and not sb["people"].get("addis_consent"):
+        raise config.PipelineError("This is a true story and Addis AI may train on it. Record that the people in it agreed: Services, Addis AI.")
+
+
 def check_ready(sb, lang, todo):
     """Everything that can be wrong without hearing it, checked before a call is spent."""
     require_consent(sb)
+    addis_consent(sb, lang)
     ids = {s["id"] for s in todo}
     if bad := [x for x in text_problems(sb, lang) if x.split(":")[0] in ids]:
         raise config.PipelineError("Fix the script before making voices:\n  - " + "\n  - ".join(bad))
