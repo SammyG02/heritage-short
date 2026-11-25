@@ -1,11 +1,13 @@
 """Picture check: a vision model compares each keyframe with the reference sheet and the shot's intent.
 
-A failing picture is drawn again with another seed, up to MAX_TRIES, and the best one is kept. If no vision model is
+A failing picture is drawn again with another seed, up to MAX_TRIES and EXTRA_PER_RUN, and the best one is kept. If no vision model is
 available the picture is kept and marked unchecked, so a quota never stops a film but also never hides.
 """
-from .core import providers
+from . import keyframes
+from .core import budget, providers
 
-MAX_TRIES = 3
+MAX_TRIES = 2
+EXTRA_PER_RUN = 6  # redraws allowed in one run, whatever the checker thinks
 PASS = 7
 SEED_STEP = 101
 MODELS = ["gemini-3.8-flash", "gemini-3.6-flash", "gemini-3.5-flash-lite"]
@@ -33,10 +35,14 @@ def check(sb, shot, ratio, png, refs):
     return None
 
 
-def best_of(sb, shot, ratio, inp, refs):
+def best_of(sb, shot, ratio, inp, refs, extra=None):
     """Draw, check, redraw. Returns (png, report)."""
-    best, tries = None, []
+    best, tries, extra = None, [], extra if extra is not None else [MAX_TRIES]
     for i in range(MAX_TRIES):
+        if i:
+            if not extra[0] or budget.flux_left() < keyframes.cost(sb, shot, ratio):
+                break
+            extra[0] -= 1
         seed = inp["seed"] + i * SEED_STEP
         try:
             png = providers.flux("keyframes", f"{shot['id']}_{ratio}", inp["prompt"], *inp["size"], seed, inp["model"], refs)
@@ -44,7 +50,7 @@ def best_of(sb, shot, ratio, inp, refs):
             if best:
                 break  # out of picture quota: keep the best so far
             raise
-        score = check(sb, shot, ratio, png, refs)
+        score = check(sb, shot, ratio, png, refs) if refs else None  # no character to compare: save the call
         tries.append({"seed": seed, "check": score})
         rank = score["worst"] if score else -1
         if best is None or rank > best[0]:

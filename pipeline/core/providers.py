@@ -4,8 +4,10 @@ import io
 import json
 import random
 import re
+import tempfile
 import time
 import wave
+from pathlib import Path
 
 import requests
 from PIL import Image
@@ -89,11 +91,11 @@ def gemini_json(stage, item, prompt, model, seed=None, temperature=0.8, images=(
     return retry(go)
 
 
-def _tts_generate_content(text, voice, style, model):
+def _tts_generate_content(text, voice, style, model, speech=None):
     """Older TTS models: generateContent, raw 16-bit PCM. Returns (wav bytes, tokens in, tokens out)."""
-    body = {"contents": [{"parts": [{"text": f"Read aloud, {style}:\n{text}"}]}],
+    body = {"contents": [{"parts": [{"text": text if speech else f"Read aloud, {style}:\n{text}"}]}],
             "generationConfig": {"responseModalities": ["AUDIO"],
-                                 "speechConfig": {"voiceConfig": {"prebuiltVoiceConfig": {"voiceName": voice}}}}}
+                                 "speechConfig": speech or {"voiceConfig": {"prebuiltVoiceConfig": {"voiceName": voice}}}}}
     r = _check(requests.post(f"{GEMINI}/models/{model}:generateContent", headers=_headers(), json=body, timeout=180)).json()
     found = [p["inlineData"] for c in r.get("candidates", []) for p in c.get("content", {}).get("parts", []) if "inlineData" in p]
     if not found:
@@ -137,6 +139,96 @@ def gemini_tts(stage, item, text, voice, style, model) -> bytes:
             rec["output"] = {"bytes": len(data)}
             return data
     return retry(go)
+
+
+def gemini_take(stage, item, turns, voices, model) -> bytes:
+    """Several lines, one or two speakers, in one call. turns: [{"speaker", "text"}], voices: {speaker: {"voice", "style"}}."""
+    names = list(dict.fromkeys(t["speaker"] for t in turns))
+    if len(names) > 2:
+        raise ProviderError("One call can hold two speakers")
+    # A blank line marks the end of a shot; speakers inside one shot follow each other directly.
+    text = "".join((f"{t['speaker']}: {t['text']}" if len(names) > 1 else t["text"]) + ("\n\n" if t.get("pause") else "\n") for t in turns).strip()
+    style = lambda t: t.get("style") or voices[t["speaker"]]["style"]  # noqa: E731
+
+    def go(attempt):
+        with runlog.call(stage, item, "gemini", model, {"lines": len(turns), "text": text, "styles": [style(t) for t in turns], "voices": {n: voices[n] for n in names}}, None, attempt) as rec:
+            if "3.8" in model:
+                content = [{"type": "text", "text": t["text"] + (" <long pause>" if t.get("pause") else ""),
+                            "annotations": [{"type": "speech_metadata", "style": style(t),
+                                             **({"speaker": t["speaker"]} if len(names) > 1 else {})}]} for t in turns]
+                speech = ({"speakers": [{"speaker": n, "voice": voices[n]["voice"]} for n in names]} if len(names) > 1
+                          else [{"voice": voices[names[0]]["voice"]}])
+                r = _check(requests.post(f"{GEMINI}/interactions", headers=_headers(), timeout=300, json={
+                    "model": model, "input": [{"type": "user_input", "content": content}], "response_format": {"type": "audio"},
+                    "generation_config": {"speech_config": speech}})).json()
+                audio = [c["data"] for s in r.get("steps", []) if s.get("type") == "model_output" for c in s.get("content", []) if c.get("type") == "audio"]
+                if not audio:
+                    raise ProviderError("TTS returned no audio", retryable=True)
+                data = base64.b64decode(audio[-1])
+                u = r.get("usage", {})
+                rec["usage"] = {"in": u.get("total_input_tokens", 0), "out": u.get("total_output_tokens", 0)}
+            else:
+                how = "; ".join(f"{n} is {voices[n]['style']}" if len(names) > 1 else voices[n]["style"] for n in names)
+                felt = [f"\"{t['text'][:24]}...\": {style(t)}" for t in turns if style(t) != voices[t["speaker"]]["style"]]
+                notes = " For the lines starting as follows: " + "; ".join(felt) + "." if felt else ""
+                say = (f"Read only the script aloud, {how}.{notes} Leave two full seconds of silence at every blank line and no long silence anywhere else."
+                       f"\n\nSCRIPT\n\n{text}")
+                one = {"voiceConfig": {"prebuiltVoiceConfig": {"voiceName": voices[names[0]]["voice"]}}}
+                many = {"multiSpeakerVoiceConfig": {"speakerVoiceConfigs": [
+                    {"speaker": n, "voiceConfig": {"prebuiltVoiceConfig": {"voiceName": voices[n]["voice"]}}} for n in names]}}
+                data, n_in, n_out = _tts_generate_content(say, None, None, model, many if len(names) > 1 else one)
+                rec["usage"] = {"in": n_in, "out": n_out}
+            rec["output"] = {"bytes": len(data)}
+            return data
+    return retry(go)
+
+
+ADDIS = "https://api.addisassistant.com/api/v1/voice"
+
+
+def _addis_headers():
+    return {"x-api-key": config.secret("ADDIS_API_KEY"), "Content-Type": "application/json"}
+
+
+def addis_voices(language):
+    r = _check(requests.get(f"{ADDIS}/voices", params={"language": language}, headers=_addis_headers(), timeout=30)).json()
+    rows = r.get("data", r)
+    rows = rows.get("voices", rows.get("items", [])) if isinstance(rows, dict) else rows
+    return [{"id": str(v.get("voice_id") or v.get("id")), "name": str(v.get("name") or v.get("voice_id") or v.get("id")), "gender": str(v.get("gender") or "")}
+            for v in rows if isinstance(v, dict)]
+
+
+def addis_tts(stage, item, text, voice, language) -> bytes:
+    """Addis AI Voices 2. Returns a 16-bit mono 24 kHz WAV. Uses signup credit, not a daily quota; style instructions are not supported."""
+    def go(attempt):
+        with runlog.call(stage, item, "addis-ai", "addis-voices-2", {"text": text, "voice": voice, "language": language}, None, attempt) as rec:
+            r = _check(requests.post(f"{ADDIS}/generations", headers=_addis_headers(), timeout=180, json={
+                "text": text, "voice_id": voice, "language": language, "output_format": "wav_44100"})).json()
+            d = r.get("data", r)
+            inline = next((d[k] for k in ("audio", "audio_data", "audio_base64") if isinstance(d.get(k), str)), None)
+            if inline:
+                raw = base64.b64decode(inline.split(",", 1)[-1])
+            else:
+                link = str(d.get("audio_url") or "")
+                if not link.startswith("https://"):
+                    raise ProviderError("Addis AI returned no audio")
+                got = requests.get(link, timeout=120)  # a signed link: the key is not sent to it
+                if not got.ok:
+                    raise ProviderError(f"HTTP {got.status_code} downloading the audio", retryable=True)
+                raw = got.content
+            data = to_wav(raw)
+            rec["output"] = {"bytes": len(data)}
+            return data
+    return retry(go)
+
+
+def to_wav(raw: bytes) -> bytes:
+    """Any audio to 16-bit mono 24 kHz, so voices from different services can be joined."""
+    with tempfile.TemporaryDirectory() as d:
+        src, dst = Path(d, "in"), Path(d, "out.wav")
+        src.write_bytes(raw)
+        config.run_ffmpeg(["-i", src, "-ac", 1, "-ar", 24000, "-c:a", "pcm_s16le", "-bitexact", "-map_metadata", -1, dst])
+        return dst.read_bytes()
 
 
 def _tiles(w, h):

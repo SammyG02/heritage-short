@@ -12,18 +12,40 @@ from .core import cache, config
 from .core.storyboard import out
 
 FPS, LEAD, TAIL = 24, 0.3, 0.3
+MIN_S, MAX_S = 60, 90
+MAX_TEMPO = 1.08  # faster than this the voice starts to sound hurried
 
 
 def timeline(sb, lang, unvoiced=()):
+    """Lay out the film and keep it between 60 and 90 seconds.
+
+    Too long: stop rounding up to the beat, then drop spare holds, then speed the voice by at most 8%.
+    Too short: hold every shot a little longer.
+    """
+    rows, total = lay(sb, lang, unvoiced)
+    if total > MAX_S - 0.5:
+        for how in ({"snap": False}, {"snap": False, "hold": False}, *({"snap": False, "hold": False, "tempo": 1 + i / 100} for i in (2, 4, 6, 8))):
+            rows, total = lay(sb, lang, unvoiced, **how)
+            if total <= MAX_S - 0.5:
+                print(f"  fitted to {total:.1f}s by {', '.join(how)}")
+                break
+    elif total < MIN_S + 0.5:
+        plain = lay(sb, lang, unvoiced, snap=False)[1]
+        rows, total = lay(sb, lang, unvoiced, snap=False, extra=(MIN_S + 1 - plain) / len(sb["shots"]) + 1 / FPS)
+        print(f"  fitted to {total:.1f}s by longer holds")
+    return rows, total
+
+
+def lay(sb, lang, unvoiced=(), snap=True, hold=True, tempo=1.0, extra=0.0):
     """Shot lengths follow the voice, then snap up to the score's beat so cuts land on it."""
-    beat = 60 / sb["music"]["bpm"]
+    beat = 60 / sb["music"]["bpm"] if snap else 1 / FPS
     t, rows = 0, []
     for shot in sb["shots"]:
         a, b = narration.speech(narration.path(sb, shot, lang)) if shot["id"] not in unvoiced else (0.0, 0.0)
-        voice = b - a
-        need = max(shot["duration_s"], LEAD + voice + TAIL)
+        voice = (b - a) / tempo
+        need = max(shot["duration_s"] if hold or not voice else 0, LEAD + voice + TAIL) + extra
         end = round(math.ceil((t / FPS + need) / beat - 1e-6) * beat * FPS)
-        rows.append({"shot": shot, "start": t / FPS, "frames": end - t, "voice": voice, "cut": (a, b)})
+        rows.append({"shot": shot, "start": t / FPS, "frames": end - t, "voice": voice, "cut": (a, b), "tempo": tempo})
         t = end
     total = t / FPS + sb["end_card"]["duration_s"]
     return rows, total
@@ -107,7 +129,7 @@ def mix(sb, lang, rows, total, folder, bed=None):
         args += ["-i", p]
         ms = round((r["start"] + LEAD) * 1000)
         a, b = r["cut"]
-        parts.append(f"[{i}:a]atrim={a:.3f}:{b:.3f},asetpts=PTS-STARTPTS,aresample=48000,aformat=channel_layouts=mono,volume={_gain(p, -18):.2f}dB,adelay={ms}[v{i}]")
+        parts.append(f"[{i}:a]atrim={a:.3f}:{b:.3f},asetpts=PTS-STARTPTS,atempo={r['tempo']},aresample=48000,aformat=channel_layouts=mono,volume={_gain(p, -18):.2f}dB,adelay={ms}[v{i}]")
     n = len(rows)
     args += ["-stream_loop", -1, "-i", score]
     marks = {c["action"]: next(r for r in rows_all if r["shot"]["id"] == c["shot"]) for c in sb["music"]["cues"]}
@@ -139,14 +161,16 @@ def _folder(sb, lang):
 
 
 def check_length(total):
-    if not 60 <= total <= 90:
-        raise config.PipelineError(f"The film would be {total:.1f} s; it must be 60-90 s. Shorten or lengthen narration or durations.")
+    if not MIN_S <= total <= MAX_S:
+        raise config.PipelineError(f"The film would be {total:.1f} s and cannot be fitted into {MIN_S}-{MAX_S} s. "
+                                   f"{'Shorten' if total > MAX_S else 'Lengthen'} the script.")
 
 
 def radio(sb, lang, unvoiced=()):
     """Narration over placeholder music on a black screen. Lines without a voice yet are shown as text."""
     folder = _folder(sb, lang)
     rows, total = timeline(sb, lang, unvoiced)
+    check_length(total)
     audio, _ = mix(sb, lang, rows, total, folder, (music.placeholder(sb), "placeholder"))
     p = folder / ("radio_cut_partial.mp4" if unvoiced else "radio_cut.mp4")
     work, vf = folder / "work", []

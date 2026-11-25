@@ -1,0 +1,17 @@
+{
+ "key": "52d72e71db2cd4f89fd64fa89147c220cc87ede96917e67bdfe1a9cad5fc042f",
+ "sha256": "fd744e4f0e64cf246e3b26fbaf780f52dd9536017e2564c7ee02701445c560cb",
+ "inputs": {
+  "stage": "reference/1",
+  "model": "@cf/black-forest-labs/flux-2-klein-4b",
+  "seed": 11,
+  "size": [
+   1024,
+   1024
+  ],
+  "prompt": "The same woman as in the reference image, now in her fifties: same oval face, eyes, shawl, dress and earrings, a few silver hairs at the temples, gentle smile lines, upper body, facing the viewer, plain warm background. 3D animated film frame with a painted look, sculpted rounded characters with expressive faces, hand-painted textures and visible soft brush strokes on 3D forms, painterly background, warm amber and terracotta palette with deep indigo shadows, gentle cinematic light, subject centred in frame, full-bleed picture reaching every edge",
+  "references": [
+   "89f1ae563a0f1565e899379b2fb289bba5d1eb2d2aeddb316e6641c8e73029ce"
+  ]
+ }
+}

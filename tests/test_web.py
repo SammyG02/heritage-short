@@ -23,6 +23,7 @@ def studio(tmp_path, monkeypatch):
     (folder / "a.mp4").write_bytes(b"0123456789")
     (folder / "web.log").write_text("log")
     monkeypatch.setattr(config, "ROOT", tmp_path)
+    monkeypatch.setenv("SHOW_REPO_FILM", "1")
     monkeypatch.setattr(config, "OUTPUTS", tmp_path / "outputs")
     monkeypatch.setattr(config, "RUNS", tmp_path / "runs.jsonl")
     started = []

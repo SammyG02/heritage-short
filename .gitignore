@@ -17,6 +17,9 @@ venv/
 # Node
 node_modules/
 
+# Personal films: stories, pictures, voices, music and call logs stay on this computer
+my-films/
+
 # Scratch files (outputs/ and runs.jsonl are deliberately committed)
 tmp/
 *.tmp

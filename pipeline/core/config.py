@@ -10,9 +10,11 @@ from dotenv import load_dotenv
 ROOT = Path(__file__).resolve().parents[2]
 OUTPUTS = ROOT / "outputs"
 RUNS = ROOT / "runs.jsonl"
+load_dotenv(ROOT / ".env")
+# Everyone's own stories, pictures, voices, music and call log. Never part of the code: Git ignores it.
+FILMS = Path(os.environ.get("HERITAGE_FILMS", "").strip() or ROOT / "my-films")
 SCHEMA = ROOT / "schema" / "storyboard.schema.json"
 FONT = ROOT / "assets" / "fonts" / "NotoSansEthiopic.ttf"
-load_dotenv(ROOT / ".env")
 
 
 class PipelineError(RuntimeError):

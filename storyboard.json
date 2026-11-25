@@ -1,6 +1,6 @@
 {
  "id": "one-percent",
- "version": 4,
+ "version": 29,
  "status": "draft",
  "title": {
   "am": "አንድ በመቶ",
@@ -25,8 +25,7 @@
   "music": "ACE-Step/ACE-Step-1.5 acestep-v15-turbo",
   "tts_fallbacks": [
    "gemini-3.8-flash-lite-tts",
-   "gemini-3.8-flash-tts",
-   "gemini-2.5-flash-preview-tts"
+   "gemini-3.8-flash-tts"
   ]
  },
  "voices": {
@@ -63,7 +62,7 @@
     44
    ],
    "chosen_seed": 11,
-   "reason": "Not chosen yet",
+   "reason": "Chosen by the filmmaker in the studio",
    "look": "young Ethiopian woman in her twenties, oval face, warm brown skin, dark centre-parted hair under a thin white netela shawl with a green and gold border, long white cotton dress, small round silver stud earrings"
   },
   "father": {
@@ -74,19 +73,19 @@
     33,
     44
    ],
-   "chosen_seed": 11,
-   "reason": "Not chosen yet",
+   "chosen_seed": 22,
+   "reason": "Chosen by the filmmaker in the studio",
    "look": "young Ethiopian man in his late twenties, slim face, warm brown skin, short dark hair, trimmed short beard, white cotton collared shirt"
   },
   "mother_older": {
-   "prompt": "The same woman as in the reference image, now in her fifties: same oval face, eyes, shawl, dress and earrings, a few silver hairs at the temples, gentle smile lines, upper body, facing the viewer, plain warm background",
+   "prompt": "The same woman as in the reference image: same oval face, same large dark eyes, same deep warm brown skin tone, same smooth skin, same shawl, dress and earrings. Change only this: about fifteen years older, hair still black with two or three thin grey strands at the temples, very faint smile lines beside the eyes. Upper body, facing the viewer, plain warm background",
    "seeds": [
     11,
     22
    ],
-   "chosen_seed": 11,
+   "chosen_seed": 22,
    "reason": "Not chosen yet",
-   "look": "the same woman in her fifties, oval face, warm brown skin, dark hair with a few silver strands under a thin white netela shawl with a green and gold border, long white cotton dress, small round silver stud earrings",
+   "look": "the same woman about fifteen years older, same oval face and large dark eyes, deep warm brown skin, black hair with two or three thin grey strands under a thin white netela shawl with a green and gold border, long white cotton dress, small round silver stud earrings",
    "from": "mother"
   },
   "father_older": {
@@ -95,8 +94,8 @@
     11,
     22
    ],
-   "chosen_seed": 11,
-   "reason": "Not chosen yet",
+   "chosen_seed": 22,
+   "reason": "Chosen by the filmmaker in the studio",
    "look": "the same man in his fifties, slim face, warm brown skin, short dark hair and trimmed beard with some grey, white cotton collared shirt",
    "from": "father"
   }
@@ -245,7 +244,8 @@
    "transition": {
     "type": "cut",
     "reason": "The news lands without warning"
-   }
+   },
+   "motion": "camera"
   },
   {
    "id": "s05",
@@ -315,7 +315,8 @@
     "type": "fadewhite",
     "reason": "A birth arrives as light",
     "seconds": 0.8
-   }
+   },
+   "motion": "camera"
   },
   {
    "id": "s08",
@@ -351,7 +352,7 @@
     "mother_older"
    ],
    "reason": "The emotional peak: the line she still says, on her face",
-   "image_prompt": "The woman, older now with a few silver hairs, face filling the frame, joyful eyes, mouth open speaking warmly toward the viewer, golden window light",
+   "image_prompt": "The woman, a little older now, face filling the frame, joyful eyes, mouth open speaking warmly toward the viewer, golden window light",
    "motion_prompt": "She speaks warmly, her lips and jaw moving naturally, she blinks and smiles, the camera is fixed",
    "narration": {
     "am": "እናቴ ዛሬም ትላለች፦ «ሌሎች ሴቶች በዘጠኝ ወር ይወልዳሉ፤ እኔ ግን በዘጠኝ ዓመት ወለድኩ።»",
@@ -384,7 +385,8 @@
     "type": "smoothright",
     "reason": "The children run into the story",
     "seconds": 0.6
-   }
+   },
+   "motion": "camera"
   },
   {
    "id": "s11",
@@ -429,7 +431,8 @@
     "type": "fadewhite",
     "reason": "The light of the birth returns for the viewer",
     "seconds": 0.8
-   }
+   },
+   "motion": "camera"
   }
  ],
  "end_card": {
@@ -440,5 +443,32 @@
    "Pictures, voice and music made with AI",
    "A true family story. All faces are invented."
   ]
+ },
+ "approvals": {
+  "voice": {
+   "s01": "c2794cf92b2cfd3692c70a42b214874ee5dd0a9b22cc8f4f666e101960f9762b:44d8ca32456d46eee3e140f35024a1f2b7e09a07b9fc652ac5fa94e1169791cf",
+   "s02": "37087865cf154dc6ee18e1fb6bde05db4043a817420d65e9a452ab269d252e24:56a5770f062f735d39668010830f00d201ea4f2caedad83816436d3ccf877ab0",
+   "s03": "54f957360036a37bfb6d5eff02c286cb035584fd4b56e7a4cedf554c006c2004:474d98ec9d28d2ad5e278bcc6b10283314ecedba2d9e94cd7b997079cdfffc01",
+   "s04": "2ffa18e2e000b32c336d36150043a2992dac23e4c70f778ca8e0e3301e95aecf:a55a43132f261b74b56ea337392ac3ad11abb06e8b6ddfcd491b88a2846042bd",
+   "s05": "b7d58e57f792bcb2cbee8e3fb2212dd2d86d4a6b0f0aa5faa4994ef21afffeef:230099d225ca5ff6f7352993d7459fc2da5f5fa0a43e6f9ff555218f159451c8",
+   "s06": "bbc0e1a53512f2329a6ac43bcf2852466d0fb63c6c62aaa41b50d5bc2a290371:dbad433bb62809e721739c3db75e6a45d92f69762e0180f7377738fc487e175c",
+   "s07": "9b0a0a1a65f12e61963b7e5d08ca1217d536519dd6427c5e441e1b95cdf02eea:042a4a85f72646f776daed36cc8a88b2cdfdfd1226b29df004130a0e1b90fc36",
+   "s08": "02efaaab61c2efbb4f81f69c7f8c14a15eeb5ebac50f19a2e474c2c9fb0da2d6:b614fd47a669f0596d61b97938042299c039cf81e68568a6f3929be2fb41b482",
+   "s09": "a551b9e4bc03990cf3c5d9a2557d0442f8d3501c5e0c0a1fdbd13c943a453b5a:dc58576657c480853e7078c4279c453a0c916b4b58c6e904f8e768da5a6b9284"
+  },
+  "script": {
+   "s01": "c03513bd5964b46e1ef52bce6443a2eae61211fe772225c30df6cab38412eec4",
+   "s02": "e8f415a45200bd2f825cc8796075a2eb5b527094fa8794d3e389984dcb7512f4",
+   "s03": "51c93ff065a6ee87afdf6e0435ab9916a1821fc164f01cce78f4da82dba223c2",
+   "s04": "9cf384890157d364228181aa8d71cb773b42cb0e5a60a5ddf096885411071926",
+   "s05": "37e00fd3deb6d5a92de83e0c2704c2fba182afafca8eb06aeff694970dcb2ae7",
+   "s06": "e44de54233b06f6dcff072474f2ee8f4667766a9d11eea07cb62bcc8663ffa11",
+   "s07": "ba1c6b48b12c656440cf2a016a3de28691c8c85304ca620142f7453953a64955",
+   "s08": "d27a7594d2fdd19dd3b46dc26c9b7751858efde552af4ade7ba7fffa29493d4d",
+   "s09": "2bf0011d199924524c7dae9ad5ffd049650161862cbd2b83e5de96f883cfe39c",
+   "s10": "e812a1e24d476f5395b46955e065b6ff4296d3d22a1b166ffdb2146de0679004",
+   "s11": "4aa8613b952107f3cb61fa71b62e0eb485bea68c6b64537ef739df589ce3f20a",
+   "s12": "a7c7da303f2cff066aa388c135924ea99117a5659f8cc22293501565d380006b"
+  }
  }
 }

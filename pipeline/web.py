@@ -4,6 +4,7 @@ It listens on this computer only. Every button that uses a model is one explicit
 """
 import json
 import mimetypes
+import os
 import re
 import subprocess
 import sys
@@ -15,16 +16,18 @@ from pathlib import Path
 from urllib.parse import unquote, urlparse
 
 from . import keyframes, music, narration, script, shots
-from .core import cache, config, runlog
-from .core.storyboard import out, validate
+from .core import approvals, budget, cache, config, providers, runlog
+from .core.storyboard import out, root, validate
 
 PORT = 8765
 STATIC = Path(__file__).parent / "web_static"
 MEDIA = {".png", ".jpg", ".wav", ".mp4", ".srt"}
-EDIT_SHOT = {"image_prompt", "motion_prompt", "emotion", "voice_emotion", "seed"}
-TTS_FREE, FLUX_FREE, GPU_FREE_H = 10, 10000, 30
+EDIT_SHOT = {"image_prompt", "motion_prompt", "emotion", "voice_emotion", "seed", "motion"}
+GEMINI_VOICES = [("Algieba", "man"), ("Charon", "man"), ("Iapetus", "man"), ("Orus", "man"), ("Puck", "man"),
+                 ("Sulafat", "woman"), ("Achernar", "woman"), ("Kore", "woman"), ("Aoede", "woman"), ("Leda", "woman")]
 lock = threading.RLock()
 job: dict = {}
+planned: dict = {}  # by action
 
 
 class Refused(config.PipelineError):
@@ -35,7 +38,10 @@ class Refused(config.PipelineError):
 
 def index():
     found = {}
-    for p in [config.ROOT / "storyboard.json", *sorted((config.ROOT / "storyboards").glob("*.json"))]:
+    places = sorted(config.FILMS.glob("*/storyboard.json"), key=lambda p: -p.stat().st_mtime)
+    if os.environ.get("SHOW_REPO_FILM", "").strip() == "1":  # the repository's film is its author's story, not part of the tool
+        places = [config.ROOT / "storyboard.json", *places, *sorted((config.ROOT / "storyboards").glob("*.json"))]
+    for p in places:
         try:
             found.setdefault(json.loads(p.read_text(encoding="utf-8"))["id"], p)
         except (OSError, ValueError, KeyError, TypeError):
@@ -61,7 +67,10 @@ def save_board(p, sb):
 
 def url(path):
     """A link that changes when the file changes, so the browser never shows an old version."""
-    return f"/files/{path.relative_to(config.OUTPUTS).as_posix()}?v={int(path.stat().st_mtime)}" if path.exists() else None
+    if not path.exists():
+        return None
+    base = config.FILMS if config.FILMS in path.parents else config.OUTPUTS
+    return f"/files/{path.relative_to(base).as_posix()}?v={int(path.stat().st_mtime)}"
 
 
 def asset(path, inputs):
@@ -74,13 +83,16 @@ def film_state(fid):
     rows = []
     for s in sb["shots"]:
         wav = narration.path(sb, s, lang)
-        row = {"id": s["id"], "voice": {**asset(wav, narration.inputs(sb, s, lang)), "calls": len(narration.parts(sb, s, lang))}}
+        row = {"id": s["id"], "cast_ok": keyframes.cast_ready(sb, s), "script_ok": approvals.ok(sb, "script", s["id"], approvals.script_key(s)), "voice_ok": approvals.ok(sb, "voice", s["id"], narration.approval_key(sb, s, lang)),
+               "voice": asset(wav, narration.inputs(sb, s, lang))}
         if wav.exists():
             row["voice"]["seconds"] = round(narration.seconds(wav), 1)
             row["voice"]["model"] = cache.read_meta(wav).get("model_used")
         for r in keyframes.SIZES:
             kf = keyframes.path(sb, s, r)
-            row[f"picture_{r}"] = {**asset(kf, keyframes.inputs(sb, s, r)), "qa": cache.read_meta(kf).get("qa")}
+            a = {**asset(kf, keyframes.inputs(sb, s, r)), "cost": round(keyframes.cost(sb, s, r))}
+            row[f"picture_{r}"] = {**a, "qa": cache.read_meta(kf).get("qa"), "ok": a["fresh"] and approvals.ok(sb, "picture", kf.stem, cache.file_sha(kf)),
+                                   "versions": [{"name": v.name, "url": url(v)} for v in keyframes.versions(kf)[-4:]]}
             row[f"clip_{r}"] = asset(shots.wan_path(sb, s, r), shots.wan_inputs(sb, s, r))
         rows.append(row)
     refs = {}
@@ -89,20 +101,25 @@ def film_state(fid):
         for seed in ref["seeds"]:
             f = keyframes.ref_path(sb, name, seed)
             opts.append({"seed": seed, **asset(f, keyframes.ref_inputs(sb, name, seed))})
-        refs[name] = {"options": opts, "chosen": ref["chosen_seed"], "decided": ref["reason"] != "Not chosen yet", "from": ref.get("from"), "reason": ref["reason"],
+        refs[name] = {"options": opts, "chosen": ref["chosen_seed"], "decided": ref["reason"] != "Not chosen yet" and any(o["seed"] == ref["chosen_seed"] and o["fresh"] for o in opts), "from": ref.get("from"), "reason": ref["reason"],
                       "look": ref.get("look", ""), "shots": [s["id"] for s in sb["shots"] if name in s["references"]]}
     scores = [{"seed": x, **asset(music.path(sb, x), music.inputs(sb, x))} for x in sb["music"]["seeds"]]
     folder = out(sb, "film", lang)
     report = folder / "report.json"
     gpu_jobs = {}
-    for kind in ("wan", "music"):
+    for kind in ("wan", "music", "voice", "pictures"):
         f = out(sb, "jobs", f"{kind}.json")
         if f.exists():
             j = json.loads(f.read_text(encoding="utf-8"))
-            items = j["job"].get("clips") or j["job"].get("candidates") or []
+            items = j["job"].get("clips") or j["job"].get("candidates") or j["job"].get("lines") or j["job"].get("pictures") or []
             gpu_jobs[kind] = {"submitted": j["submitted"], "items": len(items), "fetched": "done" in j.get("logged", [])}
     fb = feedback_path(fid)
-    return {"storyboard": sb, "main": p.name == "storyboard.json", "rows": rows, "references": refs, "scores": scores, "gpu_jobs": gpu_jobs,
+    chosen, left_out, wait, hours = shots.plan(sb)
+    todo = narration.stale(sb, lang)
+    return {"problems": narration.text_problems(sb, lang), "length": round(narration.estimate_s(sb, lang)), "voice_calls": narration.calls_needed(sb, lang, todo),
+            "engine": narration.engine(sb, lang), "addis_key": bool(os.environ.get("ADDIS_API_KEY", "").strip()),
+            "plan": {"clips": [f"{s['id']}_{r}" for s, r in chosen], "left_out": len(left_out), "waiting": len(wait), "hours": round(hours, 1)},
+            "storyboard": sb, "main": p.name == "storyboard.json", "rows": rows, "references": refs, "scores": scores, "gpu_jobs": gpu_jobs,
             "film": {r: url(folder / f"film_{r}.mp4") for r in keyframes.SIZES}, "radio_latest": url(max((folder / n for n in ("radio_cut.mp4", "radio_cut_partial.mp4")), key=lambda f: f.stat().st_mtime if f.exists() else 0)),
             "report": json.loads(report.read_text(encoding="utf-8")) if report.exists() else None,
             "feedback": [json.loads(x) for x in fb.read_text(encoding="utf-8").splitlines() if x.strip()] if fb.exists() else [],
@@ -110,37 +127,15 @@ def film_state(fid):
 
 
 def feedback_path(fid):
-    return config.ROOT / "feedback" / f"{fid}.jsonl"
+    mine = config.FILMS / fid
+    return mine / "feedback.jsonl" if (mine / "storyboard.json").is_file() else config.ROOT / "feedback" / f"{fid}.jsonl"
 
 
 # ---------------------------------------------------------------- limits, estimated from our own log
 
 def limits():
-    rows = []
-    if config.RUNS.exists():
-        for line in config.RUNS.read_text(encoding="utf-8").splitlines():
-            try:
-                rows.append(json.loads(line))
-            except ValueError:
-                continue
-    now = datetime.now(timezone.utc)
-    pacific = now - timedelta(hours=8)  # Google resets at midnight Pacific; standard time in November
-    tts_day = pacific.replace(hour=0, minute=0, second=0, microsecond=0) + timedelta(hours=8)
-    cf_day = now.replace(hour=0, minute=0, second=0, microsecond=0)
-    week = cf_day - timedelta(days=(now.weekday() - 5) % 7)  # Kaggle reported a Saturday 00:00 UTC refresh
-
-    def since(r, t):
-        return datetime.fromisoformat(r["ts"]) >= t
-    tts = {}
-    for r in rows:
-        if "tts" in (r.get("model") or "") and since(r, tts_day):
-            m = tts.setdefault(r["model"], {"used": 0, "blocked": False})
-            m["used"] += r["status"] == "ok"
-            m["blocked"] |= r["status"] == "error" and re.search(r"per day|limit: 0", r.get("error") or "", re.I) is not None
-    flux = sum((r.get("list_price_usd") or 0) for r in rows if "flux" in (r.get("model") or "") and since(r, cf_day)) / 0.011 * 1000
-    gpu = sum((r.get("gpu_s") or 0) for r in rows if since(r, week)) / 3600
-    return {"tts": tts, "tts_free": TTS_FREE, "tts_reset": (tts_day + timedelta(days=1)).isoformat(), "flux_used": round(flux), "flux_free": FLUX_FREE,
-            "flux_reset": (cf_day + timedelta(days=1)).isoformat(), "gpu_used_h": round(gpu, 2), "gpu_free_h": GPU_FREE_H}
+    return {"tts": budget.tts_used(), "tts_free": budget.TTS_PER_DAY, "tts_reset": budget.tts_reset().isoformat(), "flux_used": budget.flux_used(),
+            "flux_free": budget.FLUX_PER_DAY, "flux_reset": budget.flux_reset().isoformat(), "gpu_used_h": round(budget.gpu_used_h(), 2), "gpu_free_h": budget.GPU_H_PER_WEEK}
 
 
 # ---------------------------------------------------------------- jobs
@@ -148,7 +143,7 @@ def limits():
 ACTIONS = {
     "voice": "Making voices", "references": "Drawing characters", "pictures": "Drawing pictures", "radio": "Building the radio cut",
     "motion_submit": "Sending clips to the GPU", "motion_status": "Checking the GPU", "motion_fetch": "Collecting clips",
-    "music_submit": "Sending music to the GPU", "music_status": "Checking the GPU", "music_fetch": "Collecting music", "build": "Editing the film"}
+    "pictures_submit": "Sending pictures to the GPU", "pictures_status": "Checking the GPU", "pictures_fetch": "Collecting pictures", "voice_submit": "Sending voices to the GPU", "voice_fetch": "Collecting voices", "music_submit": "Sending music to the GPU", "music_status": "Checking the GPU", "music_fetch": "Collecting music", "build": "Editing the film"}
 
 
 def command(sb, action, body):
@@ -178,6 +173,8 @@ def command(sb, action, body):
             raise Refused("Choose these characters first: " + ", ".join(waiting))
         return ["keyframes", *(pick or [y for s in sb["shots"] for y in ("--shot", s["id"])]), *size, *force]
     return {"voice": ["narration", *pick, *force], "radio": ["radio", "--partial"], "build": ["assemble"],
+            "pictures_submit": ["gpu", "submit", "pictures", *size, *pick], "pictures_status": ["gpu", "status", "pictures"], "pictures_fetch": ["gpu", "fetch", "pictures"],
+            "voice_submit": ["gpu", "submit", "voice"], "voice_fetch": ["gpu", "fetch", "voice"],
             "motion_submit": ["gpu", "submit", "wan", *size, *pick], "motion_status": ["gpu", "status", "wan"], "motion_fetch": ["gpu", "fetch", "wan"],
             "music_submit": ["gpu", "submit", "music"], "music_status": ["gpu", "status", "music"], "music_fetch": ["gpu", "fetch", "music"]}[action]
 
@@ -196,10 +193,10 @@ def start(fid, action, body):
         errors = validate(sb)
         if errors:
             raise Refused("The storyboard has a problem: " + errors[0])
-        if sb["people"].get("based_on_real_people") and sb["people"].get("consent") != "recorded" and action not in ("motion_status", "music_status"):
+        if sb["people"].get("based_on_real_people") and sb["people"].get("consent") != "recorded" and action not in ("motion_status", "music_status", "pictures_status"):
             raise Refused("This is a true story. Record consent on the Story page first.")
-        if action in ("motion_submit", "music_submit") and body.get("replace") is not True:
-            f = out(sb, "jobs", ("wan" if action[1] == "o" else "music") + ".json")
+        if action in ("motion_submit", "music_submit", "voice_submit", "pictures_submit") and body.get("replace") is not True:
+            f = out(sb, "jobs", {"motion": "wan"}.get(action.split("_")[0], action.split("_")[0]) + ".json")
             if f.exists() and "done" not in json.loads(f.read_text(encoding="utf-8")).get("logged", []):
                 raise Refused("An earlier GPU job has not been collected yet. Collect it first, or send again and lose it.")
         folder = out(sb)
@@ -215,11 +212,55 @@ def start(fid, action, body):
 def job_state():
     with lock:
         if not job:
-            return {"running": False, "log": "", "label": None}
+            return {"running": False, "log": "", "label": None, "planned": plan_state()}
         text = job["log"].read_text(encoding="utf-8", errors="replace")[-5000:] if job["log"].exists() else ""
         code = job["proc"].poll()
         return {"running": code is None, "ok": code == 0, "label": job["label"], "action": job["action"], "film": job["film"],
-                "stopped": job.get("stopped", False), "seconds": round(time.time() - job["started"]), "log": runlog.redact(text)}
+                "planned": plan_state(), "stopped": job.get("stopped", False), "seconds": round(time.time() - job["started"]), "log": runlog.redact(text)}
+
+
+def plan_state():
+    return [{k: p[k] for k in ("film", "action", "label", "at")} for p in sorted(planned.values(), key=lambda p: p["at"])]
+
+
+def plan_later(fid, body):
+    """Start jobs when a free limit resets, one after another. They live in this window only: closing the studio cancels them."""
+    action = body.get("action")
+    reset = {"voice": budget.tts_reset, "pictures": budget.flux_reset, "references": budget.flux_reset}.get(action)
+    if not reset:
+        raise Refused("Only voices and pictures wait for a reset.")
+    command(open_board(fid)[1], action, body)  # refuses a bad request now rather than at night
+    at, key = reset() + timedelta(minutes=2), f"{action} {body.get('name', '')}"
+
+    def go():
+        with lock:
+            if key not in planned:
+                return
+            if running():
+                return again(30)
+            planned.pop(key)
+        try:
+            start(fid, action, body)
+        except config.PipelineError as e:
+            print("planned job did not start:", e)
+
+    def again(seconds):
+        t = threading.Timer(seconds, go)
+        t.daemon = True
+        planned[key]["timer"] = t
+        t.start()
+    with lock:
+        if key in planned:
+            planned.pop(key)["timer"].cancel()
+        planned[key] = {"film": fid, "action": action, "label": ACTIONS[action], "at": at.isoformat()}
+        again((at - datetime.now(timezone.utc)).total_seconds())
+
+
+def cancel_plan():
+    with lock:
+        for p in planned.values():
+            p["timer"].cancel()
+        planned.clear()
 
 
 def stop():
@@ -251,6 +292,8 @@ def edit(fid, body):
                                        **({} if v["type"] == "cut" else {"seconds": (s.get("transition") or {}).get("seconds", 0.6)})}
                 elif k in ("emotion", "voice_emotion") and not str(v).strip():
                     s.pop(k, None)
+                elif k == "redraw" and v in keyframes.SIZES:
+                    new_take(s, v)
                 elif k in EDIT_SHOT:
                     s[k] = v if k == "seed" else str(v).strip()
                 else:
@@ -258,9 +301,13 @@ def edit(fid, body):
         for name, c in (body.get("references") or {}).items():
             if name not in sb["references"]:
                 raise Refused("Unknown character.")
-            sb["references"][name].update(chosen_seed=c["seed"], reason=str(c.get("reason") or "Chosen by the filmmaker in the studio"))
+            choose_face(sb, name, c["seed"], str(c.get("reason") or "Chosen by the filmmaker in the studio"))
         if "music" in body:
             sb["music"].update(chosen_seed=body["music"]["seed"], reason=str(body["music"].get("reason") or "Chosen by the filmmaker in the studio"))
+        if "voice" in body:
+            set_voice(sb, body["voice"])
+        for kind, names in (body.get("approve") or {}).items():
+            approve(sb, kind, names, body.get("value") is not False)
         if "consent" in body:
             text = str(body["consent"]).strip()
             if len(text.split()) < 8:
@@ -269,6 +316,76 @@ def edit(fid, body):
         if json.dumps(sb, sort_keys=True) != before:
             sb["version"] += 1
             save_board(p, sb)
+
+
+def new_take(shot, ratio):
+    """Another take of one format only."""
+    takes = shot.setdefault("takes", {})
+    takes[ratio] = takes.get(ratio, 0) + 1
+
+
+def choose_face(sb, name, seed, reason):
+    ref = sb["references"][name]
+    changed = ref["chosen_seed"] != seed
+    ref.update(chosen_seed=seed, reason=reason)
+    if changed:  # older versions are drawn from this face, so they must be drawn and chosen again
+        for other in sb["references"].values():
+            if other.get("from") == name:
+                other["reason"] = "Not chosen yet"
+
+
+def set_voice(sb, v):
+    """Choose who speaks. A film uses one service; switching it makes every line out of date."""
+    lang = sb["language"]
+    if v["engine"] not in narration.ENGINES:
+        raise Refused("Unknown voice service.")
+    now = sb["voices"][lang]
+    now["engine"] = v["engine"]
+    now["voice"] = str(v["narrator"]).strip()
+    for name, voice in (v.get("characters") or {}).items():
+        if name not in now.get("characters", {}):
+            raise Refused("Unknown character.")
+        now["characters"][name]["voice"] = str(voice).strip()
+    if v["engine"] != "gemini":
+        for s in sb["shots"]:
+            s.pop("tts_model", None)
+
+
+def approve(sb, kind, names, yes):
+    by_id = {s["id"]: s for s in sb["shots"]}
+    lang = sb["language"]
+    sb.setdefault("approvals", {})
+    for name in names:
+        sid, _, ratio = name.partition("_")
+        s = by_id[sid]
+        if not yes:
+            sb["approvals"].get(kind, {}).pop(name, None)
+            continue
+        if kind == "script":
+            approvals.give(sb, kind, sid, approvals.script_key(s))
+        elif kind == "voice":
+            key = narration.approval_key(sb, s, lang)
+            if not key:
+                raise Refused(f"{sid} has no current voice.")
+            approvals.give(sb, kind, sid, key)
+        elif kind == "picture" and ratio in keyframes.SIZES:
+            p = keyframes.path(sb, s, ratio)
+            if not cache.fresh(p, keyframes.inputs(sb, s, ratio)):
+                raise Refused(f"{name} has no current picture.")
+            approvals.give(sb, kind, name, cache.file_sha(p))
+        else:
+            raise Refused("Unknown approval.")
+
+
+def restore(fid, body):
+    with lock:
+        if running():
+            raise Refused("Wait for the running job to finish.")
+        _, sb = open_board(fid)
+        s = next((s for s in sb["shots"] if s["id"] == body.get("shot")), None)
+        if not s or body.get("ratio") not in keyframes.SIZES:
+            raise Refused("Unknown shot.")
+        keyframes.restore(sb, s, body["ratio"], str(body.get("name")))
 
 
 def add_feedback(fid, body):
@@ -309,8 +426,12 @@ class Handler(BaseHTTPRequestHandler):
         return self.headers.get("Host") in hosts and (origin is None or urlparse(origin).netloc in hosts)
 
     def media(self, rel):
-        path = (config.OUTPUTS / rel).resolve()
-        if config.OUTPUTS.resolve() not in path.parents or path.suffix not in MEDIA or not path.is_file():
+        fid, _, inside = rel.partition("/")
+        if not re.fullmatch(r"[a-z0-9][a-z0-9-]{1,60}", fid):
+            return self.json({"error": "Not found"}, 404)
+        home = root(fid).resolve()
+        path = (home / inside).resolve()
+        if home not in path.parents or path.suffix not in MEDIA or not path.is_file():
             return self.json({"error": "Not found"}, 404)
         size, first, last = path.stat().st_size, 0, path.stat().st_size - 1
         m = re.fullmatch(r"bytes=(\d*)-(\d*)", self.headers.get("Range") or "")
@@ -360,6 +481,12 @@ class Handler(BaseHTTPRequestHandler):
                 return self.json([{"id": i, "title": json.loads(p.read_text(encoding="utf-8"))["title"], "main": p.name == "storyboard.json"} for i, p in index().items()])
             if path == "/api/options":
                 return self.json({"languages": script.LANGUAGES, "soon": script.COMING_SOON, "themes": script.THEMES})
+            if path == "/geist.ttf":
+                return self.send((config.ROOT / "assets" / "fonts" / "Geist.ttf").read_bytes(), kind="font/ttf")
+            if path == "/api/voices/gemini":
+                return self.json([{"id": n, "name": n, "gender": g} for n, g in GEMINI_VOICES])
+            if m := re.fullmatch(r"/api/voices/addis/([a-z]{2,3})", path):
+                return self.json(providers.addis_voices(m[1]))
             if path == "/api/job":
                 return self.json(job_state())
             if path == "/api/limits":
@@ -382,17 +509,20 @@ class Handler(BaseHTTPRequestHandler):
                 raise ValueError
             if self.path == "/api/draft":
                 args = (str(body.get(k, "")).strip() for k in ("story", "language", "theme", "audience", "intent"))
-                return self.json({"id": script.new(*args, true_story=body.get("true_story") is True)[1]["id"]})
+                return self.json({"id": script.new(*args, true_story=body.get("true_story") is True, consent_record=str(body.get("consent") or ""), narrator=body.get("narrator") if body.get("narrator") in ("man", "woman") else "man")[1]["id"]})
+            if self.path == "/api/plan/cancel":
+                cancel_plan()
+                return self.json({"ok": True})
             if self.path == "/api/job/stop":
                 stop()
                 return self.json({"ok": True})
-            m = re.fullmatch(r"/api/film/([a-z0-9-]+)/(run|edit|feedback)", self.path)
+            m = re.fullmatch(r"/api/film/([a-z0-9-]+)/(run|edit|feedback|later|restore)", self.path)
             if not m:
                 return self.json({"error": "Not found"}, 404)
             if m[2] == "run":
                 start(m[1], body.get("action"), body)
             else:
-                {"edit": edit, "feedback": add_feedback}[m[2]](m[1], body)
+                {"edit": edit, "feedback": add_feedback, "later": plan_later, "restore": restore}[m[2]](m[1], body)
             self.json({"ok": True})
         except config.PipelineError as e:
             self.json({"error": runlog.redact(str(e))[:600]}, 400)

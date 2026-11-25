@@ -67,5 +67,11 @@ def require_consent(data: dict) -> None:
                                    "ETHICS.md, then set people.consent to 'recorded'.")
 
 
+def root(film_id: str) -> Path:
+    """Where a film keeps everything it makes: its own personal folder, or outputs/ for the film that belongs to this repository."""
+    mine = config.FILMS / film_id
+    return mine if (mine / "storyboard.json").is_file() else config.OUTPUTS / film_id
+
+
 def out(data: dict, *parts: str) -> Path:
-    return config.OUTPUTS.joinpath(data["id"], *parts)
+    return root(data["id"]).joinpath(*parts)

@@ -1,0 +1,50 @@
+{
+ "key": "0ff571d1046df1c660754a0ecc3c00311be88992df0751f2dabcf3ae3bf0d225",
+ "sha256": "b950633d2a42741246e91b4e06eabd08a614241680c7cb57382a02abe9751a52",
+ "inputs": {
+  "stage": "keyframe/1",
+  "model": "@cf/black-forest-labs/flux-2-klein-4b",
+  "seed": 2002,
+  "size": [
+   768,
+   1344
+  ],
+  "prompt": "medium shot. The woman and the man as young newlyweds standing side by side in white handwoven cotton clothes with green and gold borders, shoulders touching, smiling at each other, warm afternoon garden behind. Visible emotion: young love, shining eyes, easy open smiles. Reference image 1 is the mother: young Ethiopian woman in her twenties, oval face, warm brown skin, dark centre-parted hair under a thin white netela shawl with a green and gold border, long white cotton dress, small round silver stud earrings. Same face, hair and clothes as reference image 1. Reference image 2 is the father: young Ethiopian man in his late twenties, slim face, warm brown skin, short dark hair, trimmed short beard, white cotton collared shirt. Same face, hair and clothes as reference image 2. tall vertical scene, subject large in the middle third, the painted scene continues down to the bottom edge. 3D animated film frame with a painted look, sculpted rounded characters with expressive faces, hand-painted textures and visible soft brush strokes on 3D forms, painterly background, warm amber and terracotta palette with deep indigo shadows, gentle cinematic light, subject centred in frame, full-bleed picture reaching every edge",
+  "references": [
+   "89f1ae563a0f1565e899379b2fb289bba5d1eb2d2aeddb316e6641c8e73029ce",
+   "46b379832e98df62e85c157d8a20f098bf6bccbb03e7e3b235781b93df2bd875"
+  ]
+ },
+ "qa": {
+  "status": "below target, needs a person to look",
+  "seed_used": 2103,
+  "tries": [
+   {
+    "seed": 2002,
+    "check": {
+     "identity": 7.0,
+     "emotion": 6.0,
+     "content": 5.0,
+     "anatomy": 6.0,
+     "style": 7.0,
+     "worst": 5.0,
+     "problem": "The characters look toward the viewer rather than smiling at each other.",
+     "model": "gemini-3.8-flash"
+    }
+   },
+   {
+    "seed": 2103,
+    "check": {
+     "identity": 7.0,
+     "emotion": 7.0,
+     "content": 7.0,
+     "anatomy": 6.0,
+     "style": 7.0,
+     "worst": 6.0,
+     "problem": "none",
+     "model": "gemini-3.6-flash"
+    }
+   }
+  ]
+ }
+}

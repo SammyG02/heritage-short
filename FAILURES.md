@@ -66,3 +66,18 @@ What broke, what was tried, what fixed it. Times are EAT, 25 Nov 2026.
 - **Likely cause, not isolated:** several actions in one prompt (lift head, breathe, move arms and hands, pour). The single-face clip in the same job held together.
 - **Response:** "One Percent" motion prompts cut to one small movement each, to be tested.
 - **Queue:** both jobs started at 17:47, a little over an hour after submission.
+
+## Ten defects that 70 passing tests missed (code review, 23:00)
+- **Found:** a review of the code, not a test or a run. Among them: redrawing one format made the other format's approved picture out of date; the one-call voice asked for long pauses inside lines as well as between them; an approval survived a new, unheard recording; changing a face left its older version with the old face; a saved picture could be overwritten; the proofreader and the drafting of a true story did not wait for consent.
+- **Tried:** 21 tests written first. 15 failed before the fixes; the others guard behaviour that had to stay.
+- **Fixed:** all ten. Cache keys and cached items of four storyboards (306 items, 132 cached) were the same before and after, so no finished work has to be made again.
+- **Lesson:** the earlier tests checked each feature alone. The defects were where two features meet.
+
+## The older mother became a different person (23:29)
+- **Broke:** both options drawn from the approved young face came back with much paler skin, deep wrinkles and grey hair, about 75 instead of 50. The father, from the same kind of prompt, kept his skin tone.
+- **Likely cause, not isolated:** "in her fifties", "silver hairs" and "smile lines" together.
+- **Changed:** the prompt names the skin tone and face first and asks for one small change. New drafts get the same wording from code, and older versions are made only when the script shows one. Not redrawn yet: the daily picture allowance was used up (about 10,100 of 10,000 by our estimate).
+
+## Our own story was inside the tool
+- **Found by the applicant:** a new film copied its defaults (voice style, music and video settings) from this repository's storyboard, and new stories and their call logs were saved inside the repository.
+- **Fixed:** neutral `pipeline/defaults.json`; personal films and logs in `my-films/`, ignored by Git. A test searches the code for words of our story.

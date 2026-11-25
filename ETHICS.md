@@ -38,6 +38,10 @@ Google states that free-tier Gemini content is used to improve its products. For
 | FLUX.2 klein 4B on Workers AI | Weights Apache 2.0 per the brief; hosted use links to BFL terms | Cloudflare model listing, 25 Nov 2026 |
 | Wan 2.2 TI2V-5B | Apache 2.0 | Model card, 25 Nov 2026 |
 | ACE-Step 1.5 | MIT | Repository README, 25 Nov 2026 |
+| Gemini 3.1 Flash TTS preview | Google API terms, as above | Model page, 25 Nov 2026 |
+| Addis AI Voices 2 (optional, not used in this film) | Its terms allow use in your own products, no resale. Its privacy policy says content may be used to train by default, so a true story needs fresh consent before choosing it | Terms and privacy pages, 25 Nov 2026 |
+| OmniVoice Amharic (optional last resort, not used) | Amharic card: Apache 2.0. Base model card: code Apache 2.0, weights CC-BY-NC. Treated as non-commercial. No recording of a person is used | Model cards, 25 Nov 2026 |
+| Geist | SIL Open Font License 1.1 | Bundled in assets/fonts with its licence |
 | Noto Sans Ethiopic | SIL Open Font License 1.1 | Bundled in assets/fonts with its licence |
 | FFmpeg | LGPL/GPL by build; run as an external program | - |
 

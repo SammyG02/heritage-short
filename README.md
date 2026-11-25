@@ -6,7 +6,7 @@ You write a story and choose a language and a theme. The program writes a storyb
 
 It runs on your own computer, needs no graphics card, and uses free services.
 
-> **Status:** work in progress. The included film, *The Extra Cup* (ትርፍ ሲኒ), is an invented sample. AI video clips and AI music depend on Kaggle and have not completed a run yet; until then films use gently moving paintings and simple music made in code.
+> **Status:** work in progress on 26 November 2026. The film in `storyboard.json` is *One Percent* (አንድ በመቶ), the author's family story: nine of twelve voices and one of 24 pictures are made. An earlier invented film, *The Extra Cup*, is complete in `outputs/extra-cup/`.
 
 **Contents:** [What happens](#what-happens) · [Install](#1-install) · [See the sample](#2-see-the-sample-film-no-keys-needed) · [Get keys](#3-get-your-free-keys) · [Make your film](#4-make-your-own-film) · [Change it](#5-change-something) · [Problems](#if-something-goes-wrong) · [For developers](#for-developers)
 
@@ -133,7 +133,9 @@ The studio has one page for each step. Nothing runs until you press a button, an
 7. **Film:** build both formats, watch and download. This never calls a model.
 8. **Audience:** write down what people said, in their words. **Limits:** what is left today.
 
-Press **Stop** at any time; finished parts are kept. Edits to one shot only make that shot out of date. Files are in `outputs/<film name>/`.
+**Your films are yours.** Every story you make, with its characters, pictures, voices, music and call log, is saved in `my-films/` on your computer (or the folder named by `HERITAGE_FILMS`). Git ignores it. Nothing is shared between two stories. The film in `storyboard.json` and `outputs/` belongs to this repository's author; `python -m pipeline film` rebuilds it, and the studio shows it only if `SHOW_REPO_FILM=1` is in `.env`.
+
+Press **Stop** at any time; finished parts are kept. Edits to one shot only make that shot out of date. Files are in `my-films/<film name>/`.
 
 Leave the terminal window open while it works. The page is only reachable from your own computer.
 

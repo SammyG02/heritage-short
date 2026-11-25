@@ -12,8 +12,8 @@ from pathlib import Path
 
 from PIL import Image
 
-from . import keyframes, music, shots
-from .core import cache, config, runlog
+from . import keyframes, music, narration, shots
+from .core import budget, cache, config, runlog
 from .core.storyboard import out, require_consent
 
 WORKERS = Path(__file__).parent / "kaggle_jobs"
@@ -56,9 +56,9 @@ def _push_kernel(kind, code, datasets=()):
     return f"{user()}/{slug}"
 
 
-def _push_dataset(folder, job_id):
-    ref = f"{user()}/{DATASET}"
-    (folder / "dataset-metadata.json").write_text(json.dumps({"title": DATASET, "id": ref, "licenses": [{"name": "other"}]}))
+def _push_dataset(folder, job_id, name=DATASET):
+    ref = f"{user()}/{name}"
+    (folder / "dataset-metadata.json").write_text(json.dumps({"title": name, "id": ref, "licenses": [{"name": "other"}]}))
     if "ready" in kaggle("datasets", "status", ref, check=False):
         kaggle("datasets", "version", "-p", folder, "-m", job_id)
     else:
@@ -72,19 +72,19 @@ def _push_dataset(folder, job_id):
     raise config.PipelineError("Kaggle dataset did not become ready")
 
 
-def submit_wan(sb, ratios=("9x16", "16x9"), only=None):
+def submit_wan(sb, ratios=("9x16", "16x9"), only=None, hours=None):
     require_consent(sb)
     clips = []
-    for ratio in ratios:
-        for s in sb["shots"]:
-            if (only and s["id"] not in only) or shots.has_wan(sb, s, ratio):
-                continue
-            inp = shots.wan_inputs(sb, s, ratio)
-            clips.append({"item": f"{s['id']}_{ratio}", "shot": s["id"], "ratio": ratio, "key": cache.key(inp), "inputs": inp,
-                          "motion_prompt": inp["motion_prompt"], "seed": s["seed"], "size": inp["size"],
-                          "keyframe_file": f"{s['id']}_{ratio}.jpg"})
+    chosen, left_out, wait, need_h = shots.plan(sb, ratios, only, hours)
+    print(f"  motion: {len(chosen)} clips, about {need_h:.1f} of {budget.gpu_left_h():.1f} GPU hours left; "
+          f"{len(left_out)} left out by the limit, {len(wait)} waiting for an approved picture")
+    for s, ratio in chosen:
+        inp = shots.wan_inputs(sb, s, ratio)
+        clips.append({"item": f"{s['id']}_{ratio}", "shot": s["id"], "ratio": ratio, "key": cache.key(inp), "inputs": inp,
+                      "motion_prompt": inp["motion_prompt"], "seed": s["seed"], "size": inp["size"],
+                      "keyframe_file": f"{s['id']}_{ratio}.jpg"})
     if not clips:
-        print("  wan: nothing to submit, all clips are cached")
+        print("  wan: nothing to submit")
         return None
     job_id = "job-" + uuid.uuid4().hex[:10]
     v = sb["video"]
@@ -123,6 +123,71 @@ def submit_music(sb):
     return kernel
 
 
+def submit_pictures(sb, ratios=("9x16", "16x9"), only=None):
+    """Backup for the picture limit: the same model on the free GPU. Pictures come back marked as unchecked."""
+    require_consent(sb)
+    rows, files, wait = [], {}, []
+    for ratio in ratios:
+        for s in sb["shots"]:
+            p, inp = keyframes.path(sb, s, ratio), keyframes.inputs(sb, s, ratio)
+            if (only and s["id"] not in only) or cache.fresh(p, inp):
+                continue
+            if not keyframes.voice_ok(sb, s) or not keyframes.cast_ready(sb, s):
+                wait.append(p.stem)
+                continue
+            names = [keyframes.ref_path(sb, n, sb["references"][n]["chosen_seed"]) for n in s["references"]]
+            files.update({f.stem + ".jpg": f for f in names})
+            rows.append({"item": p.stem, "key": cache.key(inp), "inputs": inp, "prompt": inp["prompt"], "size": inp["size"], "seed": inp["seed"], "files": [f.stem + ".jpg" for f in names]})
+    if wait:
+        print("  waiting for an approved voice or a chosen cast: " + ", ".join(wait))
+    if not rows:
+        print("  pictures: nothing to submit")
+        return None
+    job_id = "job-" + uuid.uuid4().hex[:10]
+    job = {"job_id": job_id, "pictures": rows}
+    with tempfile.TemporaryDirectory() as d:
+        d = Path(d)
+        for name, f in files.items():
+            im = Image.open(f).convert("RGB")
+            im.thumbnail((768, 768))
+            im.save(d / name, quality=95)
+        (d / "job.json").write_text(json.dumps(job), encoding="utf-8")
+        (d / f"{job_id}.txt").write_text(job_id)
+        ref = _push_dataset(d, job_id, "heritage-short-pictures")
+    kernel = _push_kernel("pictures", (WORKERS / "pictures_worker.py").read_text(encoding="utf-8").replace("@@JOB_ID@@", job_id), [ref])
+    _save_state(sb, "pictures", {"kernel": kernel, "submitted": time.time(), "job": job})
+    print(f"  pictures: submitted {len(rows)} as {kernel}")
+    return kernel
+
+
+def submit_voice(sb, lang):
+    """Last resort: OmniVoice. Only when the storyboard chooses that engine."""
+    if narration.engine(sb, lang) != "omnivoice":
+        raise config.PipelineError("This film does not use OmniVoice. Choose it as the voice service first.")
+    todo = narration.stale(sb, lang)
+    if not todo:
+        print("  voice: nothing to submit")
+        return None
+    narration.check_ready(sb, lang, todo)
+    lines = []
+    for s in todo:
+        for i, turn in enumerate(narration.parts(sb, s, lang), 1):
+            lines.append({"item": f"{s['id']}_{i}", "shot": s["id"], "n": i, "key": cache.key(turn), "inputs": turn, "text": turn["text"], "voice": turn["voice"]})
+    job = {"model": narration.ENGINES["omnivoice"], "lang": lang, "lines": lines}
+    kernel = _push_kernel("voice", (WORKERS / "voice_worker.py").read_text(encoding="utf-8").replace("@@JOB@@", json.dumps(job, ensure_ascii=False)))
+    _save_state(sb, "voice", {"kernel": kernel, "submitted": time.time(), "job": job})
+    print(f"  voice: submitted {len(lines)} lines as {kernel}")
+    return kernel
+
+
+def _join_voices(sb, job):
+    for s in sb["shots"]:
+        turns = narration.parts(sb, s, job["lang"])
+        files = [narration.part_path(sb, s, job["lang"], i) for i in range(1, len(turns) + 1)]
+        if all(cache.fresh(f, t) for f, t in zip(files, turns)):
+            cache.store(narration.path(sb, s, job["lang"]), narration.join(files), narration.inputs(sb, s, job["lang"]), model_used=job["model"])
+
+
 def status(sb, kind):
     p = _state(sb, kind)
     if not p.exists():
@@ -147,6 +212,12 @@ def fetch(sb, kind):
     if kind == "wan":
         for c in state["job"]["clips"]:
             items[c["item"]] = (c["key"], c["inputs"], out(sb, "shots", "wan", c["item"] + ".mp4"), c["seed"])
+    elif kind == "pictures":
+        for c in state["job"]["pictures"]:
+            items[c["item"]] = (c["key"], c["inputs"], out(sb, "keyframes", c["item"] + ".png"), c["seed"])
+    elif kind == "voice":
+        for c in state["job"]["lines"]:
+            items[c["item"]] = (c["key"], c["inputs"], out(sb, "narration", state["job"]["lang"], "parts", c["item"] + ".wav"), 7)
     else:
         for c in state["job"]["candidates"]:
             items[f"score_{c['seed']}"] = (c["cache_key"], c["inputs"], music.path(sb, c["seed"]), c["seed"])
@@ -171,10 +242,14 @@ def fetch(sb, kind):
                 error = "result belongs to another job"
             elif target is not None and r["status"] == "ok":
                 target.parent.mkdir(parents=True, exist_ok=True)
-                cache.store(target, (d / target.name).read_bytes(), inp)
+                if kind == "pictures":
+                    keyframes.keep_version(target)
+                    cache.store(target, (d / target.name).read_bytes(), inp, qa={"status": "unchecked, drawn on the GPU", "seed_used": seed, "tries": []})
+                else:
+                    cache.store(target, (d / target.name).read_bytes(), inp)
             runlog.write({"run_id": runlog.RUN_ID, "ts": time.strftime("%Y-%m-%dT%H:%M:%S+00:00", time.gmtime()),
-                          "stage": "shots" if kind == "wan" else "music", "item": name, "provider": "kaggle-2xT4",
-                          "model": sb["models"]["video" if kind == "wan" else "music"], "params": inp, "seed": seed, "attempt": 1,
+                          "stage": {"wan": "shots", "voice": "narration", "pictures": "keyframes"}.get(kind, "music"), "item": name, "provider": "kaggle-2xT4",
+                          "model": "black-forest-labs/FLUX.2-klein-4B" if kind == "pictures" else state["job"]["model"] if kind == "voice" else sb["models"]["video" if kind == "wan" else "music"], "params": inp, "seed": seed, "attempt": 1,
                           "status": "error" if error else r.get("status", "job_event"), "latency_s": r["seconds"],
                           "gpu_s": r["seconds"] if target is not None else 0.0,  # job events are running totals, not calls
                           "cost_usd": 0.0, "list_price_usd": None,
@@ -183,3 +258,5 @@ def fetch(sb, kind):
             print(f"  {name}: {'ERROR ' + error if error else 'ok'} {r['seconds']}s")
         state["logged"] = sorted(logged)
         _save_state(sb, kind, state)
+        if kind == "voice":
+            _join_voices(sb, state["job"])

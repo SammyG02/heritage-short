@@ -2,11 +2,24 @@
 import hashlib
 import json
 import os
+import time
 from pathlib import Path
 
 
+_known: dict = {}
+
+
 def file_sha(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+    """Remembered while the file's size and time stay the same, so a page does not re-read every file."""
+    st = path.stat()
+    mark = (st.st_size, st.st_mtime_ns)
+    hit = _known.get(str(path))
+    # A file touched in the last two seconds may change again within the clock's resolution: never trust the memory for it.
+    if hit and hit[0] == mark and time.time() - st.st_mtime > 2:
+        return hit[1]
+    sha = hashlib.sha256(path.read_bytes()).hexdigest()
+    _known[str(path)] = (mark, sha)
+    return sha
 
 
 def key(inputs: dict) -> str:

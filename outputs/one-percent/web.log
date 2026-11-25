@@ -1,0 +1,17 @@
+    attempt 1 failed, retrying in 5s: HTTP 503: {
+  "error": {
+    "code": 503,
+    "message": "This model is currently experiencing high demand. Sp
+    s01_9x16 scored 5: The characters look toward the viewer rather than smiling at each other.
+    attempt 1 failed, retrying in 5s: HTTP 503: {
+  "error": {
+    "code": 503,
+    "message": "This model is currently experiencing high demand. Sp
+    attempt 2 failed, retrying in 9s: HTTP 503: {
+  "error": {
+    "code": 503,
+    "message": "This model is currently experiencing high demand. Sp
+    check by gemini-3.8-flash unavailable: ProviderError
+    s01_9x16 scored 6: none
+  keyframe s01_9x16
+ERROR: Stopped before the picture limit. 1 drawn and saved; run again after Thu 03:00.

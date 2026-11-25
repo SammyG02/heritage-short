@@ -1,0 +1,17 @@
+{
+ "key": "c70d438ac554564de614ea31ce601de1f370d08fbb15600aa590065ff4bb68c2",
+ "sha256": "1396b76500e8eb30737cfcab140631a4b5c2921885ef5f9b10fa5b74d7f691df",
+ "inputs": {
+  "stage": "reference/1",
+  "model": "@cf/black-forest-labs/flux-2-klein-4b",
+  "seed": 11,
+  "size": [
+   1024,
+   1024
+  ],
+  "prompt": "The same man as in the reference image, now in his fifties: same slim face and eyes, short hair and beard with some grey, white cotton collared shirt, kind smile lines, upper body, facing the viewer, plain warm background. 3D animated film frame with a painted look, sculpted rounded characters with expressive faces, hand-painted textures and visible soft brush strokes on 3D forms, painterly background, warm amber and terracotta palette with deep indigo shadows, gentle cinematic light, subject centred in frame, full-bleed picture reaching every edge",
+  "references": [
+   "46b379832e98df62e85c157d8a20f098bf6bccbb03e7e3b235781b93df2bd875"
+  ]
+ }
+}

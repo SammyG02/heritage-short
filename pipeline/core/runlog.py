@@ -4,6 +4,7 @@ import os
 import re
 import uuid
 from contextlib import contextmanager
+from contextvars import ContextVar
 from datetime import datetime, timezone
 from time import perf_counter
 
@@ -11,7 +12,22 @@ from . import config
 
 RUN_ID = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ") + "-" + uuid.uuid4().hex[:4]
 _SECRET_NAMES = ("GEMINI_API_KEY", "CLOUDFLARE_API_TOKEN", "CLOUDFLARE_ACCOUNT_ID",
-                 "KAGGLE_API_TOKEN", "KAGGLE_KEY", "HF_TOKEN")
+                 "KAGGLE_API_TOKEN", "KAGGLE_KEY", "HF_TOKEN", "ADDIS_API_KEY")
+
+
+_private: ContextVar[bool] = ContextVar("private", default=False)
+
+
+def use_private():
+    """From here on, calls are logged with the personal films, not in the repository's runs.jsonl."""
+    _private.set(True)
+
+
+def file():
+    if not _private.get():
+        return config.RUNS
+    config.FILMS.mkdir(parents=True, exist_ok=True)
+    return config.FILMS / "runs.jsonl"
 
 
 def redact(text: str) -> str:
@@ -24,7 +40,7 @@ def redact(text: str) -> str:
 
 def write(record: dict) -> None:
     line = redact(json.dumps(record, ensure_ascii=False))
-    with config.RUNS.open("a", encoding="utf-8", newline="\n") as f:
+    with file().open("a", encoding="utf-8", newline="\n") as f:
         f.write(line + "\n")
 
 

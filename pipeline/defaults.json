@@ -1,0 +1,45 @@
+{
+ "models": {
+  "tts": "gemini-3.1-flash-tts-preview",
+  "tts_fallbacks": [
+   "gemini-3.8-flash-tts",
+   "gemini-3.8-flash-lite-tts"
+  ],
+  "image": "@cf/black-forest-labs/flux-2-klein-4b",
+  "video": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+  "music": "ACE-Step/ACE-Step-1.5 acestep-v15-turbo"
+ },
+ "voice_by_gender": {
+  "man": "Algieba",
+  "woman": "Sulafat",
+  "boy": "Puck",
+  "girl": "Leda"
+ },
+ "picture_size": "light",
+ "video": {
+  "fps": 24,
+  "frames": 121,
+  "steps": 30,
+  "guidance": 5.0,
+  "negative_prompt": "text, letters, subtitles, watermark, extra fingers, deformed hands, distorted face, morphing, flicker, fast motion, camera shake, blurry, low quality",
+  "max_gpu_hours": 4
+ },
+ "music": {
+  "duration_s": 90,
+  "seeds": [
+   101,
+   202,
+   303
+  ]
+ },
+ "mix": {
+  "duck_threshold": 0.02,
+  "duck_ratio": 6,
+  "duck_attack_ms": 300,
+  "duck_release_ms": 1500,
+  "target_lufs": -14,
+  "true_peak_db": -1,
+  "music_lufs": -20
+ },
+ "end_card_seconds": 3
+}

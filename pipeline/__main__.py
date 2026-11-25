@@ -1,11 +1,12 @@
 """Command line: python -m pipeline <command>"""
 import argparse
+import json
 import sys
 import time
 from pathlib import Path
 
 from . import assemble, gpu, keyframes, narration, script, shots, smoke
-from .core import cache, config, runlog, storyboard
+from .core import approvals, cache, config, runlog, storyboard
 
 GPU_WAIT_S = 4 * 3600
 
@@ -16,6 +17,7 @@ def film(sb, lang, use_gpu):
     print("2/5 keyframes")
     keyframes.run_references(sb)
     keyframes.run(sb)
+    missing(sb, lang)  # nothing below may start, or spend GPU time, on an incomplete or out-of-date film
     if use_gpu:
         print("3/5 moving shots and 4/5 music on Kaggle")
         submitted = {"wan": gpu.submit_wan(sb), "music": gpu.submit_music(sb)}
@@ -37,6 +39,29 @@ def film(sb, lang, use_gpu):
         print("3/5 moving shots and 4/5 music from cache (add --gpu to generate missing ones on Kaggle)")
     print("5/5 assembly")
     assemble.film(sb, lang)
+
+
+def approve(path, sb, kind, only, ratios):
+    for s in sb["shots"]:
+        if only and s["id"] not in only:
+            continue
+        if kind == "script":
+            approvals.give(sb, kind, s["id"], approvals.script_key(s))
+        elif kind == "voice":
+            key = narration.approval_key(sb, s, sb["language"])
+            if not key:
+                print(f"  {s['id']}: no current voice to approve")
+                continue
+            approvals.give(sb, kind, s["id"], key)
+        else:
+            for r in ratios or keyframes.SIZES:
+                p = keyframes.path(sb, s, r)
+                if not cache.fresh(p, keyframes.inputs(sb, s, r)):
+                    print(f"  {p.stem}: no current picture to approve")
+                    continue
+                approvals.give(sb, kind, p.stem, cache.file_sha(p))
+    path.write_text(json.dumps(sb, ensure_ascii=False, indent=1) + "\n", encoding="utf-8", newline="\n")
+    print(f"  approved {kind}: {', '.join(sorted(sb['approvals'].get(kind, {}))) or 'none'}")
 
 
 def missing(sb, lang):
@@ -68,6 +93,7 @@ def main(argv=None):
     ap.add_argument("-l", "--language", choices=list(script.LANGUAGES), help="default: the storyboard's main language")
     sub = ap.add_subparsers(dest="cmd", required=True)
     f = sub.add_parser("film", help="run every stage and export both formats")
+    f.add_argument("--review", action="store_true", help="stop wherever a person has not approved the script, voice or picture")
     f.add_argument("--gpu", action="store_true", help="generate missing Wan clips and music on Kaggle, and wait")
     sub.add_parser("new", help="draft a storyboard from a story, language and theme")
     sub.add_parser("web", help="the same questions in a local web page")
@@ -86,11 +112,18 @@ def main(argv=None):
     for x in (rf, kf, na):
         x.add_argument("--force", action="store_true", help="make again even if cached")
     sub.add_parser("assemble", help="edit the film from what exists; calls no model")
+    ap_ = sub.add_parser("approve", help="approve a step so the next one unlocks")
+    ap_.add_argument("kind", choices=["script", "voice", "picture"])
+    ap_.add_argument("--shot", action="append")
+    ap_.add_argument("--ratio", choices=list(keyframes.SIZES), action="append")
+    sub.add_parser("check", help="check the script for length, limits and unreadable text; calls no model")
+    sub.add_parser("proof", help="one text call: proofread the narration")
     g = sub.add_parser("gpu", help="Kaggle jobs")
-    g.add_argument("action", choices=["submit", "status", "fetch"])
-    g.add_argument("kind", choices=["wan", "music"])
+    g.add_argument("action", choices=["plan", "submit", "status", "fetch"])
+    g.add_argument("kind", choices=["wan", "music", "voice", "pictures"])
     g.add_argument("--ratio", choices=list(keyframes.SIZES), action="append")
     g.add_argument("--shot", action="append")
+    g.add_argument("--hours", type=float, help="most GPU hours to plan for")
     a = ap.parse_args(argv)
     for stream in (sys.stdout, sys.stderr):
         if hasattr(stream, "reconfigure"):
@@ -107,9 +140,13 @@ def main(argv=None):
             web.serve()
             return 0
         sb = storyboard.load(a.storyboard)
+        if config.FILMS.resolve() in a.storyboard.resolve().parents:
+            runlog.use_private()
         lang = a.language or sb["language"]
         if lang not in sb["voices"]:
             raise config.PipelineError(f"This storyboard has no {lang!r} narration.")
+        if a.cmd == "film" and not a.review:
+            approvals.no_review()
         if a.cmd == "validate":
             print(f"OK: {len(sb['shots'])} shots, languages {', '.join(sb['voices'])}")
         elif a.cmd == "film":
@@ -134,9 +171,24 @@ def main(argv=None):
             if not a.shot:
                 keyframes.run_references(sb)
             keyframes.run(sb, a.ratio or tuple(keyframes.SIZES), a.force, a.shot)
+        elif a.cmd == "approve":
+            approve(a.storyboard, sb, a.kind, a.shot, a.ratio)
+        elif a.cmd == "check":
+            notes = narration.text_problems(sb, lang)
+            todo = narration.stale(sb, lang)
+            print("\n".join(notes) or "No text problems found.")
+            print(f"About {narration.estimate_s(sb, lang):.0f} s (must be 60-90). {len(todo)} lines without a voice, {narration.calls_needed(sb, lang, todo)} voice calls at best.")
+        elif a.cmd == "proof":
+            for n in script.proofread(sb, lang):
+                print(f"{n.get('shot')}: {n.get('problem')}\n    {n.get('suggestion')}")
         elif a.cmd == "gpu":
+            if a.action == "plan":
+                chosen, left_out, wait, hours = shots.plan(sb, a.ratio or list(keyframes.SIZES), a.shot, a.hours)
+                name = lambda xs: ", ".join(f"{s['id']}_{r}" for s, r in xs) or "none"  # noqa: E731
+                print(f"now ({hours:.1f} h): {name(chosen)}\nleft out by the limit: {name(left_out)}\nwaiting for approval: {name(wait)}")
+                return 0
             if a.action == "submit":
-                gpu.submit_wan(sb, a.ratio or list(keyframes.SIZES), a.shot) if a.kind == "wan" else gpu.submit_music(sb)
+                gpu.submit_wan(sb, a.ratio or list(keyframes.SIZES), a.shot, a.hours) if a.kind == "wan" else gpu.submit_pictures(sb, a.ratio or list(keyframes.SIZES), a.shot) if a.kind == "pictures" else gpu.submit_voice(sb, lang) if a.kind == "voice" else gpu.submit_music(sb)
             elif a.action == "status":
                 print(gpu.status(sb, a.kind))
             else:
