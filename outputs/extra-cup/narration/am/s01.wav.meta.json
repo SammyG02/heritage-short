@@ -1,0 +1,11 @@
+{
+ "key": "b6263aa459cae77ee0cd9b5758b1b6fafe2f8ca50c97ca6a258f379fac485a12",
+ "sha256": "68a02cffda77f77badb48e02f5eea120afbcdac5d6d1da7c205ca971a591ad39",
+ "inputs": {
+  "stage": "narration/1",
+  "model": "gemini-3.8-flash-tts",
+  "text": "አያቴ ቡና ስታፈላ፣ ሁልጊዜ አንድ ትርፍ ሲኒ ታስቀምጥ ነበር።",
+  "voice": "Sulafat",
+  "style": "warm, calm and unhurried, like telling a family story at night"
+ }
+}

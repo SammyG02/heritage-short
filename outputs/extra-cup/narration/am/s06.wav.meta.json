@@ -1,0 +1,11 @@
+{
+ "key": "6a39cc77502581d08858b1a71494d8159ee0a91ddcab01adbdb6f614f7ea9e59",
+ "sha256": "4202e4f32a1aa2e09a6cc679702b6c721d520d33e03dc63ce038e116be2dbdb9",
+ "inputs": {
+  "stage": "narration/1",
+  "model": "gemini-3.8-flash-tts",
+  "text": "አንድ ዝናባማ ምሽት ግን፣ በሩ ተንኳኳ።",
+  "voice": "Sulafat",
+  "style": "warm, calm and unhurried, like telling a family story at night"
+ }
+}

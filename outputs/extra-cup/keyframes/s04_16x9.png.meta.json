@@ -1,0 +1,17 @@
+{
+ "key": "24e3425efd7f23fcdb09c1a46d217ca2de53ee26276e17d7400f8868ed44ad33",
+ "sha256": "7bbdcdc86969791a31a68433b5483c4e45a81ab336038b6280884b527573227f",
+ "inputs": {
+  "stage": "keyframe/1",
+  "model": "@cf/black-forest-labs/flux-2-klein-4b",
+  "seed": 1004,
+  "size": [
+   1344,
+   768
+  ],
+  "prompt": "close-up shot. Tight close-up of the face of the same grandmother from the reference filling the frame, white shawl with green and gold border around her head, looking up with a gentle knowing smile, firelight on one side of her face, dark room behind. horizontal composition, subject in the centre, calm empty space near the bottom. Hand-painted gouache illustration, visible brush texture, soft film grain, warm amber and terracotta palette with deep indigo shadows, gentle firelight, quiet and intimate, subject centred in frame, full-bleed painting reaching every edge",
+  "references": [
+   "c41e3cfc6aa5115a9da7a09a31bf41a56ef6da0e4a626b4c8bf67df51f59c21e"
+  ]
+ }
+}

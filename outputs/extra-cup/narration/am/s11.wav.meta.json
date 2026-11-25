@@ -1,0 +1,11 @@
+{
+ "key": "50aa6d45286cd06b92b486e027cf16e1c6b011dd2e2a221e63d9ff468bf68f4a",
+ "sha256": "91de3605f38e854f73add04c67f838119faf08dba6330eefc5366f19f72b31fa",
+ "inputs": {
+  "stage": "narration/1",
+  "model": "gemini-3.8-flash-tts",
+  "text": "ምናልባት፣ መንገድ ላይ ያሉት እርስዎ ይሆናሉ።",
+  "voice": "Sulafat",
+  "style": "warm, calm and unhurried, like telling a family story at night"
+ }
+}

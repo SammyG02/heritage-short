@@ -1,0 +1,17 @@
+{
+ "key": "0d7fd47d1e53362b1ee49bdd38f4e12ed3a18f3b2693bdfb5303e235cc59191b",
+ "sha256": "52e066d80c2eb1bd2132902c7ef847f18c672b956e2c399f690a83b575f45168",
+ "inputs": {
+  "stage": "keyframe/1",
+  "model": "@cf/black-forest-labs/flux-2-klein-4b",
+  "seed": 1007,
+  "size": [
+   768,
+   1344
+  ],
+  "prompt": "insert shot. Close view of two pairs of hands, an elderly woman's hands in white cotton sleeves offering a small white bowl-shaped cup with a thin green rim to the rain-wet hands of a traveller wrapped in a dark soaked blanket, steam rising, dark earthen room with warm firelight all around. tall vertical scene, subject large in the middle third, the painted scene continues down to the bottom edge. Hand-painted gouache illustration, visible brush texture, soft film grain, warm amber and terracotta palette with deep indigo shadows, gentle firelight, quiet and intimate, subject centred in frame, full-bleed painting reaching every edge",
+  "references": [
+   "f691334c202c92c48ef973238370f4a6e9974a8bf83675ef55b25734dd10d03f"
+  ]
+ }
+}

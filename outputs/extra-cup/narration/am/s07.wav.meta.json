@@ -1,0 +1,11 @@
+{
+ "key": "db23c165ef3b24bc88d70354c9afa77deca4d58ce33612a56702de69fc697540",
+ "sha256": "d2ced24ddf66a1fc5db119ef667377bbdbf5c6770ad31ccb9e222392e93c76ba",
+ "inputs": {
+  "stage": "narration/1",
+  "model": "gemini-3.8-flash-tts",
+  "text": "በዝናብ የራሰ መንገደኛ ነበር። ስሙን እንኳ ሳትጠይቅ፣ ቡናውን ሰጠችው።",
+  "voice": "Sulafat",
+  "style": "warm, calm and unhurried, like telling a family story at night"
+ }
+}

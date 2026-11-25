@@ -1,0 +1,15 @@
+{
+ "key": "d76f2bfcff8652d24b4906aeae8ff1ebd4c47e68afa2c23428d985e86a07c38e",
+ "sha256": "2119fd5368aaa67cb094f49f306378b0af4403a737a2542837b1979acb4909be",
+ "inputs": {
+  "stage": "keyframe/1",
+  "model": "@cf/black-forest-labs/flux-2-klein-4b",
+  "seed": 1001,
+  "size": [
+   768,
+   1344
+  ],
+  "prompt": "wide shot. Wide view of a small round Ethiopian highland house with a thatched roof at dusk, warm light in the open doorway, thin smoke rising, green hills and heavy rain clouds behind. tall vertical scene, subject large in the middle third, the painted scene continues down to the bottom edge. Hand-painted gouache illustration, visible brush texture, soft film grain, warm amber and terracotta palette with deep indigo shadows, gentle firelight, quiet and intimate, subject centred in frame, full-bleed painting reaching every edge",
+  "references": []
+ }
+}

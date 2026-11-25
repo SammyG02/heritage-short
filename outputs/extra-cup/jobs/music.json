@@ -1,0 +1,65 @@
+{
+ "kernel": "samuelgosaye/heritage-short-music",
+ "submitted": 1795613930.6490557,
+ "job": {
+  "candidates": [
+   {
+    "stage": "music/1",
+    "model": "ACE-Step/ACE-Step-1.5 acestep-v15-turbo",
+    "caption": "Instrumental, intimate Ethiopian highland mood, solo krar lyre plucked gently, soft washint flute answering far away, warm low drone, sparse and tender, pentatonic, acoustic, close room sound, no drums, no vocals",
+    "bpm": 72,
+    "key": "D minor",
+    "duration_s": 90,
+    "seed": 101,
+    "cache_key": "5d24d6bcdc1aac2d8964530d3323be6963870482823dfc60dd31d73525d17f38",
+    "inputs": {
+     "stage": "music/1",
+     "model": "ACE-Step/ACE-Step-1.5 acestep-v15-turbo",
+     "caption": "Instrumental, intimate Ethiopian highland mood, solo krar lyre plucked gently, soft washint flute answering far away, warm low drone, sparse and tender, pentatonic, acoustic, close room sound, no drums, no vocals",
+     "bpm": 72,
+     "key": "D minor",
+     "duration_s": 90,
+     "seed": 101
+    }
+   },
+   {
+    "stage": "music/1",
+    "model": "ACE-Step/ACE-Step-1.5 acestep-v15-turbo",
+    "caption": "Instrumental, intimate Ethiopian highland mood, solo krar lyre plucked gently, soft washint flute answering far away, warm low drone, sparse and tender, pentatonic, acoustic, close room sound, no drums, no vocals",
+    "bpm": 72,
+    "key": "D minor",
+    "duration_s": 90,
+    "seed": 202,
+    "cache_key": "09a8dae8be90285f6211f748532f7532696972c4af14f6ffd9bac438a016b34a",
+    "inputs": {
+     "stage": "music/1",
+     "model": "ACE-Step/ACE-Step-1.5 acestep-v15-turbo",
+     "caption": "Instrumental, intimate Ethiopian highland mood, solo krar lyre plucked gently, soft washint flute answering far away, warm low drone, sparse and tender, pentatonic, acoustic, close room sound, no drums, no vocals",
+     "bpm": 72,
+     "key": "D minor",
+     "duration_s": 90,
+     "seed": 202
+    }
+   },
+   {
+    "stage": "music/1",
+    "model": "ACE-Step/ACE-Step-1.5 acestep-v15-turbo",
+    "caption": "Instrumental, intimate Ethiopian highland mood, solo krar lyre plucked gently, soft washint flute answering far away, warm low drone, sparse and tender, pentatonic, acoustic, close room sound, no drums, no vocals",
+    "bpm": 72,
+    "key": "D minor",
+    "duration_s": 90,
+    "seed": 303,
+    "cache_key": "d1ec23dec6c1267f9f1af476b6e6f8113a634b9e5833f3d7952bdc8b5a9fafaf",
+    "inputs": {
+     "stage": "music/1",
+     "model": "ACE-Step/ACE-Step-1.5 acestep-v15-turbo",
+     "caption": "Instrumental, intimate Ethiopian highland mood, solo krar lyre plucked gently, soft washint flute answering far away, warm low drone, sparse and tender, pentatonic, acoustic, close room sound, no drums, no vocals",
+     "bpm": 72,
+     "key": "D minor",
+     "duration_s": 90,
+     "seed": 303
+    }
+   }
+  ]
+ }
+}

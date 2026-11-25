@@ -1,0 +1,11 @@
+{
+ "key": "b5cd94feb38ff45debb6417a9218719513203a738d6cf180b63548cc2e88efd7",
+ "sha256": "94ae08af84bd0bb836b35c6bcfd55d36c015ae01d5187553311c28a2e7a04327",
+ "inputs": {
+  "stage": "narration/1",
+  "model": "gemini-3.8-flash-tts",
+  "text": "ፈገግ ብላ፣ «መንገድ ላይ ላለው ሰው ነው» አለችኝ።",
+  "voice": "Sulafat",
+  "style": "warm, calm and unhurried, like telling a family story at night"
+ }
+}

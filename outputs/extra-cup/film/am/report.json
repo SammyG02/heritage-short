@@ -1,0 +1,100 @@
+{
+ "language": "am",
+ "seconds": 74.67,
+ "music": "placeholder",
+ "wan_shots": {
+  "9x16": 0,
+  "16x9": 0
+ },
+ "shots": 11,
+ "files": [
+  {
+   "file": "film_9x16.mp4",
+   "seconds": 74.67,
+   "size": "1080x1920",
+   "fps": 24.0,
+   "lufs": -14.24,
+   "true_peak_db": -1.46,
+   "problems": [],
+   "sha256": "5cc65abe013c44f7"
+  },
+  {
+   "file": "film_16x9.mp4",
+   "seconds": 74.67,
+   "size": "1920x1080",
+   "fps": 24.0,
+   "lufs": -14.24,
+   "true_peak_db": -1.46,
+   "problems": [],
+   "sha256": "8c94984bdc59f196"
+  }
+ ],
+ "timeline": [
+  {
+   "shot": "s01",
+   "start": 0.0,
+   "seconds": 7.5,
+   "voice": 6.03
+  },
+  {
+   "shot": "s02",
+   "start": 7.5,
+   "seconds": 6.67,
+   "voice": 5.45
+  },
+  {
+   "shot": "s03",
+   "start": 14.17,
+   "seconds": 5.83,
+   "voice": 3.61
+  },
+  {
+   "shot": "s04",
+   "start": 20.0,
+   "seconds": 5.83,
+   "voice": 4.19
+  },
+  {
+   "shot": "s05",
+   "start": 25.83,
+   "seconds": 6.67,
+   "voice": 5.09
+  },
+  {
+   "shot": "s06",
+   "start": 32.5,
+   "seconds": 5.0,
+   "voice": 3.56
+  },
+  {
+   "shot": "s07",
+   "start": 37.5,
+   "seconds": 7.5,
+   "voice": 6.25
+  },
+  {
+   "shot": "s08",
+   "start": 45.0,
+   "seconds": 5.83,
+   "voice": 3.71
+  },
+  {
+   "shot": "s09",
+   "start": 50.83,
+   "seconds": 7.5,
+   "voice": 5.97
+  },
+  {
+   "shot": "s10",
+   "start": 58.33,
+   "seconds": 6.67,
+   "voice": 5.14
+  },
+  {
+   "shot": "s11",
+   "start": 65.0,
+   "seconds": 6.67,
+   "voice": 4.78
+  }
+ ]
+}

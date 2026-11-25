@@ -1,0 +1,11 @@
+{
+ "key": "d14b30d2c01963ffbd98e298dd3ce748e5f218a240b8c913b6d877f1956e9239",
+ "sha256": "f5b8d51015cefbaedfd5ed06cab9bf4b00d6f61f0e24ea6f865b0c4343ed7068",
+ "inputs": {
+  "stage": "narration/1",
+  "model": "gemini-3.8-flash-tts",
+  "text": "ዛሬ እሷ የለችም። እኔም ከቤት ርቄ እኖራለሁ።",
+  "voice": "Sulafat",
+  "style": "warm, calm and unhurried, like telling a family story at night"
+ }
+}

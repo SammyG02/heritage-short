@@ -1,0 +1,15 @@
+{
+ "key": "f3bdc5cc8e04e1a35929ccc988a957c509ed8183a4f9501a96482f5dd21e7230",
+ "sha256": "d0f11d995561ef0de6dd206ce06c4917a3613bfe6561ad879d4f3ec8b18b288d",
+ "inputs": {
+  "stage": "keyframe/1",
+  "model": "@cf/black-forest-labs/flux-2-klein-4b",
+  "seed": 1006,
+  "size": [
+   768,
+   1344
+  ],
+  "prompt": "wide shot. Inside a dark earthen highland house at night, looking at a closed rough wooden plank door, thin lines of cold blue light glowing between the planks and under the door, warm firelight on the earthen floor and walls. tall vertical scene, subject large in the middle third, the painted scene continues down to the bottom edge. Hand-painted gouache illustration, visible brush texture, soft film grain, warm amber and terracotta palette with deep indigo shadows, gentle firelight, quiet and intimate, subject centred in frame, full-bleed painting reaching every edge",
+  "references": []
+ }
+}

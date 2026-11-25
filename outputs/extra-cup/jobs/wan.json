@@ -1,0 +1,43 @@
+{
+ "kernel": "samuelgosaye/heritage-short-wan",
+ "submitted": 1795614027.4254544,
+ "job": {
+  "job_id": "job-63b22ca128",
+  "model": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+  "clips": [
+   {
+    "item": "s01_9x16",
+    "shot": "s01",
+    "ratio": "9x16",
+    "key": "d2184c28552b8568e89dc9711e3ab89639c5bbf8b601fb5f61461c3469ba7bbb",
+    "inputs": {
+     "stage": "wan/1",
+     "model": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+     "size": [
+      480,
+      832
+     ],
+     "seed": 1001,
+     "motion_prompt": "Smoke drifts slowly upward, grass moves in a soft wind, the camera pushes in very gently",
+     "fps": 24,
+     "frames": 121,
+     "steps": 30,
+     "guidance": 5.0,
+     "negative_prompt": "text, letters, subtitles, watermark, extra fingers, deformed hands, distorted face, morphing, flicker, fast motion, camera shake, blurry, low quality",
+     "keyframe": "2119fd5368aaa67cb094f49f306378b0af4403a737a2542837b1979acb4909be"
+    },
+    "motion_prompt": "Smoke drifts slowly upward, grass moves in a soft wind, the camera pushes in very gently",
+    "seed": 1001,
+    "size": [
+     480,
+     832
+    ],
+    "keyframe_file": "s01_9x16.jpg"
+   }
+  ],
+  "frames": 121,
+  "steps": 30,
+  "guidance": 5.0,
+  "negative_prompt": "text, letters, subtitles, watermark, extra fingers, deformed hands, distorted face, morphing, flicker, fast motion, camera shake, blurry, low quality"
+ }
+}

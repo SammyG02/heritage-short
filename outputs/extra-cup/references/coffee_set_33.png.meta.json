@@ -1,0 +1,14 @@
+{
+ "key": "3e7a976197ffd9e21f9a1b2bf71970c2656cf3ce8bbd4f53779d52baec7e71af",
+ "sha256": "f691334c202c92c48ef973238370f4a6e9974a8bf83675ef55b25734dd10d03f",
+ "inputs": {
+  "stage": "reference/1",
+  "model": "@cf/black-forest-labs/flux-2-klein-4b",
+  "seed": 33,
+  "size": [
+   1024,
+   1024
+  ],
+  "prompt": "Still life of a traditional Ethiopian coffee set. A jebena: a matte black clay bottle with a round ball-shaped base and one tall slender vertical tube neck like a narrow bottle, a small woven straw stopper in the top of the neck, a curved clay loop handle joining neck and base. Beside it four small white porcelain bowl-shaped cups, smooth round sides, thin green rim, on a low dark wooden tray. Fresh green grass on an earthen floor, soft firelight from the side. Hand-painted gouache illustration, visible brush texture, soft film grain, warm amber and terracotta palette with deep indigo shadows, gentle firelight, quiet and intimate, subject centred in frame, full-bleed painting reaching every edge"
+ }
+}

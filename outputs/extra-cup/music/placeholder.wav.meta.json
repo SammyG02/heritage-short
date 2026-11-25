@@ -1,0 +1,9 @@
+{
+ "key": "74675b730248a36395c22018e24f2b0dfd4f15e35b35240e4a66ba0a06e8c165",
+ "sha256": "b37cff79c9548ac14a96d2836dfe4c9a60e4b98d812487ed6dc09a9f2b33dc66",
+ "inputs": {
+  "stage": "placeholder/1",
+  "bpm": 72,
+  "duration_s": 90
+ }
+}

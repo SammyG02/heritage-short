@@ -27,3 +27,8 @@ tmp/
 .idea/
 .DS_Store
 Thumbs.db
+
+# Derived by FFmpeg from committed inputs, large and rebuilt on demand
+outputs/*/shots/cut/
+outputs/*/film/*/mix.wav
+outputs/*/film/*/work/

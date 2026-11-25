@@ -1,0 +1,11 @@
+{
+ "key": "090bc7f9197a4c7efb9b7c0e0fb8f98b4d15a77c3f420457e4db117ae0788524",
+ "sha256": "787c01eee912da53a3f65b63e86f5c4e4defb152634eb837c906dc231ecf19c5",
+ "inputs": {
+  "stage": "narration/1",
+  "model": "gemini-3.8-flash-tts",
+  "text": "ሦስት ሰዎች ብንሆን፣ አራት ሲኒ። አራት ብንሆን፣ አምስት።",
+  "voice": "Sulafat",
+  "style": "warm, calm and unhurried, like telling a family story at night"
+ }
+}

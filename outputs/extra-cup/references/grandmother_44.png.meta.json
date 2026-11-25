@@ -1,0 +1,14 @@
+{
+ "key": "143d70c49b2b28716f259c5f6c85a504d865bec1756f05e38bdab6155a52ee81",
+ "sha256": "4e09020ea86d4b5058c599d9795277a618486ea7ca7e1dd0735a34d55653d8c7",
+ "inputs": {
+  "stage": "reference/1",
+  "model": "@cf/black-forest-labs/flux-2-klein-4b",
+  "seed": 44,
+  "size": [
+   1024,
+   1024
+  ],
+  "prompt": "Character portrait of an invented elderly Ethiopian highland grandmother, kind lined face, deep brown skin, silver hair under a plain white cotton netela shawl with a narrow green and gold woven border, long white handwoven cotton dress, small plain round silver stud earrings, facing the viewer, gentle closed-mouth smile, plain warm background, upper body. Hand-painted gouache illustration, visible brush texture, soft film grain, warm amber and terracotta palette with deep indigo shadows, gentle firelight, quiet and intimate, subject centred in frame, full-bleed painting reaching every edge"
+ }
+}

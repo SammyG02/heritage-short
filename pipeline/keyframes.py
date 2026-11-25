@@ -4,7 +4,7 @@ from .core.storyboard import out
 
 # Multiples of 16, close to the delivery ratios.
 SIZES = {"9x16": (768, 1344), "16x9": (1344, 768)}
-FRAMING = {"9x16": "vertical composition, subject in the middle third, calm empty space near the bottom",
+FRAMING = {"9x16": "tall vertical scene, subject large in the middle third, the painted scene continues down to the bottom edge",
            "16x9": "horizontal composition, subject in the centre, calm empty space near the bottom"}
 
 

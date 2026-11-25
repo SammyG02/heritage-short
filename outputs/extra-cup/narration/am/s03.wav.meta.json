@@ -1,0 +1,11 @@
+{
+ "key": "e6ff4b982407f63cc9bb46eed62a27504e9fdd174b82df52fcc09eed0f72b0c5",
+ "sha256": "8df0116d0a16924a24c07be3d5c3a03e4b2ceb55f359c88a4b3e7a9b03467d10",
+ "inputs": {
+  "stage": "narration/1",
+  "model": "gemini-3.8-flash-tts",
+  "text": "«አያቴ፣ ይሄ የማነው?» ብዬ ጠየቅኳት።",
+  "voice": "Sulafat",
+  "style": "warm, calm and unhurried, like telling a family story at night"
+ }
+}

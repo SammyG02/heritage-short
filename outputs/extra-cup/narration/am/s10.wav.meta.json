@@ -1,0 +1,11 @@
+{
+ "key": "882f3084a5f447cd5b262ee7380207bd969cb55f7c8498c2d4a482c45b2e985b",
+ "sha256": "e601ea557b74e12021852883a49870ad8458352bd55e8dc32c5a40805fdcb482",
+ "inputs": {
+  "stage": "narration/1",
+  "model": "gemini-3.8-flash-tts",
+  "text": "ግን ቡና ሳፈላ፣ አሁንም አንድ ትርፍ ሲኒ አስቀምጣለሁ።",
+  "voice": "Sulafat",
+  "style": "warm, calm and unhurried, like telling a family story at night"
+ }
+}

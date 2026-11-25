@@ -1,0 +1,17 @@
+{
+ "key": "6bb18e83173c82223f3fd76c6a5df4421ad3466a6d51269e30fb8d147d0dc123",
+ "sha256": "70e7f9143c55d042436f6c850b2f89951ac3d4e84157b2f747ca09896f31851f",
+ "inputs": {
+  "stage": "keyframe/1",
+  "model": "@cf/black-forest-labs/flux-2-klein-4b",
+  "seed": 1011,
+  "size": [
+   768,
+   1344
+  ],
+  "prompt": "close-up shot. One small white bowl-shaped cup like a tiny porcelain bowl, smooth round sides, thin green rim, filled with dark coffee, steam rising, on a low wooden table in a modern apartment, behind it the apartment door slightly open with warm light spilling in. tall vertical scene, subject large in the middle third, the painted scene continues down to the bottom edge. Hand-painted gouache illustration, visible brush texture, soft film grain, warm amber and terracotta palette with deep indigo shadows, gentle firelight, quiet and intimate, subject centred in frame, full-bleed painting reaching every edge",
+  "references": [
+   "f691334c202c92c48ef973238370f4a6e9974a8bf83675ef55b25734dd10d03f"
+  ]
+ }
+}

@@ -1,0 +1,17 @@
+{
+ "key": "435da87da4005b73c04ebd8f75ad7d1d1edc72b3fdd85bb3cefee4e469dbf0ef",
+ "sha256": "9bf20c9e491b58c8c7a07f78bec5b27eebaff7b2aea48c4454104c9710ed0d58",
+ "inputs": {
+  "stage": "keyframe/1",
+  "model": "@cf/black-forest-labs/flux-2-klein-4b",
+  "seed": 1002,
+  "size": [
+   768,
+   1344
+  ],
+  "prompt": "insert shot. View from above of a low dark wooden tray on an earthen floor with green grass: three small white bowl-shaped cups with a thin green rim in a close group, and one more identical cup standing apart on its own at the edge of the tray, warm firelight. tall vertical scene, subject large in the middle third, the painted scene continues down to the bottom edge. Hand-painted gouache illustration, visible brush texture, soft film grain, warm amber and terracotta palette with deep indigo shadows, gentle firelight, quiet and intimate, subject centred in frame, full-bleed painting reaching every edge",
+  "references": [
+   "f691334c202c92c48ef973238370f4a6e9974a8bf83675ef55b25734dd10d03f"
+  ]
+ }
+}

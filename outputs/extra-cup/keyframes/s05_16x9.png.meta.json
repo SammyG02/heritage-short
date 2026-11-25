@@ -1,0 +1,17 @@
+{
+ "key": "b50a562738706f34747bcb89a6bfe83529e2b4da172726f83c57809b49ff7f7e",
+ "sha256": "f1adfd158fb91a11817d2b6759fd4fd2265f80aa229061bf50483b567d68371b",
+ "inputs": {
+  "stage": "keyframe/1",
+  "model": "@cf/black-forest-labs/flux-2-klein-4b",
+  "seed": 1005,
+  "size": [
+   1344,
+   768
+  ],
+  "prompt": "close-up shot. One single small white bowl-shaped cup like a tiny porcelain bowl, smooth round sides, thin green rim, empty, alone on a low dark wooden tray, morning light from a small window, dust in the air. horizontal composition, subject in the centre, calm empty space near the bottom. Hand-painted gouache illustration, visible brush texture, soft film grain, warm amber and terracotta palette with deep indigo shadows, gentle firelight, quiet and intimate, subject centred in frame, full-bleed painting reaching every edge",
+  "references": [
+   "f691334c202c92c48ef973238370f4a6e9974a8bf83675ef55b25734dd10d03f"
+  ]
+ }
+}

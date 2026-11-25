@@ -1,0 +1,18 @@
+{
+ "key": "b33ffc4cc1e552a0c384dee25634535c2a6ae8e5d3351aa3a1dcad5db8425cb7",
+ "sha256": "66e9f8a91d9313547fc958783c7934148d51b46fbbb6788e0c4795d9cf81a236",
+ "inputs": {
+  "stage": "keyframe/1",
+  "model": "@cf/black-forest-labs/flux-2-klein-4b",
+  "seed": 1003,
+  "size": [
+   768,
+   1344
+  ],
+  "prompt": "medium shot. The same grandmother from the reference, in her white shawl with green and gold border, seated on a low stool, pouring coffee from the black clay jebena bottle with tall slender neck into a small white cup, dim warm room. tall vertical scene, subject large in the middle third, the painted scene continues down to the bottom edge. Hand-painted gouache illustration, visible brush texture, soft film grain, warm amber and terracotta palette with deep indigo shadows, gentle firelight, quiet and intimate, subject centred in frame, full-bleed painting reaching every edge",
+  "references": [
+   "c41e3cfc6aa5115a9da7a09a31bf41a56ef6da0e4a626b4c8bf67df51f59c21e",
+   "f691334c202c92c48ef973238370f4a6e9974a8bf83675ef55b25734dd10d03f"
+  ]
+ }
+}

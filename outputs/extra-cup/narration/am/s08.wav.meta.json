@@ -1,0 +1,11 @@
+{
+ "key": "7b6a599648d1393d6623b4e547b284acdf240fef0ec4b278cb53f176279ffe16",
+ "sha256": "83c4db5cfbe134e4bed7d85d1993d2622ea684e29811faae580df2eec461a749",
+ "inputs": {
+  "stage": "narration/1",
+  "model": "gemini-3.8-flash-tts",
+  "text": "«ቤት የሚሞላው በሰው ነው» ትል ነበር።",
+  "voice": "Sulafat",
+  "style": "warm, calm and unhurried, like telling a family story at night"
+ }
+}

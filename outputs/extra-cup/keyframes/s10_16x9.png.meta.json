@@ -1,0 +1,17 @@
+{
+ "key": "c226476160c7b5356aa05c820119cc441b97e2736b85a897b1e26a5fc65f6be2",
+ "sha256": "27777c41cbb7ca6cbc3f080566e7cf17b63aa3dc6e33ae30455213ee63a69ace",
+ "inputs": {
+  "stage": "keyframe/1",
+  "model": "@cf/black-forest-labs/flux-2-klein-4b",
+  "seed": 1010,
+  "size": [
+   1344,
+   768
+  ],
+  "prompt": "insert shot. Close view of a low table in a modern room with three small white bowl-shaped cups with a thin green rim, a young adult's hand with deep brown skin and a plain dark sleeve setting down one cup apart from the others, warm lamp light, rain on the window behind. horizontal composition, subject in the centre, calm empty space near the bottom. Hand-painted gouache illustration, visible brush texture, soft film grain, warm amber and terracotta palette with deep indigo shadows, gentle firelight, quiet and intimate, subject centred in frame, full-bleed painting reaching every edge",
+  "references": [
+   "f691334c202c92c48ef973238370f4a6e9974a8bf83675ef55b25734dd10d03f"
+  ]
+ }
+}

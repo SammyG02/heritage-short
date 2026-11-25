@@ -1,0 +1,11 @@
+{
+ "key": "c6cdc804eaf2c9a9f6964fe2321b8dd069e2c2bbc9242b6ff4815322d7fb78c8",
+ "sha256": "79c7f388cbf72e7d0d361b7d623e84aa2d95fb24f619299313cfc721e1750953",
+ "inputs": {
+  "stage": "narration/1",
+  "model": "gemini-3.8-flash-tts",
+  "text": "ለብዙ ዓመታት፣ ያ ሲኒ ባዶውን ይቀመጥ ነበር።",
+  "voice": "Sulafat",
+  "style": "warm, calm and unhurried, like telling a family story at night"
+ }
+}

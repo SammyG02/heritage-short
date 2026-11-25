@@ -1,0 +1,17 @@
+{
+ "key": "ef8e1e13fd513dbd5689afc5ea6fb2c720833bd679379028800986849f9448f5",
+ "sha256": "b332a3e41a01650f721a7f52b5cf679ec93b83918c2a1aee3cba4a91d6439c2a",
+ "inputs": {
+  "stage": "keyframe/1",
+  "model": "@cf/black-forest-labs/flux-2-klein-4b",
+  "seed": 1009,
+  "size": [
+   768,
+   1344
+  ],
+  "prompt": "wide shot. Small modern city apartment at evening, a large window with rain and blurred city lights, the same round black clay jebena bottle with tall slender neck and small white cups with a thin green rim on a low table, cool blue light with one warm lamp, no people. tall vertical scene, subject large in the middle third, the painted scene continues down to the bottom edge. Hand-painted gouache illustration, visible brush texture, soft film grain, warm amber and terracotta palette with deep indigo shadows, gentle firelight, quiet and intimate, subject centred in frame, full-bleed painting reaching every edge",
+  "references": [
+   "f691334c202c92c48ef973238370f4a6e9974a8bf83675ef55b25734dd10d03f"
+  ]
+ }
+}
