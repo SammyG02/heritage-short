@@ -2,7 +2,7 @@
 
 ## Change of story, 25 Nov 2026 (before anything of the new story was generated)
 
-The applicant replaced the invented sample "The Extra Cup" (kept below, and in `storyboards/the-extra-cup.json`) with their own family's story, "One Percent". The narration is the applicant's text. Amharic is an agent's translation, shortened to fit 90 seconds, and no native speaker has checked it yet.
+The applicant replaced the invented sample "The Extra Cup" (kept below, and in `storyboards/the-extra-cup.json`) with their own family's story, "One Percent". The narration is the applicant's text. Amharic began as an agent's translation; the applicant corrected it in version 3.
 
 - **Audience (draft, applicant to confirm):** families and couples in Ethiopia and the diaspora who are waiting for something they have been told is unlikely. They watch vertically on a phone.
 - **Intent:** feel that a small chance is still a chance, and want to keep trying.
@@ -17,7 +17,9 @@ The applicant replaced the invented sample "The Extra Cup" (kept below, and in `
 - **Motion:** the applicant asked for people who move and speak rather than still pictures, so motion prompts ask for lips, heads, hands and breath. Narration is voice-over; mouths are not lip-synced.
 - **Every shot's reason** is in its `reason` field.
 
-- **Style:** the applicant's mother, asked for consent, said she would like to see it as animation. The style block changed from painted gouache to hand-drawn 2D animation.
+- **Style:** the applicant's mother, asked for consent, said she would like to see it as animation. An agent first read that as 2D; the applicant corrected it: she means 3D painted animation. The style block now says so.
+- **Script version 3:** the applicant rewrote the Amharic themselves as a native speaker (agent fixes: one stray comma, "4" spelled out for the voice, quote marks around the question). The English subtitles were updated to match.
+- **Voices:** the narrator is a man, like the applicant. Quoted words are spoken in a woman's stock voice.
 
 ## First version: the sample story
 

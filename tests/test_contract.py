@@ -110,3 +110,30 @@ def test_true_story_is_locked_until_consent_is_recorded(sb, monkeypatch, tmp_pat
     assert calls == []
     sb["people"]["consent"] = "recorded"
     storyboard.require_consent(sb)
+
+
+def test_quoted_words_use_the_character_voice_and_retake_alone(sb, monkeypatch, tmp_path):
+    import io
+    import wave
+    said = []
+
+    def speak(stage, item, text, voice, style, model):
+        said.append((text, voice))
+        raw = io.BytesIO()
+        with wave.open(raw, "wb") as w:
+            w.setnchannels(1)
+            w.setsampwidth(2)
+            w.setframerate(24000)
+            w.writeframes(b"\x10\x10" * 2400)
+        return raw.getvalue()
+    monkeypatch.setattr(config, "OUTPUTS", tmp_path)
+    monkeypatch.setattr(providers, "gemini_tts", speak)
+    sb["people"]["consent"] = "recorded"
+    sb["voices"] = {"en": {"voice": "Man", "style": "a", "characters": {"mother": {"voice": "Woman", "style": "b"}}}}
+    sb["shots"] = [dict(sb["shots"][0], quote_voice="mother", narration={"en": "She says: “Nine years.”"})]
+    narration.run(sb, "en")
+    assert said == [("She says:", "Man"), ("Nine years.", "Woman")]
+    assert narration.seconds(narration.path(sb, sb["shots"][0], "en")) == pytest.approx(0.4)
+    sb["shots"][0]["narration"]["en"] = "She says: “Nine long years.”"
+    narration.run(sb, "en")
+    assert said[2:] == [("Nine long years.", "Woman")]

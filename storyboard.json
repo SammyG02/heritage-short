@@ -1,6 +1,6 @@
 {
  "id": "one-percent",
- "version": 2,
+ "version": 3,
  "status": "draft",
  "title": {
   "am": "አንድ በመቶ",
@@ -11,7 +11,7 @@
  "language": "am",
  "audience": "Draft, to be confirmed by the applicant: families and couples in Ethiopia and the diaspora who are waiting for something they have been told is unlikely",
  "intent": "Feel that a small chance is still a chance, and want to keep trying",
- "style_block": "Hand-drawn 2D animated film frame, clean ink outlines, softly shaded flat colours, expressive faces, painted background, warm amber and terracotta palette with deep indigo shadows, gentle cinematic light, subject centred in frame, full-bleed picture reaching every edge",
+ "style_block": "3D animated film frame with a painted look, sculpted rounded characters with expressive faces, hand-painted textures and visible soft brush strokes on 3D forms, painterly background, warm amber and terracotta palette with deep indigo shadows, gentle cinematic light, subject centred in frame, full-bleed picture reaching every edge",
  "people": {
   "real_people": false,
   "based_on_real_people": true,
@@ -26,12 +26,24 @@
  },
  "voices": {
   "am": {
-   "voice": "Sulafat",
-   "style": "warm, calm and unhurried, like telling a family story at night"
+   "voice": "Algieba",
+   "style": "a young man, warm, calm and unhurried, like telling a family story at night",
+   "characters": {
+    "mother": {
+     "voice": "Sulafat",
+     "style": "a mother, warm and heartfelt, speaking gently to her family"
+    }
+   }
   },
   "en": {
-   "voice": "Sulafat",
-   "style": "warm, calm and unhurried, like telling a family story at night",
+   "voice": "Algieba",
+   "style": "a young man, warm, calm and unhurried, like telling a family story at night",
+   "characters": {
+    "mother": {
+     "voice": "Sulafat",
+     "style": "a mother, warm and heartfelt, speaking gently to her family"
+    }
+   },
    "model": "gemini-3.8-flash-lite-tts"
   }
  },
@@ -125,8 +137,8 @@
    "image_prompt": "the same woman from the first reference and the same man from the second reference as young newlyweds standing side by side in white handwoven cotton clothes with green and gold borders, shoulders touching, smiling at each other, warm afternoon garden behind",
    "motion_prompt": "The couple turn toward each other and smile, she laughs softly, their clothes move in a light wind, the camera is fixed",
    "narration": {
-    "am": "ባልና ሚስት ነበሩ። በወጣትነታቸው ተጋቡ፤ ልጅ እንደሚወልዱም እርግጠኛ ነበሩ።",
-    "en": "There were a husband and a wife. They married young, sure that a family would follow."
+    "am": "ሁለት በወጣትነታቸው የተጋቡ ባልና ሚስት ነበሩ፤ ልጅ እንደሚወልዱም እርግጠኛ ነበሩ።",
+    "en": "There were a husband and a wife who married young. They were sure they would have children."
    }
   },
   {
@@ -143,8 +155,8 @@
    "seed": 2013,
    "ken_burns": "in",
    "narration": {
-    "am": "አንድ ዓመት አለፈ። ከዚያ ሁለት። ከዚያ አምስት።",
-    "en": "One year passed. Then two. Then five."
+    "am": "ሆኖም አንድ ዓመት አለፈ። ከዚያም ሁለት። ከዚያም አምስት።",
+    "en": "But one year passed. Then two. Then five."
    }
   },
   {
@@ -178,8 +190,8 @@
    "image_prompt": "the same woman from the first reference and the same man from the second reference seated close together in a plain consulting room, holding hands tightly, heads lowered, cool daylight from a high window",
    "motion_prompt": "Her shoulders rise and fall with a heavy breath, he slowly squeezes her hand and turns his head to her, the camera is fixed",
    "narration": {
-    "am": "ከዚያ ሐኪሙ እውነቱን ነገራቸው፦ በኢትዮጵያ ዕድላቸው ከአንድ በመቶ በታች ነበር።",
-    "en": "Then a doctor told them the truth. Here in Ethiopia, their chance was less than one percent."
+    "am": "ከዚያም ሐኪሙ፦ በኢትዮጵያ የመውለድ ዕድላቸው ከአንድ በመቶ በታች መሆኑን ነገራቸው።",
+    "en": "Then the doctor told them that in Ethiopia, their chance of having a child was less than one percent."
    }
   },
   {
@@ -196,9 +208,10 @@
    "image_prompt": "the same woman from the first reference lifting her face with a determined look toward the same man from the second reference beside her, warm lamp light on both faces, night window behind",
    "motion_prompt": "She raises her head and speaks, her lips moving, he looks at her and nods slowly, the camera pushes in gently",
    "narration": {
-    "am": "ብዙ ሰው እዚህ ያቆም ነበር። እነሱ ግን ጠየቁ፦ ሌላ የት እንሞክር?",
-    "en": "Most people would have stopped there. They asked a different question: where else can we try?"
-   }
+    "am": "ብዙ ሰው እዚህ ጋር ተስፋ ይቆርጥ ነበር። እነሱ ግን ጠየቁ፦ «ሌላ የት እንሞክር?»",
+    "en": "Many people would have lost hope here. But they asked: “Where else can we try?”"
+   },
+   "quote_voice": "mother"
   },
   {
    "id": "s06",
@@ -214,8 +227,8 @@
    "image_prompt": "the same woman from the first reference and the same man from the second reference seen from behind, walking hand in hand along a sunlit pale stone hillside street with olive trees, one small suitcase, morning light ahead of them",
    "motion_prompt": "They walk slowly forward, her shawl and the olive leaves move in the wind, the camera follows gently behind",
    "narration": {
-    "am": "መልሱ ሩቅ ነበር፤ እስራኤል። አዲስ ሐኪሞች፣ አዲስ ቋንቋ፣ ለዓመታት ያው ተስፋ።",
-    "en": "The answer was far from home. Israel. New doctors. A new language. The same hope they had carried for years."
+    "am": "መልሱ ሩቅ ነበር፤ እስራኤል። አዲስ ሃገር፣ አዲስ ሐኪሞች፣ አዲስ ቋንቋ፣ አራት አመት።",
+    "en": "The answer was far away: Israel. A new country, new doctors, a new language. Four years."
    }
   },
   {
@@ -265,8 +278,9 @@
    "motion_prompt": "She speaks warmly, her lips and jaw moving naturally, then breaks into a smile and blinks, the camera is fixed",
    "narration": {
     "am": "እናቴ ዛሬም ትላለች፦ «ሌሎች ሴቶች በዘጠኝ ወር ይወልዳሉ፤ እኔ ግን በዘጠኝ ዓመት ወለድኩ።»",
-    "en": "My mother still says: “Other women give birth in nine months. I gave birth in nine years.”"
-   }
+    "en": "My mother still says: “Other women give birth in nine months. But I gave birth in nine years.”"
+   },
+   "quote_voice": "mother"
   },
   {
    "id": "s10",
@@ -274,7 +288,7 @@
    "duration_s": 5,
    "size": "wide",
    "references": [],
-   "image_prompt": "Three small children seen from behind running together across a sunny green field, holding hands, white cotton clothes, warm golden light",
+   "image_prompt": "An older boy, a younger girl and a small boy seen from behind running together across a sunny green field, holding hands, white cotton clothes, warm golden light",
    "motion_prompt": "The three children run forward hand in hand, clothes and grass move in the wind, the camera follows gently",
    "seed": 2015,
    "ken_burns": "right",
@@ -294,11 +308,11 @@
     "father"
    ],
    "reason": "The same doorstep that was empty is now full",
-   "image_prompt": "the same woman from the first reference and the same man from the second reference, older, sitting on the stone doorstep of a small house with three children seen from behind around them, all close together, warm golden light",
+   "image_prompt": "the same woman from the first reference and the same man from the second reference, older, sitting on the stone doorstep of a small house with two boys and one girl seen from behind around them, all close together, warm golden light",
    "motion_prompt": "The family lean together and laugh, shoulders moving, a child hugs the mother, the camera pulls back slowly",
    "narration": {
-    "am": "ያ አንድ በመቶ እኔ ነበርኩ። ሁላችንም ነበርን።",
-    "en": "I was the one percent. We all were."
+    "am": "ያ አንድ በመቶ እኔ ነበርኩ። ሁላችንም ነን።",
+    "en": "I was that one percent. We all are."
    }
   },
   {
@@ -313,7 +327,7 @@
    "ken_burns": "up",
    "narration": {
     "am": "ዕድላችሁ አንድ በመቶ ነው ቢሏችሁ፣ አስታውሱ፦ አንድ በመቶ ዜሮ አይደለም። ተስፋ አትቁረጡ።",
-    "en": "So if anyone ever tells you your chance is one percent, remember: one percent is not zero. Never give up."
+    "en": "If they tell you your chance is one percent, remember: one percent is not zero. Never give up."
    }
   }
  ],

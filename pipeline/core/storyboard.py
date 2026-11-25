@@ -24,6 +24,8 @@ def validate(data: dict) -> list[str]:
         for lang in data["voices"]:
             if not s["narration"].get(lang):
                 errors.append(f"shots/{s['id']}/narration: missing {lang!r}")
+            if s.get("quote_voice") and s["quote_voice"] not in data["voices"][lang].get("characters", {}):
+                errors.append(f"shots/{s['id']}/quote_voice: no {lang!r} voice for {s['quote_voice']!r}")
         for ref in s["references"]:
             if ref not in data["references"]:
                 errors.append(f"shots/{s['id']}/references: unknown reference {ref!r}")

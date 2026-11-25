@@ -2,21 +2,21 @@
 
 ## Consent
 
-**Status: the applicant asked all four relatives; mother and father approved. Still locked until the details below are confirmed. Nothing of "One Percent" has been generated.** The pipeline refuses to call a model for it until `people.consent` in `storyboard.json` is `recorded` (`require_consent` in `pipeline/core/storyboard.py`, with a test).
+**Status: mother, father, sister and brother all agreed, as reported by the applicant. Still locked until the mother confirms her exact quoted line. Nothing of "One Percent" has been generated.** The pipeline refuses to call a model for it until `people.consent` in `storyboard.json` is `recorded` (`require_consent` in `pipeline/core/storyboard.py`, with a test).
 
 "One Percent" is the applicant's true family story. It tells private medical history and quotes their mother.
 
 - **Faces** are invented and drawn from text only. No photograph is used as input.
-- **Voice** is a stock Gemini voice. No voice is cloned. It reads the mother's quoted words, so she must agree to them.
+- **Voice** is a stock Gemini voice. No voice is cloned. The narrator is a male stock voice; a female stock voice reads the mother's quoted words, so she must agree to them. Neither imitates a real person.
 - **Siblings** are mentioned without names and seen only from behind.
 
 | Person | How they appear | Agreed to the story, the public film and the words | When and how |
 |---|---|---|---|
 | Applicant (narrator in the story) | Told in first person, stock voice | Supplied the story, 25 Nov 2026 | Written instruction to the agent |
-| Mother | Invented drawing; one quoted line | Agreed to the film; said it would be great to see it in animation style. **Quoted line, public posting and free-tier use: to confirm** | Reported by the applicant, 25 Nov 2026, about 19:15 EAT. How she was asked: **to confirm** |
-| Father | Invented drawing | Approved; wants to see the final result. **Public posting and free-tier use: to confirm** | Same; how: **to confirm** |
-| Sister, adult (22) | Mentioned, seen from behind | Asked for consent to this film. **Her answer: to confirm** | Same; how: **to confirm** |
-| Brother, adult (20) | Mentioned, seen from behind | Asked for consent to this film. **His answer: to confirm** | Same; how: **to confirm** |
+| Mother | Invented drawing; one quoted line | Agreed to the film; said it would be great to see it in animation style. Agreed to public posting. **Exact quoted line: to confirm** | In person at home, as reported by the applicant on 25 Nov 2026 (about 19:15 and 19:30 EAT) |
+| Father | Invented drawing | Approved; wants to see the final result. Agreed to public posting | Same |
+| Sister, adult (22) | Mentioned, seen from behind | Said yes; agreed to public posting | Same |
+| Brother, adult (20) | Mentioned, seen from behind | Said yes; agreed to public posting | Same |
 
 The earlier sample, "The Extra Cup", was invented: no real person was shown or voiced.
 

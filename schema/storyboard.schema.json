@@ -23,7 +23,9 @@
       "properties": {"tts": {"$ref": "#/$defs/text"}, "image": {"$ref": "#/$defs/text"}, "video": {"$ref": "#/$defs/text"}, "music": {"$ref": "#/$defs/text"}}},
     "voices": {"type": "object", "minProperties": 1, "propertyNames": {"enum": ["am", "en"]},
       "additionalProperties": {"type": "object", "additionalProperties": false, "required": ["voice", "style"],
-        "properties": {"voice": {"$ref": "#/$defs/text"}, "style": {"$ref": "#/$defs/text"}, "model": {"$ref": "#/$defs/text", "description": "Overrides models.tts for this language, for example when a daily quota is used up"}}}},
+        "properties": {"voice": {"$ref": "#/$defs/text"}, "style": {"$ref": "#/$defs/text"}, "model": {"$ref": "#/$defs/text", "description": "Overrides models.tts for this language, for example when a daily quota is used up"},
+          "characters": {"type": "object", "description": "Stock voices for quoted words, by character name", "additionalProperties": {"type": "object", "additionalProperties": false, "required": ["voice", "style"],
+            "properties": {"voice": {"$ref": "#/$defs/text"}, "style": {"$ref": "#/$defs/text"}}}}}}},
     "references": {"type": "object", "minProperties": 1,
       "additionalProperties": {"type": "object", "additionalProperties": false, "required": ["prompt", "seeds", "chosen_seed", "reason"],
         "properties": {"prompt": {"$ref": "#/$defs/text"}, "seeds": {"type": "array", "minItems": 1, "items": {"type": "integer"}},
@@ -59,6 +61,7 @@
         "image_prompt": {"$ref": "#/$defs/text"},
         "motion_prompt": {"$ref": "#/$defs/text", "description": "Motion and camera only"},
         "seed": {"type": "integer"},
+        "quote_voice": {"type": "string", "description": "Character who speaks the quoted words; needs a voice in voices.<lang>.characters"},
         "ken_burns": {"enum": ["in", "out", "left", "right", "up", "down"]},
         "narration": {"type": "object", "required": ["en"], "propertyNames": {"enum": ["am", "en"]}, "additionalProperties": {"$ref": "#/$defs/text"},
           "description": "Per language. English is also the subtitle text"}
