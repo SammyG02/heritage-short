@@ -122,11 +122,18 @@ Or start it yourself and open <http://localhost:8765>:
 .venv\Scripts\python -m pipeline web
 ```
 
-1. **Tell your story** in a few sentences. Choose Amharic or English, a theme, who it is for, and how they should feel at the end.
-2. **Draft.** Wait for the storyboard. This can take a few minutes when Google is busy.
-3. **Check every line** and change words that sound wrong. Check the Amharic especially. Pictures and voice are only made after you approve.
-4. **Approve and make the film.** The page shows progress. Expect 15 to 30 minutes or more, depending on your computer and connection.
-5. **Watch it** on the page. The files are in `outputs/<film name>/film/<language>/`.
+The studio has one page for each step. Nothing runs until you press a button, and each button that uses a free limit first shows what it will use.
+
+1. **New film:** tell your story, choose the language and theme. You get a draft storyboard.
+2. **Story:** edit every line, picture, emotion and transition. For a true story, record consent here; everything stays locked until you do.
+3. **Characters:** draw four options for each person and choose one. Every shot is drawn from that face. Older versions are drawn from it too.
+4. **Voice:** make, listen to and remake single lines. Build a radio cut to test with people.
+5. **Pictures:** draw them all, one format, or one shot. Each shows the result of its automatic check.
+6. **Motion and music:** send work to the Kaggle GPU, check it, collect it. Optional: without it the film uses slow camera moves and simple music.
+7. **Film:** build both formats, watch and download. This never calls a model.
+8. **Audience:** write down what people said, in their words. **Limits:** what is left today.
+
+Press **Stop** at any time; finished parts are kept. Edits to one shot only make that shot out of date. Files are in `outputs/<film name>/`.
 
 Leave the terminal window open while it works. The page is only reachable from your own computer.
 
@@ -223,9 +230,11 @@ Narration in Amharic and English. Afaan Oromo, Tigrinya and Somali are coming so
 | `film [--gpu]` | Every stage, both formats. `make film` does the same with whichever `python` is active |
 | `-l en film` | English narration instead of the main language |
 | `-s FILE ...` | Use another storyboard |
-| `new`, `web` | Draft a storyboard |
+| `web` | The studio: every step in the browser |
+| `new` | Draft a storyboard in the terminal |
+| `assemble` | Edit the film from what exists; calls no model |
 | `validate`, `status` | Check the storyboard; show what is stale |
-| `narration`, `references`, `keyframes`, `radio` | One stage |
+| `narration`, `references`, `keyframes`, `radio` | One stage; `--shot s03` or `--name mother` for one item, `--force` to make it again |
 | `gpu submit\|status\|fetch wan\|music` | Kaggle jobs |
 | `smoke` | Call each provider once |
 

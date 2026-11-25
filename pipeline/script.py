@@ -80,7 +80,7 @@ def build(draft, *, language, theme, audience, intent, base):
     sb["shots"] = [{**s, "seed": 1000 + i} for i, s in enumerate(draft["shots"], 1)]
     for s in sb["shots"]:
         s["narration"] = {k: s["narration"][k] for k in sb["voices"] if k in s["narration"]}
-    sb["end_card"]["lines"] = [*dict.fromkeys(draft["title"].values())][:2] + ["Pictures, voice and music made with AI", "All characters are invented"]
+    sb["end_card"]["lines"] = [*dict.fromkeys(draft["title"].values())][:2] + ["Pictures, voice and music made with AI", "A true story. All faces are invented" if sb["people"].get("based_on_real_people") else "All characters are invented"]
     return sb
 
 
@@ -96,7 +96,7 @@ def lint(sb):
     return problems
 
 
-def new(story, language, theme, audience, intent):
+def new(story, language, theme, audience, intent, true_story=False):
     """Draft a storyboard, save it under storyboards/ and return (path, storyboard)."""
     if language not in LANGUAGES:
         raise config.PipelineError(f"Choose one of {', '.join(LANGUAGES)}. Coming soon: {', '.join(COMING_SOON)}.")
@@ -105,6 +105,8 @@ def new(story, language, theme, audience, intent):
     theme_text = THEMES.get(theme, theme)
     base = json.loads((config.ROOT / "storyboard.json").read_text(encoding="utf-8"))
     base["people"] = {"real_people": False, "statement": "All characters are invented. The narrator is a stock synthetic voice."}
+    if true_story:
+        base["people"].update(based_on_real_people=True, consent="pending", statement="Based on a true story. Faces are invented and voices are stock synthetic voices.")
     extra = f" and {LANGUAGES[language]}" if language != "en" else ""
     prompt = PROMPT.format(story=story, theme=theme_text, audience=audience, intent=intent, extra=extra,
                            narr=f', "{language}": "..."' if language != "en" else "")

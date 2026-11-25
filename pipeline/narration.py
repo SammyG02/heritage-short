@@ -100,10 +100,12 @@ def _speak(sb, item, inp):
     raise error
 
 
-def run(sb, lang, force=False):
+def run(sb, lang, force=False, only=None):
     made = 0
     for shot in sb["shots"]:
         p, inp = path(sb, shot, lang), inputs(sb, shot, lang)
+        if only and shot["id"] not in only:
+            continue
         if not force and cache.fresh(p, inp):
             continue
         turns = parts(sb, shot, lang)
@@ -121,4 +123,4 @@ def run(sb, lang, force=False):
             cache.store(p, join(files), inp)
         made += 1
         print(f"  narration {lang}/{shot['id']}  {seconds(p):.1f}s")
-    print(f"  narration {lang}: {made} generated, {len(sb['shots']) - made} cached")
+    print(f"  narration {lang}: {made} generated, {(len(only) if only else len(sb['shots'])) - made} cached")

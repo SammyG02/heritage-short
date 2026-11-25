@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Heritage Studio</title>
+<link rel="icon" href="/icon.svg">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="#/">Heritage Studio</a>
+  <label class="pick"><span class="sr">Film</span><select id="films"></select></label>
+  <a class="btn quiet" href="#/new">New film</a>
+</header>
+<div id="shell"><nav id="steps" aria-label="Steps"></nav><main id="view" tabindex="-1"></main></div>
+<aside id="dock" hidden aria-live="polite"></aside>
+<dialog id="ask"><form method="dialog"><h2 id="ask-title"></h2><p id="ask-text"></p><div class="row"><button value="no" class="btn quiet">Cancel</button><button value="yes" class="btn" id="ask-yes"></button></div></form></dialog>
+<div id="toast" role="status"></div>
+<script src="/app.js"></script>
+</body>
+</html>

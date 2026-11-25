@@ -39,6 +39,15 @@ def film(sb, lang, use_gpu):
     assemble.film(sb, lang)
 
 
+def missing(sb, lang):
+    """Stop before editing if any voice or picture is missing or out of date."""
+    gaps = [f"voice {s['id']}" for s in sb["shots"] if not cache.fresh(narration.path(sb, s, lang), narration.inputs(sb, s, lang))]
+    gaps += [f"picture {s['id']} {r}" for s in sb["shots"] for r in keyframes.SIZES
+             if not cache.fresh(keyframes.path(sb, s, r), keyframes.inputs(sb, s, r))]
+    if gaps:
+        raise config.PipelineError(f"Not ready to edit, {len(gaps)} missing: " + ", ".join(gaps[:12]) + ("..." if len(gaps) > 12 else ""))
+
+
 def status(sb, langs):
     """What a run would regenerate, without calling any model."""
     for lang in langs:
@@ -67,9 +76,16 @@ def main(argv=None):
     sub.add_parser("status", help="show what is stale")
     rd = sub.add_parser("radio", help="narration over placeholder music on black")
     rd.add_argument("--partial", action="store_true", help="call no model; show lines that have no voice yet as text")
-    sub.add_parser("references", help="reference sheet only")
-    sub.add_parser("keyframes", help="keyframes only")
-    sub.add_parser("narration", help="narration only")
+    rf = sub.add_parser("references", help="reference sheet only")
+    rf.add_argument("--name", action="append")
+    kf = sub.add_parser("keyframes", help="keyframes only")
+    kf.add_argument("--shot", action="append")
+    kf.add_argument("--ratio", choices=list(keyframes.SIZES), action="append")
+    na = sub.add_parser("narration", help="narration only")
+    na.add_argument("--shot", action="append")
+    for x in (rf, kf, na):
+        x.add_argument("--force", action="store_true", help="make again even if cached")
+    sub.add_parser("assemble", help="edit the film from what exists; calls no model")
     g = sub.add_parser("gpu", help="Kaggle jobs")
     g.add_argument("action", choices=["submit", "status", "fetch"])
     g.add_argument("kind", choices=["wan", "music"])
@@ -101,19 +117,23 @@ def main(argv=None):
         elif a.cmd == "status":
             status(sb, list(sb["voices"]))
         elif a.cmd == "narration":
-            narration.run(sb, lang)
+            narration.run(sb, lang, a.force, a.shot)
+        elif a.cmd == "assemble":
+            missing(sb, lang)
+            assemble.film(sb, lang)
         elif a.cmd == "radio":
-            missing = ()
+            silent = ()
             if a.partial:
-                missing = [s["id"] for s in sb["shots"] if not cache.fresh(narration.path(sb, s, lang), narration.inputs(sb, s, lang))]
+                silent = [s["id"] for s in sb["shots"] if not cache.fresh(narration.path(sb, s, lang), narration.inputs(sb, s, lang))]
             else:
                 narration.run(sb, lang)
-            assemble.radio(sb, lang, missing)
+            assemble.radio(sb, lang, silent)
         elif a.cmd == "references":
-            keyframes.run_references(sb)
+            keyframes.run_references(sb, a.force, a.name)
         elif a.cmd == "keyframes":
-            keyframes.run_references(sb)
-            keyframes.run(sb)
+            if not a.shot:
+                keyframes.run_references(sb)
+            keyframes.run(sb, a.ratio or tuple(keyframes.SIZES), a.force, a.shot)
         elif a.cmd == "gpu":
             if a.action == "submit":
                 gpu.submit_wan(sb, a.ratio or list(keyframes.SIZES), a.shot) if a.kind == "wan" else gpu.submit_music(sb)

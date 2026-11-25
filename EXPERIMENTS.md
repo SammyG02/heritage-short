@@ -42,7 +42,7 @@ Each entry: hypothesis, the one thing changed, result. Image counts below come f
 ## 6. Face motion against body motion in Wan
 
 - **Hypothesis:** Wan can move a mouth and a body from one keyframe.
-- **Change:** two clips in one job, same model, 30 steps, guidance 5, 121 frames, 480x832. `s04_9x16`: speaking close-up. `s03_9x16`: medium shot, lifting the head, breathing and pouring. Different keyframes and seeds, so this compares two kinds of shot, not one variable. Prompts are in `storyboards/motion-test.json`.
+- **Change:** two clips in one job, same model, 30 steps, guidance 5, 121 frames, 480x832. `s04_9x16`: speaking close-up. `s03_9x16`: medium shot, lifting the head, breathing and pouring. Different keyframes and seeds, so this compares two kinds of shot, not one variable. Prompts are in `storyboards/tests/motion-test.json`.
 - **Result:** (agent viewing 10 frames from each) the face spoke, blinked, smiled and tilted with the same identity throughout; a small purple tint appears in the lower right corner. The body clip failed: the head folds back out of view from about second 2, and the camera moves.
 - **Decision:** let close faces speak; give bodies one small movement; keep the fallback for any clip that breaks.
 

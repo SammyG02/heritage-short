@@ -1,0 +1,13 @@
+{
+ "key": "09a8dae8be90285f6211f748532f7532696972c4af14f6ffd9bac438a016b34a",
+ "sha256": "34d7fa54819b02dc8a0c4ecb8c72990fdda349bfca3ccbf375223ec697c10205",
+ "inputs": {
+  "stage": "music/1",
+  "model": "ACE-Step/ACE-Step-1.5 acestep-v15-turbo",
+  "caption": "Instrumental, intimate Ethiopian highland mood, solo krar lyre plucked gently, soft washint flute answering far away, warm low drone, sparse and tender, pentatonic, acoustic, close room sound, no drums, no vocals",
+  "bpm": 72,
+  "key": "D minor",
+  "duration_s": 90,
+  "seed": 202
+ }
+}

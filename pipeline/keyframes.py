@@ -1,6 +1,6 @@
 """Keyframe stage: reference sheet first, then one image per shot and aspect ratio."""
 from . import qa
-from .core import cache, providers
+from .core import cache, config, providers
 from .core.storyboard import out, require_consent
 
 # Multiples of 16, close to the delivery ratios.
@@ -44,9 +44,11 @@ def inputs(sb, shot, ratio):
             "references": [cache.file_sha(r) if r.exists() else "missing" for r in refs]}
 
 
-def run_references(sb, force=False):
+def run_references(sb, force=False, only=None):
     made = 0
     for name, ref in sorted(sb["references"].items(), key=lambda kv: bool(kv[1].get("from"))):  # parents first
+        if only and name not in only:
+            continue
         for seed in ref["seeds"]:
             p, inp = ref_path(sb, name, seed), ref_inputs(sb, name, seed)
             if not force and cache.fresh(p, inp):
@@ -59,17 +61,20 @@ def run_references(sb, force=False):
     print(f"  references: {made} generated")
 
 
-def run(sb, ratios=tuple(SIZES), force=False):
+def run(sb, ratios=tuple(SIZES), force=False, only=None):
     made = 0
-    for shot in sb["shots"]:
+    todo = [s for s in sb["shots"] if not only or s["id"] in only]
+    for shot in todo:
         for ratio in ratios:
             p, inp = path(sb, shot, ratio), inputs(sb, shot, ratio)
             if not force and cache.fresh(p, inp):
                 continue
-            refs = [ref_path(sb, n, sb["references"][n]["chosen_seed"]) for n in shot["references"]]
             require_consent(sb)
+            refs = [ref_path(sb, n, sb["references"][n]["chosen_seed"]) for n in shot["references"]]
+            if gone := [r.stem for r in refs if not r.exists()]:
+                raise config.PipelineError(f"{shot['id']} needs a character that is not drawn yet: {', '.join(gone)}")
             data, report = qa.best_of(sb, shot, ratio, inp, refs)
             cache.store(p, data, inp, qa=report)
             made += 1
             print(f"  keyframe {shot['id']}_{ratio}")
-    print(f"  keyframes: {made} generated, {len(sb['shots']) * len(ratios) - made} cached")
+    print(f"  keyframes: {made} generated, {len(todo) * len(ratios) - made} cached")
