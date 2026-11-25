@@ -135,7 +135,7 @@
    ],
    "reason": "Meets a husband and wife as strangers, so the later reveal is a surprise",
    "image_prompt": "the same woman from the first reference and the same man from the second reference as young newlyweds standing side by side in white handwoven cotton clothes with green and gold borders, shoulders touching, smiling at each other, warm afternoon garden behind",
-   "motion_prompt": "The couple turn toward each other and smile, she laughs softly, their clothes move in a light wind, the camera is fixed",
+   "motion_prompt": "She smiles warmly at him, their clothes stir in a light breeze, the camera is fixed",
    "narration": {
     "am": "ሁለት በወጣትነታቸው የተጋቡ ባልና ሚስት ነበሩ፤ ልጅ እንደሚወልዱም እርግጠኛ ነበሩ።",
     "en": "There were a husband and a wife who married young. They were sure they would have children."
@@ -151,7 +151,7 @@
     "father"
    ],
    "image_prompt": "the same woman from the first reference and the same man from the second reference sitting close together on the stone doorstep of a small house, looking out over an empty quiet yard, dry leaves falling from a tree, late afternoon light",
-   "motion_prompt": "Leaves fall slowly past them, she leans her head onto his shoulder, his chest rises with a breath, the camera pushes in very slowly",
+   "motion_prompt": "Dry leaves fall slowly, she gently rests her head on his shoulder, the camera is fixed",
    "seed": 2013,
    "ken_burns": "in",
    "narration": {
@@ -170,7 +170,7 @@
    ],
    "reason": "Their waiting is active: prayer and patience",
    "image_prompt": "the same woman from the reference seated by candlelight at night, white shawl over her hair, eyes closed, hands pressed together near her chest, quiet prayer, dark room",
-   "motion_prompt": "Her lips move silently in prayer, she breathes slowly, the candle flame flickers, the camera is fixed",
+   "motion_prompt": "Her lips move softly in prayer, the candle flame flickers, the camera is fixed",
    "narration": {
     "am": "ጸለዩ። ጠበቁ።",
     "en": "They prayed. They waited."
@@ -188,7 +188,7 @@
    ],
    "reason": "The bad news, held on the couple rather than the doctor",
    "image_prompt": "the same woman from the first reference and the same man from the second reference seated close together in a plain consulting room, holding hands tightly, heads lowered, cool daylight from a high window",
-   "motion_prompt": "Her shoulders rise and fall with a heavy breath, he slowly squeezes her hand and turns his head to her, the camera is fixed",
+   "motion_prompt": "He slowly turns his face toward her, the camera is fixed",
    "narration": {
     "am": "ከዚያም ሐኪሙ፦ በኢትዮጵያ የመውለድ ዕድላቸው ከአንድ በመቶ በታች መሆኑን ነገራቸው።",
     "en": "Then the doctor told them that in Ethiopia, their chance of having a child was less than one percent."
@@ -206,7 +206,7 @@
    ],
    "reason": "The turn: the couple choose a question over an ending",
    "image_prompt": "the same woman from the first reference lifting her face with a determined look toward the same man from the second reference beside her, warm lamp light on both faces, night window behind",
-   "motion_prompt": "She raises her head and speaks, her lips moving, he looks at her and nods slowly, the camera pushes in gently",
+   "motion_prompt": "She speaks gently, her lips moving naturally, the camera is fixed",
    "narration": {
     "am": "ብዙ ሰው እዚህ ጋር ተስፋ ይቆርጥ ነበር። እነሱ ግን ጠየቁ፦ «ሌላ የት እንሞክር?»",
     "en": "Many people would have lost hope here. But they asked: “Where else can we try?”"
@@ -225,7 +225,7 @@
    ],
    "reason": "Distance made visible: far from home, the same two people",
    "image_prompt": "the same woman from the first reference and the same man from the second reference seen from behind, walking hand in hand along a sunlit pale stone hillside street with olive trees, one small suitcase, morning light ahead of them",
-   "motion_prompt": "They walk slowly forward, her shawl and the olive leaves move in the wind, the camera follows gently behind",
+   "motion_prompt": "They walk slowly forward hand in hand, her shawl moves in the wind, the camera is fixed",
    "narration": {
     "am": "መልሱ ሩቅ ነበር፤ እስራኤል። አዲስ ሃገር፣ አዲስ ሐኪሞች፣ አዲስ ቋንቋ፣ አራት አመት።",
     "en": "The answer was far away: Israel. A new country, new doctors, a new language. Four years."
@@ -240,7 +240,7 @@
    "references": [],
    "reason": "The birth, in a hand rather than a face; it does not say yet whose life this is",
    "image_prompt": "Extreme close view of a newborn baby hand with tiny fingers wrapped around one adult finger, white blanket, soft golden morning light",
-   "motion_prompt": "The tiny fingers slowly open and close around the finger, the blanket moves with breathing, the camera is fixed",
+   "motion_prompt": "The tiny fingers slowly close around the finger, the camera is fixed",
    "narration": {
     "am": "እና ከዚያ… ሕፃን ተወለደ።",
     "en": "And then… a baby was born."
@@ -256,7 +256,7 @@
     "father"
    ],
    "image_prompt": "the same woman from the first reference holding a newborn baby wrapped in a white blanket against her chest, the same man from the second reference leaning in beside her, both looking down at the baby with tears of joy, soft golden window light",
-   "motion_prompt": "She rocks the baby gently and smiles, he bows his head toward them, the baby stirs, the camera pushes in slowly",
+   "motion_prompt": "She smiles and gently rocks the baby, the camera is fixed",
    "seed": 2014,
    "ken_burns": "in",
    "narration": {
@@ -275,7 +275,7 @@
    ],
    "reason": "The emotional peak: the line she still says, on her face",
    "image_prompt": "the same woman from the reference, older now with a few silver hairs, face filling the frame, joyful eyes, mouth open speaking warmly toward the viewer, golden window light",
-   "motion_prompt": "She speaks warmly, her lips and jaw moving naturally, then breaks into a smile and blinks, the camera is fixed",
+   "motion_prompt": "She speaks warmly, her lips and jaw moving naturally, she blinks and smiles, the camera is fixed",
    "narration": {
     "am": "እናቴ ዛሬም ትላለች፦ «ሌሎች ሴቶች በዘጠኝ ወር ይወልዳሉ፤ እኔ ግን በዘጠኝ ዓመት ወለድኩ።»",
     "en": "My mother still says: “Other women give birth in nine months. But I gave birth in nine years.”"
@@ -289,7 +289,7 @@
    "size": "wide",
    "references": [],
    "image_prompt": "An older boy, a younger girl and a small boy seen from behind running together across a sunny green field, holding hands, white cotton clothes, warm golden light",
-   "motion_prompt": "The three children run forward hand in hand, clothes and grass move in the wind, the camera follows gently",
+   "motion_prompt": "The children run slowly forward, grass moves in the wind, the camera is fixed",
    "seed": 2015,
    "ken_burns": "right",
    "narration": {
@@ -309,7 +309,7 @@
    ],
    "reason": "The same doorstep that was empty is now full",
    "image_prompt": "the same woman from the first reference and the same man from the second reference, older, sitting on the stone doorstep of a small house with two boys and one girl seen from behind around them, all close together, warm golden light",
-   "motion_prompt": "The family lean together and laugh, shoulders moving, a child hugs the mother, the camera pulls back slowly",
+   "motion_prompt": "The family laugh softly, shoulders moving slightly, the camera is fixed",
    "narration": {
     "am": "ያ አንድ በመቶ እኔ ነበርኩ። ሁላችንም ነን።",
     "en": "I was that one percent. We all are."
@@ -322,7 +322,7 @@
    "size": "extreme wide",
    "references": [],
    "image_prompt": "A family of five seen from far behind as small figures walking together up a green hill toward a huge golden sunrise, long soft shadows, open sky",
-   "motion_prompt": "The family walk slowly up the hill, grass sways, the sunlight grows brighter, the camera rises slowly",
+   "motion_prompt": "The family walk slowly up the hill, grass sways, sunlight grows brighter, the camera is fixed",
    "seed": 2016,
    "ken_burns": "up",
    "narration": {

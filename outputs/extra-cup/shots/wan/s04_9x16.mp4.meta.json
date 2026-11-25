@@ -1,0 +1,20 @@
+{
+ "key": "c7fd34595306d5dafa08d806ae9242e78be5e80d417207dda52ce6cd3c3f49f8",
+ "sha256": "6cca2c7a968a734a60c183438d0c644c77f4b0e2d0b876cee4742f12e66fe942",
+ "inputs": {
+  "stage": "wan/1",
+  "model": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+  "size": [
+   480,
+   832
+  ],
+  "seed": 1004,
+  "motion_prompt": "She speaks gently, her lips and jaw moving naturally, she blinks and tilts her head slightly, firelight flickers, the camera is fixed",
+  "fps": 24,
+  "frames": 121,
+  "steps": 30,
+  "guidance": 5.0,
+  "negative_prompt": "text, letters, subtitles, watermark, extra fingers, deformed hands, distorted face, morphing, flicker, fast motion, camera shake, blurry, low quality",
+  "keyframe": "0069c1e0f6f910233aa798f4904d13372c6bc44577456d8012679d4c3c0049cf"
+ }
+}

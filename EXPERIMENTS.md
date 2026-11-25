@@ -2,7 +2,7 @@
 
 Each entry: hypothesis, the one thing changed, result. Image counts below come from the coding agent viewing contact sheets on 25 Nov 2026; the applicant has not yet confirmed them. Every call is in `runs.jsonl`.
 
-**Done: 5. Target: at least 10.** Nothing is listed here until it has been run.
+**Done: 6. Target: at least 10.** Nothing is listed here until it has been run.
 
 ## 1. Negative wording in an image prompt
 
@@ -38,6 +38,13 @@ Each entry: hypothesis, the one thing changed, result. Image counts below come f
 - **Change:** removed it from s01 (house) and s06 (door), where no cup should appear. The s06 wording also changed.
 - **Result:** with it, the coffee set appeared outdoors in front of the house in vertical s01, and blocked the door in both versions of s06. Without it, neither shot contained it.
 - **Decision:** attach a reference only where its subject belongs. This is a limit on the brief's "condition every keyframe on the sheet" advice.
+
+## 6. Face motion against body motion in Wan
+
+- **Hypothesis:** Wan can move a mouth and a body from one keyframe.
+- **Change:** two clips in one job, same model, 30 steps, guidance 5, 121 frames, 480x832. `s04_9x16`: speaking close-up. `s03_9x16`: medium shot, lifting the head, breathing and pouring. Different keyframes and seeds, so this compares two kinds of shot, not one variable. Prompts are in `storyboards/motion-test.json`.
+- **Result:** (agent viewing 10 frames from each) the face spoke, blinked, smiled and tilted with the same identity throughout; a small purple tint appears in the lower right corner. The body clip failed: the head folds back out of view from about second 2, and the camera moves.
+- **Decision:** let close faces speak; give bodies one small movement; keep the fallback for any clip that breaks.
 
 ## Planned
 

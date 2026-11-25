@@ -36,7 +36,7 @@ Rubric: A1 = codebase and report (100). A2 = film 50, walkthrough 30, post 20.
 - [ ] Reference candidates and style block; (You) approve the golden reference
 - [x] Keyframes for every shot; check faces, hands, cultural and period details
 - [x] Ken Burns for every shot (complete fallback film)
-- [ ] Kaggle Wan worker, resumable; overnight batch at 480p
+- [x] Kaggle Wan worker works (two test clips); batch waits for the applicant's go
 - [ ] Spotting list; three ACE-Step candidates; (You) choose with a reason
 - [ ] Rough cut
 - [ ] EXPERIMENTS.md and FAILURES.md kept current

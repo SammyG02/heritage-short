@@ -1,0 +1,20 @@
+{
+ "key": "f1bb8e3beebfb6bd543e0d681172e52e46fbe510126bb2ccf444040541231da5",
+ "sha256": "81472318c5b8785f5b441cd9493e3d73b29a79487374b0e272e2279661748cf3",
+ "inputs": {
+  "stage": "wan/1",
+  "model": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+  "size": [
+   480,
+   832
+  ],
+  "seed": 1003,
+  "motion_prompt": "She slowly lifts her head and breathes, her arms and hands move gently as she pours, steam rises, the camera is fixed",
+  "fps": 24,
+  "frames": 121,
+  "steps": 30,
+  "guidance": 5.0,
+  "negative_prompt": "text, letters, subtitles, watermark, extra fingers, deformed hands, distorted face, morphing, flicker, fast motion, camera shake, blurry, low quality",
+  "keyframe": "66e9f8a91d9313547fc958783c7934148d51b46fbbb6788e0c4795d9cf81a236"
+ }
+}

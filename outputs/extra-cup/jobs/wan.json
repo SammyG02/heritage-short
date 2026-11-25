@@ -68,5 +68,11 @@
   "steps": 30,
   "guidance": 5.0,
   "negative_prompt": "text, letters, subtitles, watermark, extra fingers, deformed hands, distorted face, morphing, flicker, fast motion, camera shake, blurry, low quality"
- }
+ },
+ "logged": [
+  "done",
+  "loaded",
+  "s03_9x16",
+  "s04_9x16"
+ ]
 }

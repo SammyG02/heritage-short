@@ -51,5 +51,12 @@ What broke, what was tried, what fixed it. Times are EAT, 25 Nov 2026.
 - **Broke:** the first Wan job (one clip, s01 vertical, 480x832, 121 frames) failed before the first step: `CUDA out of memory`, 13.93 GiB allocated by PyTorch on GPU 0 of 14.56 GiB. Loading had taken 309 s.
 - **Layout at the time:** fp16 transformer and a float32 VAE both on GPU 0; a second float32 VAE on GPU 1 for decoding.
 - **Not tried yet:** moving the encoding VAE off GPU 0 or encoding first and freeing it, fewer frames, CPU or group offload, a quantised transformer, `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True`.
-- **Worked around for now:** Ken Burns.
+- **Tried, 18:45:** the VAE (encoding and decoding) moved to GPU 1 so the transformer has GPU 0 alone, plus `expandable_segments:True`. Both were changed at once, so which one mattered is not separated.
+- **Fixed:** two clips completed (19:35): peak 12.5 GB, 832 and 827 s denoising, 1,175 and 1,171 s in total each.
+- **New limit:** about 20 GPU minutes per 5 s clip at 480p, so 24 clips is roughly 8 hours in one session.
+
+## A Wan clip that broke the body (19:35)
+- **Broke:** in `s03_9x16` the woman's head folds backwards until her face is hidden, and the camera moves although the prompt asked for a fixed one.
+- **Likely cause, not isolated:** several actions in one prompt (lift head, breathe, move arms and hands, pour). The single-face clip in the same job held together.
+- **Response:** "One Percent" motion prompts cut to one small movement each, to be tested.
 - **Queue:** both jobs started at 17:47, a little over an hour after submission.
