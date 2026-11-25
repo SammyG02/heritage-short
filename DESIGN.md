@@ -17,6 +17,8 @@ The applicant replaced the invented sample "The Extra Cup" (kept below, and in `
 - **Motion:** the applicant asked for people who move and speak rather than still pictures, so motion prompts ask for lips, heads, hands and breath. Narration is voice-over; mouths are not lip-synced.
 - **Every shot's reason** is in its `reason` field.
 
+- **Style:** the applicant's mother, asked for consent, said she would like to see it as animation. The style block changed from painted gouache to hand-drawn 2D animation.
+
 ## First version: the sample story
 
 Written before any image, voice, music or video was generated.
