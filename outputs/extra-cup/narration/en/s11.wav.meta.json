@@ -1,0 +1,11 @@
+{
+ "key": "8ac5bc2fd3f1ef8f2cabf47104f66eaf1dd79eae381941abf916dc209297b09c",
+ "sha256": "8d766a2ad95ddd67ad4d310fb96176fd3ab778de60b23d118705eb7b183c1490",
+ "inputs": {
+  "stage": "narration/1",
+  "model": "gemini-3.8-flash-lite-tts",
+  "text": "Perhaps the one still on the road is you.",
+  "voice": "Sulafat",
+  "style": "warm, calm and unhurried, like telling a family story at night"
+ }
+}

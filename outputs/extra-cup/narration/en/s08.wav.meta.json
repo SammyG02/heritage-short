@@ -1,0 +1,11 @@
+{
+ "key": "7657078385a7841fad0c1512c68207de0dc3d805e774fdbecebef90f1f0d304f",
+ "sha256": "7521f1fcbf840eb0fc3dab85bf428c0889b21daa9daffdb80e6263d303ffcaaa",
+ "inputs": {
+  "stage": "narration/1",
+  "model": "gemini-3.8-flash-lite-tts",
+  "text": "“It is people who fill a house,” she used to say.",
+  "voice": "Sulafat",
+  "style": "warm, calm and unhurried, like telling a family story at night"
+ }
+}

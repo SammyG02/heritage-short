@@ -1,0 +1,265 @@
+{
+  "id": "the-half-blanket-11251645",
+  "version": 1,
+  "status": "draft",
+  "title": {
+    "en": "The Half Blanket",
+    "am": "እኩሌታው ጋቢ"
+  },
+  "logline": "A young woman leaves her highland home with a single woven blanket, giving half away on a cold city night, only to discover years later that true warmth always finds its way back.",
+  "theme": "Journey and courage: wide landscapes, dawn light, dust and gold",
+  "language": "am",
+  "audience": "families with someone living abroad",
+  "intent": "that kindness comes back",
+  "style_block": "Hand-painted watercolor and gouache texture, golden dawn light, rich ochre and deep indigo palette, soft atmospheric bloom, expressive visible brushstrokes",
+  "people": {
+    "real_people": false,
+    "statement": "All characters are invented. The narrator is a stock synthetic voice."
+  },
+  "models": {
+    "tts": "gemini-3.8-flash-tts",
+    "image": "@cf/black-forest-labs/flux-2-klein-4b",
+    "video": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+    "music": "ACE-Step/ACE-Step-1.5 acestep-v15-turbo"
+  },
+  "voices": {
+    "am": {
+      "voice": "Sulafat",
+      "style": "warm, calm and unhurried, like telling a family story at night"
+    },
+    "en": {
+      "voice": "Sulafat",
+      "style": "warm, calm and unhurried, like telling a family story at night"
+    }
+  },
+  "references": {
+    "character": {
+      "prompt": "portrait of a young East African woman with braided hair, brown skin, warm expressive eyes, wearing a simple earthy tunic",
+      "seeds": [
+        11,
+        22,
+        33,
+        44
+      ],
+      "chosen_seed": 11,
+      "reason": "Not chosen yet"
+    },
+    "object": {
+      "prompt": "still life of a hand-woven wool blanket featuring traditional red, yellow, and blue geometric highland patterns",
+      "seeds": [
+        11,
+        22,
+        33,
+        44
+      ],
+      "chosen_seed": 11,
+      "reason": "Not chosen yet"
+    }
+  },
+  "video": {
+    "fps": 24,
+    "frames": 121,
+    "steps": 30,
+    "guidance": 5.0,
+    "negative_prompt": "text, letters, subtitles, watermark, extra fingers, deformed hands, distorted face, morphing, flicker, fast motion, camera shake, blurry, low quality"
+  },
+  "music": {
+    "caption": "Instrumental acoustic guitar and soft traditional masenqo melodies, gentle ambient soundscape, no vocals",
+    "bpm": 72,
+    "key": "D minor",
+    "duration_s": 90,
+    "seeds": [
+      101,
+      202,
+      303
+    ],
+    "chosen_seed": 101,
+    "reason": "Not chosen yet",
+    "cues": [
+      {
+        "shot": "s01",
+        "action": "start",
+        "note": "Opens before the voice"
+      },
+      {
+        "shot": "s09",
+        "action": "end",
+        "note": "Returns and fades"
+      }
+    ]
+  },
+  "mix": {
+    "duck_threshold": 0.02,
+    "duck_ratio": 6,
+    "duck_attack_ms": 300,
+    "duck_release_ms": 1500,
+    "target_lufs": -14,
+    "true_peak_db": -1,
+    "music_lufs": -20
+  },
+  "shots": [
+    {
+      "id": "s01",
+      "size": "wide",
+      "duration_s": 7,
+      "references": [
+        "character",
+        "object"
+      ],
+      "reason": "Establishes the origin journey from rural highlands into the unknown.",
+      "image_prompt": "A wide highland landscape bathed in soft golden dawn light, a young woman walking along a dusty dirt trail holding a folded woven blanket.",
+      "motion_prompt": "Slow pan right following the forward walk along the dusty trail as dawn light glimmers.",
+      "ken_burns": "right",
+      "narration": {
+        "am": "ከቤት መውጣት ድፍረት ይጠይቃል፤ ነገር ግን የሚወዱንን ሰዎች ሞቅታ አብረን እንይዛለን።",
+        "en": "Leaving home takes courage, but we carry the warmth of those who love us."
+      },
+      "seed": 1001
+    },
+    {
+      "id": "s02",
+      "size": "medium close-up",
+      "duration_s": 7,
+      "references": [
+        "object"
+      ],
+      "reason": "Focuses on the heirloom blanket and its emotional connection to home.",
+      "image_prompt": "Hands gently resting upon a vibrant hand-woven wool blanket with red and yellow woven geometric patterns.",
+      "motion_prompt": "Static camera with a gentle slow zoom in on the hands resting on fabric.",
+      "ken_burns": "in",
+      "narration": {
+        "am": "አክስቷ ይህንን ጋቢ የሸመነችው በሩቅ አገር ከሚነፍሰው የብርድ ንፋስ እንድትጠበቅ ነበር።",
+        "en": "Her aunt wove this blanket to shield her against distant winter winds."
+      },
+      "seed": 1002
+    },
+    {
+      "id": "s03",
+      "size": "extreme wide",
+      "duration_s": 8,
+      "references": [
+        "character"
+      ],
+      "reason": "Shows the scale and isolation of arriving in a new cold city.",
+      "image_prompt": "An extreme wide view of a bustling city street at dusk, golden dust in the air while a solitary traveler walks holding a bundle.",
+      "motion_prompt": "High angle camera slowly tilting down while tracking across the cityscape.",
+      "ken_burns": "down",
+      "narration": {
+        "am": "በዚያች ቀዝቃዛ ከተማ ውስጥ እያንዳንዱ እንግዳ መንገድ ሰፊና ጭጭ ያለ ይመስል ነበር።",
+        "en": "In the bustling cold city, every unfamiliar street felt vast and silent."
+      },
+      "seed": 1003
+    },
+    {
+      "id": "s04",
+      "size": "medium",
+      "duration_s": 7,
+      "references": [
+        "character",
+        "object"
+      ],
+      "reason": "Depicts her vulnerability and intent to sell her prized possession.",
+      "image_prompt": "A young woman sitting on a stone doorstep in a cool dusk setting, holding a folded woven blanket tightly.",
+      "motion_prompt": "Subtle camera push in, keeping a static low angle framing.",
+      "ken_burns": "in",
+      "narration": {
+        "am": "ትኩስ ምግብ ለመግዛት ያንን ውድ ሀብቷን ለመሸጥ አሲባ ነበር።",
+        "en": "She hoped to sell her cherished treasure to afford a simple warm meal."
+      },
+      "seed": 1004
+    },
+    {
+      "id": "s05",
+      "size": "close-up",
+      "duration_s": 8,
+      "references": [],
+      "reason": "Introduces the secondary character in need, inspiring compassion.",
+      "image_prompt": "A young child sitting in an alley doorway wrapped in a thin grey shawl, looking upward into the chilly night air.",
+      "motion_prompt": "Slow pedestal up camera movement maintaining focus on the child looking upward.",
+      "ken_burns": "up",
+      "narration": {
+        "am": "ነገር ግን አጠገቧ አንድ የሚንቀጠቀጥ ልጅ በብርዱ ውስጥ በደከሙ ዓይኖች ቀና ብሎ አያት።",
+        "en": "Nearby, a shivering child looked up with gentle, tired eyes in the frost."
+      },
+      "seed": 1005
+    },
+    {
+      "id": "s06",
+      "size": "insert",
+      "duration_s": 7,
+      "references": [
+        "object"
+      ],
+      "reason": "Captures the pivotal selfless act of sharing the woven blanket.",
+      "image_prompt": "A hand-woven wool blanket cleanly divided into two matching halves lying softly across wooden boards.",
+      "motion_prompt": "Top down camera slowly zooming out to show the divided textile pieces.",
+      "ken_burns": "out",
+      "narration": {
+        "am": "ጋቢውን ለሁለት በመክፈል እኩሌታውን በሚንቀጠቀጠው ህፃን ላይ ፍቅር በተሞላበት እጅ አሸፈነችው።",
+        "en": "She carefully divided the blanket, wrapping half around the small shivering child."
+      },
+      "seed": 1006
+    },
+    {
+      "id": "s07",
+      "size": "wide",
+      "duration_s": 8,
+      "references": [
+        "character"
+      ],
+      "reason": "Marks the passage of time into the present day.",
+      "image_prompt": "A quiet sunlit city alley bathed in golden morning light, an older woman sitting near a warm window with half a woven blanket over her shoulders.",
+      "motion_prompt": "Slow horizontal camera pan from left to right across the sunlit wall.",
+      "ken_burns": "right",
+      "narration": {
+        "am": "ብዙ የበረዶ ወራት አለፉ፤ ነገር ግን የዚያች ትንሽ ቸርነት ሞቅታ በውስጧ ህያው ሆኖ ቀረ።",
+        "en": "Many winters passed by, yet the memory of that small kindness remained warm."
+      },
+      "seed": 1007
+    },
+    {
+      "id": "s08",
+      "size": "medium close-up",
+      "duration_s": 7,
+      "references": [
+        "object"
+      ],
+      "reason": "Reveals the surprise return of the lost half of the blanket.",
+      "image_prompt": "A young adult standing in bright morning sunlight, holding out half of a faded hand-woven wool blanket with matching red and gold patterns.",
+      "motion_prompt": "Gentle camera tilt up following the hands lifting the folded fabric.",
+      "ken_burns": "up",
+      "narration": {
+        "am": "በአንድ ፀሐያማ ጠዋት አንድ ያደገ እንግዳ የተጠበቀውን የጋቢውን እኩሌታ ይዞ ተመለሰ።",
+        "en": "One bright morning, a grown youth returned holding the faded half woven cloth."
+      },
+      "seed": 1008
+    },
+    {
+      "id": "s09",
+      "size": "medium",
+      "duration_s": 8,
+      "references": [
+        "character",
+        "object"
+      ],
+      "reason": "Completes the emotional arc, showing that kindness returns.",
+      "image_prompt": "Two pairs of hands bringing together two matching halves of a woven pattern blanket under warm morning sun rays.",
+      "motion_prompt": "Slow circular orbit around the central gesture as golden sunlight glints across the fabric.",
+      "ken_burns": "in",
+      "narration": {
+        "am": "የተሰጠ የማንኛውም ፍቅር መልካምነት መጨረሻው ወደ እኛ ተመልሶ ይመጣል።",
+        "en": "Every act of pure love given away eventually finds its way back home."
+      },
+      "seed": 1009
+    }
+  ],
+  "end_card": {
+    "duration_s": 3,
+    "lines": [
+      "The Half Blanket",
+      "እኩሌታው ጋቢ",
+      "Pictures, voice and music made with AI",
+      "All characters are invented"
+    ]
+  }
+}

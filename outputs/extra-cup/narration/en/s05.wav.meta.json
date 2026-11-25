@@ -1,0 +1,11 @@
+{
+ "key": "37484e681cd9e85c584ccca78477b83ead2a617bfccc66e3e0f15b4628fd3c6a",
+ "sha256": "9cb660ee80e9b810bbae39b61b3d5a15e0e6d25efbe72ec17ce416f929c431fe",
+ "inputs": {
+  "stage": "narration/1",
+  "model": "gemini-3.8-flash-lite-tts",
+  "text": "For many years, that cup sat empty.",
+  "voice": "Sulafat",
+  "style": "warm, calm and unhurried, like telling a family story at night"
+ }
+}

@@ -11,7 +11,7 @@ def path(sb, shot, lang):
 
 def inputs(sb, shot, lang):
     v = sb["voices"][lang]
-    return {"stage": "narration/1", "model": sb["models"]["tts"], "text": shot["narration"][lang],
+    return {"stage": "narration/1", "model": v.get("model", sb["models"]["tts"]), "text": shot["narration"][lang],
             "voice": v["voice"], "style": v["style"]}
 
 

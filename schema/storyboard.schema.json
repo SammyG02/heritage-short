@@ -21,7 +21,7 @@
       "properties": {"tts": {"$ref": "#/$defs/text"}, "image": {"$ref": "#/$defs/text"}, "video": {"$ref": "#/$defs/text"}, "music": {"$ref": "#/$defs/text"}}},
     "voices": {"type": "object", "minProperties": 1, "propertyNames": {"enum": ["am", "en"]},
       "additionalProperties": {"type": "object", "additionalProperties": false, "required": ["voice", "style"],
-        "properties": {"voice": {"$ref": "#/$defs/text"}, "style": {"$ref": "#/$defs/text"}}}},
+        "properties": {"voice": {"$ref": "#/$defs/text"}, "style": {"$ref": "#/$defs/text"}, "model": {"$ref": "#/$defs/text", "description": "Overrides models.tts for this language, for example when a daily quota is used up"}}}},
     "references": {"type": "object", "minProperties": 1,
       "additionalProperties": {"type": "object", "additionalProperties": false, "required": ["prompt", "seeds", "chosen_seed", "reason"],
         "properties": {"prompt": {"$ref": "#/$defs/text"}, "seeds": {"type": "array", "minItems": 1, "items": {"type": "integer"}},

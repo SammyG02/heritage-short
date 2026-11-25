@@ -1,0 +1,11 @@
+{
+ "key": "bfaa993c1025e731f4e3d8cd64ced03519a6fb57c3e8567e5fb8796f201ddfae",
+ "sha256": "4de14a560032a06c4a8a2e288abcc112f4661491c4129c807a1fe26ea6c87c1c",
+ "inputs": {
+  "stage": "narration/1",
+  "model": "gemini-3.8-flash-lite-tts",
+  "text": "But one rainy evening, there was a knock at the door.",
+  "voice": "Sulafat",
+  "style": "warm, calm and unhurried, like telling a family story at night"
+ }
+}

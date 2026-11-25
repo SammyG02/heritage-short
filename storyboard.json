@@ -29,7 +29,8 @@
     },
     "en": {
       "voice": "Sulafat",
-      "style": "warm, calm and unhurried, like telling a family story at night"
+      "style": "warm, calm and unhurried, like telling a family story at night",
+      "model": "gemini-3.8-flash-lite-tts"
     }
   },
   "references": {

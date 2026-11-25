@@ -1,0 +1,11 @@
+{
+ "key": "b6c2dd3254f321ce9c19779aeb6898e33440991d56cb1f5cb61f67ce6e9994ac",
+ "sha256": "ba9a26721e16ccff891b9507fb7fd436ea9d12d70a36c39a791c0fa02be3cb69",
+ "inputs": {
+  "stage": "narration/1",
+  "model": "gemini-3.8-flash-lite-tts",
+  "text": "But when I make coffee, I still set out one extra cup.",
+  "voice": "Sulafat",
+  "style": "warm, calm and unhurried, like telling a family story at night"
+ }
+}

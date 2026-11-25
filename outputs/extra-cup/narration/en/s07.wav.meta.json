@@ -1,0 +1,11 @@
+{
+ "key": "a92b03202d943bfb994baff916822528b992d3cf8a0d7508bc353cdd3d0efe91",
+ "sha256": "2bc8fbf9842a4a9c1536497bb3582a62eefce8d2b48d85d0acbbc98c627e29f7",
+ "inputs": {
+  "stage": "narration/1",
+  "model": "gemini-3.8-flash-lite-tts",
+  "text": "It was a traveller, soaked by the rain. Without even asking his name, she gave him the coffee.",
+  "voice": "Sulafat",
+  "style": "warm, calm and unhurried, like telling a family story at night"
+ }
+}

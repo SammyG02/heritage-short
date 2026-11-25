@@ -1,0 +1,11 @@
+{
+ "key": "396c172e2a9945bf446a3bbf6daf843e87a3e374859f249eb77213257a928666",
+ "sha256": "492441fa0af230ef5e184c29c170a4a137ab52714643295c067b55fe423325dc",
+ "inputs": {
+  "stage": "narration/1",
+  "model": "gemini-3.8-flash-lite-tts",
+  "text": "“Grandmother, whose is this one?” I asked her.",
+  "voice": "Sulafat",
+  "style": "warm, calm and unhurried, like telling a family story at night"
+ }
+}

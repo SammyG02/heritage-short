@@ -1,0 +1,11 @@
+{
+ "key": "7409726ad805812eec7a0daa762c3920838ccd665644c76ced606b8c12118b0b",
+ "sha256": "99dd9f5691df9cc94f57577d026b5c7225551c6d0f5b66a1ab4709ef10633518",
+ "inputs": {
+  "stage": "narration/1",
+  "model": "gemini-3.8-flash-lite-tts",
+  "text": "Whenever my grandmother made coffee, she always set out one extra cup.",
+  "voice": "Sulafat",
+  "style": "warm, calm and unhurried, like telling a family story at night"
+ }
+}

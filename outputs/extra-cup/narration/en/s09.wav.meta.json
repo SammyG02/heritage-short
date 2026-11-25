@@ -1,0 +1,11 @@
+{
+ "key": "1cc930546599617e37ebd2edd9be867920e0249e4eac6897271446563d46cfbe",
+ "sha256": "2ef3a17dc581d0abdce98146852a23e6c0c7ee3c4b956aea64de3191e1f7c59b",
+ "inputs": {
+  "stage": "narration/1",
+  "model": "gemini-3.8-flash-lite-tts",
+  "text": "Today she is gone, and I live far from home.",
+  "voice": "Sulafat",
+  "style": "warm, calm and unhurried, like telling a family story at night"
+ }
+}

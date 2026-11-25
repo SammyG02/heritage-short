@@ -1,0 +1,11 @@
+{
+ "key": "54b78ba64512e4d8c77dea84f11ad88a136ee77a8cddfa3f18e8239ff66e67d3",
+ "sha256": "b1014e84cd6e8a9627225b35b6768951de279338ed54264c77a7586aac04e07b",
+ "inputs": {
+  "stage": "narration/1",
+  "model": "gemini-3.8-flash-lite-tts",
+  "text": "If we were three, four cups. If we were four, five.",
+  "voice": "Sulafat",
+  "style": "warm, calm and unhurried, like telling a family story at night"
+ }
+}

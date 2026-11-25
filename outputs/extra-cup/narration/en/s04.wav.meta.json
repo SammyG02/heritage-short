@@ -1,0 +1,11 @@
+{
+ "key": "5b87a64bc5ac7fff3b23884d0b779025e1080aa044f166694b69ed6c80c6f2f6",
+ "sha256": "2a505308cd5ac94ab12f596516b163182c39e7827295309cf4677af63664ecd5",
+ "inputs": {
+  "stage": "narration/1",
+  "model": "gemini-3.8-flash-lite-tts",
+  "text": "She smiled and said, “It is for the one still on the road.”",
+  "voice": "Sulafat",
+  "style": "warm, calm and unhurried, like telling a family story at night"
+ }
+}
