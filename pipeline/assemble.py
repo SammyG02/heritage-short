@@ -174,7 +174,7 @@ def join_shots(rows, clips, tails, target):
     last = "c0"
     for i in range(1, len(clips)):
         kind = (rows[i]["shot"].get("transition") or {}).get("type", "cut")
-        parts.append(f"[{last}][c{i}]xfade=transition={'fade' if kind == 'cut' else kind}:duration={tails[i - 1] / FPS:.5f}"
+        parts.append(f"[{last}][c{i}]xfade=transition={'fade' if kind in ('cut', 'dissolve') else kind}:duration={tails[i - 1] / FPS:.5f}"
                      f":offset={rows[i]['start']:.5f},settb=1/24[x{i}]")
         last = f"x{i}"
     config.run_ffmpeg([*args, "-filter_complex", ";".join(parts), "-map", f"[{last}]", "-r", 24, "-c:v", "libx264", "-preset", "veryfast",
