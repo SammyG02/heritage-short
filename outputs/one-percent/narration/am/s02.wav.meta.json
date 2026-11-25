@@ -1,0 +1,11 @@
+{
+ "key": "37087865cf154dc6ee18e1fb6bde05db4043a817420d65e9a452ab269d252e24",
+ "sha256": "56a5770f062f735d39668010830f00d201ea4f2caedad83816436d3ccf877ab0",
+ "inputs": {
+  "stage": "narration/1",
+  "model": "gemini-3.1-flash-tts-preview",
+  "text": "ሆኖም አንድ ዓመት አለፈ። ከዚያም ሁለት። ከዚያም አምስት።",
+  "voice": "Algieba",
+  "style": "a young man, warm, calm and unhurried, like telling a family story at night"
+ }
+}

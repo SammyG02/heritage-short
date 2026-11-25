@@ -1,0 +1,24 @@
+{
+ "key": "b7d58e57f792bcb2cbee8e3fb2212dd2d86d4a6b0f0aa5faa4994ef21afffeef",
+ "sha256": "230099d225ca5ff6f7352993d7459fc2da5f5fa0a43e6f9ff555218f159451c8",
+ "inputs": {
+  "stage": "narration/2",
+  "gap_s": 0.2,
+  "parts": [
+   {
+    "stage": "narration/1",
+    "model": "gemini-3.1-flash-tts-preview",
+    "text": "ብዙ ሰው እዚህ ጋር ተስፋ ይቆርጥ ነበር። እነሱ ግን ጠየቁ፦",
+    "voice": "Algieba",
+    "style": "a young man, warm, calm and unhurried, like telling a family story at night"
+   },
+   {
+    "stage": "narration/1",
+    "model": "gemini-3.1-flash-tts-preview",
+    "text": "ሌላ የት እንሞክር?",
+    "voice": "Sulafat",
+    "style": "a mother, warm and heartfelt, speaking gently to her family"
+   }
+  ]
+ }
+}

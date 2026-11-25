@@ -26,7 +26,7 @@ def part_path(sb, shot, lang, i):
 def parts(sb, shot, lang):
     """One set of TTS inputs per speaker turn."""
     v = sb["voices"][lang]
-    model, text, who = v.get("model", sb["models"]["tts"]), shot["narration"][lang], shot.get("quote_voice")
+    model, text, who = shot.get("tts_model") or v.get("model", sb["models"]["tts"]), shot["narration"][lang], shot.get("quote_voice")
     if not who:
         return [{"stage": "narration/1", "model": model, "text": text, "voice": v["voice"], "style": v["style"]}]
     rows = []
@@ -46,6 +46,19 @@ def inputs(sb, shot, lang):
 def seconds(p) -> float:
     with wave.open(str(p)) as w:
         return w.getnframes() / w.getframerate()
+
+
+def speech(p):
+    """(start, end) in seconds of the spoken part, so silent edges do not lengthen the film."""
+    with wave.open(str(p)) as w:
+        if w.getsampwidth() != 2 or w.getnchannels() != 1:
+            return 0.0, w.getnframes() / w.getframerate()
+        rate, data = w.getframerate(), array.array("h", w.readframes(w.getnframes()))
+    step = rate // 50
+    loud = [i for i in range(0, len(data), step) if max(map(abs, data[i:i + step])) > 250]
+    if not loud:
+        return 0.0, len(data) / rate
+    return max(0.0, loud[0] / rate - 0.06), min(len(data) / rate, (loud[-1] + step) / rate + 0.12)
 
 
 def join(files) -> bytes:

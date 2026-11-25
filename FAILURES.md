@@ -13,6 +13,12 @@ What broke, what was tried, what fixed it. Times are EAT, 25 Nov 2026.
 - **Worked around:** a storyboard can set a TTS model per language. English uses gemini-3.8-flash-lite-tts, which completed all 11 lines.
 - **Cost:** the two languages are not voiced by the same model, so they are not a fair quality comparison.
 
+## All free TTS allowances used in one day (19:38 to 19:42)
+- **Broke:** the new story's Amharic needed 14 calls (one per speaker turn). 3.8 Flash TTS was already used up; 3.8 Flash Lite TTS allowed one more line and then reported its own limit of 10 a day.
+- **Tried:** gemini-3.1-flash-tts-preview (through generateContent, which returns raw PCM): 11 calls succeeded, then 429, "limit: 10" a day; also 3 a minute, which the retry waited out. gemini-2.5-flash-preview-tts reported its limit of 10 already exceeded although `runs.jsonl` has no earlier call to it, cause unknown. gemini-2.5-pro-preview-tts has a free limit of 0.
+- **State:** 10 of 12 lines voiced (s01 by 3.8 Lite, s02 to s10 by 3.1). s11 and s12 wait for the reset, about 11:00 on 26 Nov. `radio --partial` shows them as text so the user test is not blocked.
+- **Lesson:** 11 English test lines for the sample story cost the allowance the real film needed. Test on one line, not a whole film.
+
 ## TTS moved to a different API
 - **Found:** gemini-3.8-flash-tts is documented on the Interactions API, not `generateContent`, and the documentation moved from ai.google.dev to aistudio.google.com.
 - **Fixed:** built directly on Interactions. It returns a complete WAV file.

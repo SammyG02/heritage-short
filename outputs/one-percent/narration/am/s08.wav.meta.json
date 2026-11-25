@@ -1,0 +1,11 @@
+{
+ "key": "02efaaab61c2efbb4f81f69c7f8c14a15eeb5ebac50f19a2e474c2c9fb0da2d6",
+ "sha256": "b614fd47a669f0596d61b97938042299c039cf81e68568a6f3929be2fb41b482",
+ "inputs": {
+  "stage": "narration/1",
+  "model": "gemini-3.1-flash-tts-preview",
+  "text": "ያ ሕፃን እኔ ነበርኩ።",
+  "voice": "Algieba",
+  "style": "a young man, warm, calm and unhurried, like telling a family story at night"
+ }
+}

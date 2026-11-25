@@ -1,0 +1,11 @@
+{
+ "key": "0a36aad9539f631eefdefd2acfd672cf56094cbd15842a181e467b8b9ebe3210",
+ "sha256": "4a0b02dc2122d800f287fdd928b5018da10ddd4a1a89f3dc6d20370962b08b08",
+ "inputs": {
+  "stage": "narration/1",
+  "model": "gemini-3.1-flash-tts-preview",
+  "text": "እናቴ ዛሬም ትላለች፦",
+  "voice": "Algieba",
+  "style": "a young man, warm, calm and unhurried, like telling a family story at night"
+ }
+}

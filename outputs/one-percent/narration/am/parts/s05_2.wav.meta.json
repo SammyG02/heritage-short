@@ -1,0 +1,11 @@
+{
+ "key": "d252904af39f61758772a2e6d1b9f22d868a545c32db1729e0e66fa1d34ef763",
+ "sha256": "af972b93d67009914d9af35e363c093c98563b26f40d73b279d61fe28957e935",
+ "inputs": {
+  "stage": "narration/1",
+  "model": "gemini-3.1-flash-tts-preview",
+  "text": "ሌላ የት እንሞክር?",
+  "voice": "Sulafat",
+  "style": "a mother, warm and heartfelt, speaking gently to her family"
+ }
+}

@@ -1,0 +1,11 @@
+{
+ "key": "9b0a0a1a65f12e61963b7e5d08ca1217d536519dd6427c5e441e1b95cdf02eea",
+ "sha256": "042a4a85f72646f776daed36cc8a88b2cdfdfd1226b29df004130a0e1b90fc36",
+ "inputs": {
+  "stage": "narration/1",
+  "model": "gemini-3.1-flash-tts-preview",
+  "text": "እና ከዚያ… ሕፃን ተወለደ።",
+  "voice": "Algieba",
+  "style": "a young man, warm, calm and unhurried, like telling a family story at night"
+ }
+}

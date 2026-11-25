@@ -5,6 +5,7 @@ import json
 import random
 import re
 import time
+import wave
 
 import requests
 from PIL import Image
@@ -79,6 +80,26 @@ def gemini_json(stage, item, prompt, model, seed=None, temperature=0.8):
     return retry(go)
 
 
+def _tts_generate_content(text, voice, style, model):
+    """Older TTS models: generateContent, raw 16-bit PCM. Returns (wav bytes, tokens in, tokens out)."""
+    body = {"contents": [{"parts": [{"text": f"Read aloud, {style}:\n{text}"}]}],
+            "generationConfig": {"responseModalities": ["AUDIO"],
+                                 "speechConfig": {"voiceConfig": {"prebuiltVoiceConfig": {"voiceName": voice}}}}}
+    r = _check(requests.post(f"{GEMINI}/models/{model}:generateContent", headers=_headers(), json=body, timeout=180)).json()
+    found = [p["inlineData"] for c in r.get("candidates", []) for p in c.get("content", {}).get("parts", []) if "inlineData" in p]
+    if not found:
+        raise ProviderError("TTS returned no audio", retryable=True)
+    rate = re.search(r"rate=(\d+)", found[0].get("mimeType", ""))
+    raw = io.BytesIO()
+    with wave.open(raw, "wb") as w:
+        w.setnchannels(1)
+        w.setsampwidth(2)
+        w.setframerate(int(rate.group(1)) if rate else 24000)
+        w.writeframes(b"".join(base64.b64decode(f["data"]) for f in found))
+    u = r.get("usageMetadata", {})
+    return raw.getvalue(), u.get("promptTokenCount", 0), u.get("candidatesTokenCount", 0)
+
+
 def gemini_tts(stage, item, text, voice, style, model) -> bytes:
     """Return a WAV file. 3.8 TTS uses the Interactions API, not generateContent."""
     body = {"model": model,
@@ -89,6 +110,11 @@ def gemini_tts(stage, item, text, voice, style, model) -> bytes:
 
     def go(attempt):
         with runlog.call(stage, item, "gemini", model, {"text": text, "voice": voice, "style": style}, None, attempt) as rec:
+            if "3.8" not in model:
+                data, n_in, n_out = _tts_generate_content(text, voice, style, model)
+                rec["usage"] = {"in": n_in, "out": n_out}  # no list price recorded: not checked for this model
+                rec["output"] = {"bytes": len(data)}
+                return data
             r = _check(requests.post(f"{GEMINI}/interactions", headers=_headers(), json=body, timeout=180)).json()
             audio = [c for s in r.get("steps", []) if s.get("type") == "model_output"
                      for c in s.get("content", []) if c.get("type") == "audio"]

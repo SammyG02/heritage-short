@@ -1,0 +1,11 @@
+{
+ "key": "5eee0c83737b3b3338edfa23a0099db6211f8fb90e9a4a5628f4a8eced210b4e",
+ "sha256": "d6ea1dae73c8a492091ec631249c83d76b6b302f6323d00b025872a584d26a1e",
+ "inputs": {
+  "stage": "narration/1",
+  "model": "gemini-3.1-flash-tts-preview",
+  "text": "ሌሎች ሴቶች በዘጠኝ ወር ይወልዳሉ፤ እኔ ግን በዘጠኝ ዓመት ወለድኩ።",
+  "voice": "Sulafat",
+  "style": "a mother, warm and heartfelt, speaking gently to her family"
+ }
+}

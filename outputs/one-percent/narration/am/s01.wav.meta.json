@@ -1,0 +1,11 @@
+{
+ "key": "c2794cf92b2cfd3692c70a42b214874ee5dd0a9b22cc8f4f666e101960f9762b",
+ "sha256": "44d8ca32456d46eee3e140f35024a1f2b7e09a07b9fc652ac5fa94e1169791cf",
+ "inputs": {
+  "stage": "narration/1",
+  "model": "gemini-3.8-flash-lite-tts",
+  "text": "ሁለት በወጣትነታቸው የተጋቡ ባልና ሚስት ነበሩ፤ ልጅ እንደሚወልዱም እርግጠኛ ነበሩ።",
+  "voice": "Algieba",
+  "style": "a young man, warm, calm and unhurried, like telling a family story at night"
+ }
+}

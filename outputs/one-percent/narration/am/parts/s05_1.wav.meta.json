@@ -1,0 +1,11 @@
+{
+ "key": "183514161055794238a9437865b33a3cd4fca4dd1aff621ece64c5a1770774a2",
+ "sha256": "2222e3db243728633d04abda375d58b9af98b2c0f8315f40b0481232e6fe7ae0",
+ "inputs": {
+  "stage": "narration/1",
+  "model": "gemini-3.1-flash-tts-preview",
+  "text": "ብዙ ሰው እዚህ ጋር ተስፋ ይቆርጥ ነበር። እነሱ ግን ጠየቁ፦",
+  "voice": "Algieba",
+  "style": "a young man, warm, calm and unhurried, like telling a family story at night"
+ }
+}

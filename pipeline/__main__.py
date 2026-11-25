@@ -5,7 +5,7 @@ import time
 from pathlib import Path
 
 from . import assemble, gpu, keyframes, narration, script, shots, smoke
-from .core import config, runlog, storyboard
+from .core import cache, config, runlog, storyboard
 
 GPU_WAIT_S = 4 * 3600
 
@@ -41,7 +41,6 @@ def film(sb, lang, use_gpu):
 
 def status(sb, langs):
     """What a run would regenerate, without calling any model."""
-    from .core import cache
     for lang in langs:
         stale = [s["id"] for s in sb["shots"] if not cache.fresh(narration.path(sb, s, lang), narration.inputs(sb, s, lang))]
         print(f"narration {lang}: {', '.join(stale) or 'all cached'}")
@@ -66,7 +65,8 @@ def main(argv=None):
     sub.add_parser("validate", help="check the storyboard")
     sub.add_parser("smoke", help="call each provider once")
     sub.add_parser("status", help="show what is stale")
-    sub.add_parser("radio", help="narration over placeholder music on black")
+    rd = sub.add_parser("radio", help="narration over placeholder music on black")
+    rd.add_argument("--partial", action="store_true", help="call no model; show lines that have no voice yet as text")
     sub.add_parser("references", help="reference sheet only")
     sub.add_parser("keyframes", help="keyframes only")
     sub.add_parser("narration", help="narration only")
@@ -103,8 +103,12 @@ def main(argv=None):
         elif a.cmd == "narration":
             narration.run(sb, lang)
         elif a.cmd == "radio":
-            narration.run(sb, lang)
-            assemble.radio(sb, lang)
+            missing = ()
+            if a.partial:
+                missing = [s["id"] for s in sb["shots"] if not cache.fresh(narration.path(sb, s, lang), narration.inputs(sb, s, lang))]
+            else:
+                narration.run(sb, lang)
+            assemble.radio(sb, lang, missing)
         elif a.cmd == "references":
             keyframes.run_references(sb)
         elif a.cmd == "keyframes":

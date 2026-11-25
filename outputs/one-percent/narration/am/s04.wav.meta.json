@@ -1,0 +1,11 @@
+{
+ "key": "2ffa18e2e000b32c336d36150043a2992dac23e4c70f778ca8e0e3301e95aecf",
+ "sha256": "a55a43132f261b74b56ea337392ac3ad11abb06e8b6ddfcd491b88a2846042bd",
+ "inputs": {
+  "stage": "narration/1",
+  "model": "gemini-3.1-flash-tts-preview",
+  "text": "ከዚያም ሐኪሙ፦ በኢትዮጵያ የመውለድ ዕድላቸው ከአንድ በመቶ በታች መሆኑን ነገራቸው።",
+  "voice": "Algieba",
+  "style": "a young man, warm, calm and unhurried, like telling a family story at night"
+ }
+}

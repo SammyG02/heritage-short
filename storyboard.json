@@ -33,7 +33,8 @@
      "voice": "Sulafat",
      "style": "a mother, warm and heartfelt, speaking gently to her family"
     }
-   }
+   },
+   "model": "gemini-3.1-flash-tts-preview"
   },
   "en": {
    "voice": "Algieba",
@@ -139,7 +140,8 @@
    "narration": {
     "am": "ሁለት በወጣትነታቸው የተጋቡ ባልና ሚስት ነበሩ፤ ልጅ እንደሚወልዱም እርግጠኛ ነበሩ።",
     "en": "There were a husband and a wife who married young. They were sure they would have children."
-   }
+   },
+   "tts_model": "gemini-3.8-flash-lite-tts"
   },
   {
    "id": "s02",
@@ -162,7 +164,7 @@
   {
    "id": "s03",
    "size": "medium close-up",
-   "duration_s": 4,
+   "duration_s": 3.5,
    "seed": 2004,
    "ken_burns": "in",
    "references": [
@@ -234,7 +236,7 @@
   {
    "id": "s07",
    "size": "close-up",
-   "duration_s": 4,
+   "duration_s": 3.5,
    "seed": 2008,
    "ken_burns": "in",
    "references": [],
@@ -249,7 +251,7 @@
   {
    "id": "s08",
    "reason": "The reveal: the narrator was the baby all along",
-   "duration_s": 5,
+   "duration_s": 4,
    "size": "medium close-up",
    "references": [
     "mother",
@@ -300,7 +302,7 @@
   {
    "id": "s11",
    "size": "wide",
-   "duration_s": 5,
+   "duration_s": 4,
    "seed": 2011,
    "ken_burns": "out",
    "references": [

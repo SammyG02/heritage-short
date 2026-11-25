@@ -61,6 +61,7 @@
         "image_prompt": {"$ref": "#/$defs/text"},
         "motion_prompt": {"$ref": "#/$defs/text", "description": "Motion and camera only"},
         "seed": {"type": "integer"},
+        "tts_model": {"type": "string", "description": "Overrides the TTS model for this shot, for example a line made before a quota ran out"},
         "quote_voice": {"type": "string", "description": "Character who speaks the quoted words; needs a voice in voices.<lang>.characters"},
         "ken_burns": {"enum": ["in", "out", "left", "right", "up", "down"]},
         "narration": {"type": "object", "required": ["en"], "propertyNames": {"enum": ["am", "en"]}, "additionalProperties": {"$ref": "#/$defs/text"},

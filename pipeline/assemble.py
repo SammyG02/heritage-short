@@ -14,15 +14,16 @@ from .core.storyboard import out
 FPS, LEAD, TAIL = 24, 0.3, 0.3
 
 
-def timeline(sb, lang):
+def timeline(sb, lang, unvoiced=()):
     """Shot lengths follow the voice, then snap up to the score's beat so cuts land on it."""
     beat = 60 / sb["music"]["bpm"]
     t, rows = 0, []
     for shot in sb["shots"]:
-        voice = narration.seconds(narration.path(sb, shot, lang))
+        a, b = narration.speech(narration.path(sb, shot, lang)) if shot["id"] not in unvoiced else (0.0, 0.0)
+        voice = b - a
         need = max(shot["duration_s"], LEAD + voice + TAIL)
         end = round(math.ceil((t / FPS + need) / beat - 1e-6) * beat * FPS)
-        rows.append({"shot": shot, "start": t / FPS, "frames": end - t, "voice": voice})
+        rows.append({"shot": shot, "start": t / FPS, "frames": end - t, "voice": voice, "cut": (a, b)})
         t = end
     total = t / FPS + sb["end_card"]["duration_s"]
     return rows, total
@@ -100,14 +101,16 @@ def mix(sb, lang, rows, total, folder, bed=None):
     m = sb["mix"]
     score, kind = bed or music.score(sb)
     args, parts = [], []
+    rows_all, rows = rows, [r for r in rows if r["voice"]]
     for i, r in enumerate(rows):
         p = narration.path(sb, r["shot"], lang)
         args += ["-i", p]
         ms = round((r["start"] + LEAD) * 1000)
-        parts.append(f"[{i}:a]aresample=48000,aformat=channel_layouts=mono,volume={_gain(p, -18):.2f}dB,adelay={ms}[v{i}]")
+        a, b = r["cut"]
+        parts.append(f"[{i}:a]atrim={a:.3f}:{b:.3f},asetpts=PTS-STARTPTS,aresample=48000,aformat=channel_layouts=mono,volume={_gain(p, -18):.2f}dB,adelay={ms}[v{i}]")
     n = len(rows)
     args += ["-stream_loop", -1, "-i", score]
-    marks = {c["action"]: next(r for r in rows if r["shot"]["id"] == c["shot"]) for c in sb["music"]["cues"]}
+    marks = {c["action"]: next(r for r in rows_all if r["shot"]["id"] == c["shot"]) for c in sb["music"]["cues"]}
     vol = "1"
     if "lower" in marks:
         a = marks["lower"]["start"]
@@ -140,14 +143,24 @@ def check_length(total):
         raise config.PipelineError(f"The film would be {total:.1f} s; it must be 60-90 s. Shorten or lengthen narration or durations.")
 
 
-def radio(sb, lang):
-    """Narration over placeholder music on a black screen."""
+def radio(sb, lang, unvoiced=()):
+    """Narration over placeholder music on a black screen. Lines without a voice yet are shown as text."""
     folder = _folder(sb, lang)
-    rows, total = timeline(sb, lang)
+    rows, total = timeline(sb, lang, unvoiced)
     audio, _ = mix(sb, lang, rows, total, folder, (music.placeholder(sb), "placeholder"))
-    p = folder / "radio_cut.mp4"
+    p = folder / ("radio_cut_partial.mp4" if unvoiced else "radio_cut.mp4")
+    work, vf = folder / "work", []
+    if unvoiced:
+        work.mkdir(exist_ok=True)
+        shutil.copy(config.FONT, work / "font.ttf")
+        caps = [(r["start"] + LEAD, r["start"] + r["frames"] / FPS, textwrap.wrap(r["shot"]["narration"][lang], 26))
+                for r in rows if r["shot"]["id"] in unvoiced]
+        write_subtitles(sb, caps, "9x16", work)
+        vf = ["-vf", "subtitles=subs_9x16.ass:fontsdir=."]
     config.run_ffmpeg(["-f", "lavfi", "-i", f"color=black:s=720x1280:r=24:d={total:.3f}", "-i", audio, "-c:v", "libx264",
-                       "-preset", "veryfast", "-c:a", "aac", "-b:a", "192k", "-pix_fmt", "yuv420p", "-shortest", p])
+                       "-preset", "veryfast", "-c:a", "aac", "-b:a", "192k", "-pix_fmt", "yuv420p", "-shortest", *vf, p], cwd=work if vf else None)
+    if vf:
+        shutil.rmtree(work)
     print(f"  radio cut {lang}: {total:.1f}s  {p}")
     return p
 

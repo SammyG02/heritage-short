@@ -1,0 +1,11 @@
+{
+ "key": "bbc0e1a53512f2329a6ac43bcf2852466d0fb63c6c62aaa41b50d5bc2a290371",
+ "sha256": "dbad433bb62809e721739c3db75e6a45d92f69762e0180f7377738fc487e175c",
+ "inputs": {
+  "stage": "narration/1",
+  "model": "gemini-3.1-flash-tts-preview",
+  "text": "መልሱ ሩቅ ነበር፤ እስራኤል። አዲስ ሃገር፣ አዲስ ሐኪሞች፣ አዲስ ቋንቋ፣ አራት አመት።",
+  "voice": "Algieba",
+  "style": "a young man, warm, calm and unhurried, like telling a family story at night"
+ }
+}

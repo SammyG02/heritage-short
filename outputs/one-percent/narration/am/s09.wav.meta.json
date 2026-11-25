@@ -1,0 +1,24 @@
+{
+ "key": "a551b9e4bc03990cf3c5d9a2557d0442f8d3501c5e0c0a1fdbd13c943a453b5a",
+ "sha256": "dc58576657c480853e7078c4279c453a0c916b4b58c6e904f8e768da5a6b9284",
+ "inputs": {
+  "stage": "narration/2",
+  "gap_s": 0.2,
+  "parts": [
+   {
+    "stage": "narration/1",
+    "model": "gemini-3.1-flash-tts-preview",
+    "text": "እናቴ ዛሬም ትላለች፦",
+    "voice": "Algieba",
+    "style": "a young man, warm, calm and unhurried, like telling a family story at night"
+   },
+   {
+    "stage": "narration/1",
+    "model": "gemini-3.1-flash-tts-preview",
+    "text": "ሌሎች ሴቶች በዘጠኝ ወር ይወልዳሉ፤ እኔ ግን በዘጠኝ ዓመት ወለድኩ።",
+    "voice": "Sulafat",
+    "style": "a mother, warm and heartfelt, speaking gently to her family"
+   }
+  ]
+ }
+}

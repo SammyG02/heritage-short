@@ -1,0 +1,11 @@
+{
+ "key": "54f957360036a37bfb6d5eff02c286cb035584fd4b56e7a4cedf554c006c2004",
+ "sha256": "474d98ec9d28d2ad5e278bcc6b10283314ecedba2d9e94cd7b997079cdfffc01",
+ "inputs": {
+  "stage": "narration/1",
+  "model": "gemini-3.1-flash-tts-preview",
+  "text": "ጸለዩ። ጠበቁ።",
+  "voice": "Algieba",
+  "style": "a young man, warm, calm and unhurried, like telling a family story at night"
+ }
+}
