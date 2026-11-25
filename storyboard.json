@@ -15,7 +15,7 @@
  "people": {
   "real_people": false,
   "based_on_real_people": true,
-  "consent": "pending",
+  "consent": "recorded",
   "statement": "Based on the applicant's own family story. Faces are invented drawings made from text and the narrator is a stock synthetic voice. Nobody's photograph or recording is used. Consent is recorded in ETHICS.md."
  },
  "models": {

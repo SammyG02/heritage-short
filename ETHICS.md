@@ -2,7 +2,7 @@
 
 ## Consent
 
-**Status: mother, father, sister and brother all agreed, as reported by the applicant. Still locked until the mother confirms her exact quoted line. Nothing of "One Percent" has been generated.** The pipeline refuses to call a model for it until `people.consent` in `storyboard.json` is `recorded` (`require_consent` in `pipeline/core/storyboard.py`, with a test).
+**Status: mother, father, sister and brother all agreed, as reported by the applicant. Recorded before anything of the story was generated. Nothing of "One Percent" has been generated.** The pipeline refuses to call a model for it until `people.consent` in `storyboard.json` is `recorded` (`require_consent` in `pipeline/core/storyboard.py`, with a test).
 
 "One Percent" is the applicant's true family story. It tells private medical history and quotes their mother.
 
@@ -13,7 +13,7 @@
 | Person | How they appear | Agreed to the story, the public film and the words | When and how |
 |---|---|---|---|
 | Applicant (narrator in the story) | Told in first person, stock voice | Supplied the story, 25 Nov 2026 | Written instruction to the agent |
-| Mother | Invented drawing; one quoted line | Agreed to the film; said it would be great to see it in animation style. Agreed to public posting. **Exact quoted line: to confirm** | In person at home, as reported by the applicant on 25 Nov 2026 (about 19:15 and 19:30 EAT) |
+| Mother | Invented drawing; one quoted line | Agreed to the film; said it would be great to see it in animation style. Agreed to public posting. Approved her quoted line (s09) and the question spoken by her character (s05), after the applicant told her about them | In person at home, as reported by the applicant on 25 Nov 2026 (about 19:15 and 19:30 EAT; the lines confirmed afterwards) |
 | Father | Invented drawing | Approved; wants to see the final result. Agreed to public posting | Same |
 | Sister, adult (22) | Mentioned, seen from behind | Said yes; agreed to public posting | Same |
 | Brother, adult (20) | Mentioned, seen from behind | Said yes; agreed to public posting | Same |
