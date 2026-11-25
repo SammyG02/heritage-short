@@ -51,3 +51,17 @@ Every attempt, including failures, is one line in `runs.jsonl`: run id, stage, i
 ## Decision: two keyframes per shot
 
 Each shot has its own vertical and horizontal picture rather than one picture cropped twice. It doubles image calls but keeps faces and hands whole in both. The cost is that the two versions are not identical.
+
+## Quality rules every film gets
+
+| Promise | How it is kept | If it fails |
+|---|---|---|
+| Same characters throughout | One approved reference image per character; a locked `look` sentence added to every prompt that shows them; older versions are drawn `from` the approved one | Changing the chosen image makes exactly that character's shots stale |
+| Emotion fits the moment | `emotion` per shot goes into the picture and motion prompts; `voice_emotion` into the voice style | New drafts without an emotion are rejected (`script.lint`) |
+| Meaningful transitions | `transition` per shot with a reason; shots still start exactly on their beat | Default is a cut |
+| Pictures are checked | `qa.py`: a vision model scores identity, emotion, content, anatomy and style; below 7 is redrawn with another seed, at most 3 tries, best kept | No vision model available: kept and marked `unchecked`, never `passed` |
+| Voices | Quota or outage: the next model in `models.tts_fallbacks` with the same voice name; the model used is stored beside the file | All exhausted: the run stops and resumes later; no half-voiced film is exported |
+| Motion | Wan clip | Slow camera move on the same picture |
+| Music | Chosen ACE-Step score | Placeholder made in code |
+
+The vision check reduces bad pictures; it does not guarantee good ones. A person still approves references and looks at every shot.

@@ -165,6 +165,22 @@ def radio(sb, lang, unvoiced=()):
     return p
 
 
+def join_shots(rows, clips, tails, target):
+    """Join shots with their transitions. Cuts are one-frame fades, so every shot still starts exactly on its beat."""
+    args, parts = [], []
+    for i, c in enumerate(clips):
+        args += ["-i", c]
+        parts.append(f"[{i}:v]fps=24,settb=1/24,setsar=1,format=yuv420p[c{i}]")
+    last = "c0"
+    for i in range(1, len(clips)):
+        kind = (rows[i]["shot"].get("transition") or {}).get("type", "cut")
+        parts.append(f"[{last}][c{i}]xfade=transition={'fade' if kind == 'cut' else kind}:duration={tails[i - 1] / FPS:.5f}"
+                     f":offset={rows[i]['start']:.5f},settb=1/24[x{i}]")
+        last = f"x{i}"
+    config.run_ffmpeg([*args, "-filter_complex", ";".join(parts), "-map", f"[{last}]", "-r", 24, "-c:v", "libx264", "-preset", "veryfast",
+                       "-crf", 16, "-pix_fmt", "yuv420p", "-an", target])
+
+
 def film(sb, lang, ratios=("9x16", "16x9")):
     folder = _folder(sb, lang)
     rows, total = timeline(sb, lang)
@@ -175,7 +191,9 @@ def film(sb, lang, ratios=("9x16", "16x9")):
     results = []
     for ratio in ratios:
         work.mkdir(exist_ok=True)
-        clips = [shots.make(sb, r["shot"], ratio, lang, r["frames"])[0] for r in rows]
+        moves = any(shots.tail_frames(r["shot"]) for r in rows)
+        tails = [shots.tail_frames(n["shot"]) or 1 for n in rows[1:]] + [0] if moves else [0] * len(rows)
+        clips = [shots.make(sb, r["shot"], ratio, lang, r["frames"] + x)[0] for r, x in zip(rows, tails)]
         w, h = shots.DELIVERY[ratio]
         (work / "list.txt").write_text("".join(f"file '{c.as_posix()}'\n" for c in clips), encoding="utf-8")
         card = end_card(sb, ratio, work)
@@ -187,7 +205,12 @@ def film(sb, lang, ratios=("9x16", "16x9")):
         graph = (f"[0:v]subtitles=subs_{ratio}.ass:fontsdir=.,fade=t=in:d=0.6,fade=t=out:st={body - 0.5:.3f}:d=0.5[a];"
                  f"[1:v]scale={w}:{h},fade=t=in:d=0.4,format=yuv420p,fps=24[b];[a][b]concat=n=2:v=1:a=0[v]")
         p = folder / f"film_{ratio}.mp4"
-        config.run_ffmpeg(["-f", "concat", "-safe", 0, "-i", "list.txt", "-loop", 1, "-t", card_s, "-framerate", 24, "-i", card,
+        source = ["-f", "concat", "-safe", 0, "-i", "list.txt"]
+        if moves:
+            joined = work / "joined.mp4"
+            join_shots(rows, clips, tails, joined)
+            source = ["-i", joined]
+        config.run_ffmpeg([*source, "-loop", 1, "-t", card_s, "-framerate", 24, "-i", card,
                            "-i", audio, "-filter_complex", graph, "-map", "[v]", "-map", "2:a", "-r", 24, "-c:v", "libx264",
                            "-preset", "medium", "-crf", 20, "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k", "-ar", 48000,
                            "-movflags", "+faststart", "-t", f"{total:.3f}", "-metadata", "comment=Made with AI", p], cwd=work)

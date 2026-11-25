@@ -1,0 +1,14 @@
+{
+ "key": "7a5fb3fe16bf0c6d8c1d46fd5a3122ef2d5bee352e5f73dfad394347c5deda38",
+ "sha256": "12999ace5404910113313be24ae27c8ba0372a7be467f6990c28b57fe51053c9",
+ "inputs": {
+  "stage": "reference/1",
+  "model": "@cf/black-forest-labs/flux-2-klein-4b",
+  "seed": 33,
+  "size": [
+   1024,
+   1024
+  ],
+  "prompt": "Character portrait of an invented young Ethiopian man in his late twenties, slim face, warm brown skin, short dark hair, trimmed short beard, white handwoven cotton collared shirt, kind steady expression, facing the viewer, plain warm background, upper body. 3D animated film frame with a painted look, sculpted rounded characters with expressive faces, hand-painted textures and visible soft brush strokes on 3D forms, painterly background, warm amber and terracotta palette with deep indigo shadows, gentle cinematic light, subject centred in frame, full-bleed picture reaching every edge"
+ }
+}

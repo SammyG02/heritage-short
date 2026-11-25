@@ -12,10 +12,14 @@ def wan_path(sb, shot, ratio):
     return out(sb, "shots", "wan", f"{shot['id']}_{ratio}.mp4")
 
 
+def motion(shot):
+    return shot["motion_prompt"] + (f". Emotion: {shot['emotion']}" if shot.get("emotion") else "")
+
+
 def wan_inputs(sb, shot, ratio):
     kf = keyframes.path(sb, shot, ratio)
     return {"stage": "wan/1", "model": sb["models"]["video"], "size": list(WAN_SIZE[ratio]), "seed": shot["seed"],
-            "motion_prompt": shot["motion_prompt"], **sb["video"],
+            "motion_prompt": motion(shot), **sb["video"],
             "keyframe": cache.file_sha(kf) if kf.exists() else "missing"}
 
 
@@ -41,6 +45,12 @@ def _zoompan(move, frames, w, h):
     # Upscaling first hides zoompan's whole-pixel stepping.
     return (f"scale={w*2}:{h*2}:force_original_aspect_ratio=increase,crop={w*2}:{h*2},"
             f"zoompan=z='{z}':x='{x}':y='{y}':d={frames}:s={w}x{h}:fps=24,format=yuv420p")
+
+
+def tail_frames(shot):
+    """Extra frames the previous shot needs so it can still be seen while this one arrives."""
+    t = shot.get("transition")
+    return 0 if not t or t["type"] == "cut" else round(t.get("seconds", 0.6) * 24)
 
 
 def make(sb, shot, ratio, lang, frames, force=False):

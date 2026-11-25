@@ -4,7 +4,7 @@ import json
 
 import pytest
 
-from pipeline import gpu, keyframes, narration
+from pipeline import gpu, keyframes, narration, qa, script, shots
 from pipeline.core import cache, config, providers, runlog, storyboard
 
 
@@ -100,7 +100,7 @@ def test_network_error_is_not_a_failed_job():
 def test_true_story_is_locked_until_consent_is_recorded(sb, monkeypatch, tmp_path):
     calls = []
     monkeypatch.setattr(config, "OUTPUTS", tmp_path)
-    for name in ("gemini_tts", "flux"):
+    for name in ("gemini_tts", "flux", "gemini_json"):
         monkeypatch.setattr(providers, name, lambda *a, **k: calls.append(a) or b"x")
     sb["people"].update(based_on_real_people=True, consent="pending")
     for stage in (lambda: narration.run(sb, "am"), lambda: keyframes.run_references(sb), lambda: keyframes.run(sb),
@@ -137,3 +137,70 @@ def test_quoted_words_use_the_character_voice_and_retake_alone(sb, monkeypatch, 
     sb["shots"][0]["narration"]["en"] = "She says: “Nine long years.”"
     narration.run(sb, "en")
     assert said[2:] == [("Nine long years.", "Woman")]
+
+
+def _png():
+    import io
+    from PIL import Image
+    buf = io.BytesIO()
+    Image.new("RGB", (8, 8)).save(buf, "PNG")
+    return buf.getvalue()
+
+
+def test_locked_look_and_emotion_reach_every_prompt(sb):
+    for s in sb["shots"]:
+        text = keyframes.prompt(sb, s, "9x16")
+        assert s["emotion"] in text and s["emotion"] in shots.motion(s)
+        for name in s["references"]:
+            assert sb["references"][name]["look"] in text
+
+
+def test_changing_the_chosen_mother_makes_every_shot_of_her_stale(sb, monkeypatch, tmp_path):
+    monkeypatch.setattr(config, "OUTPUTS", tmp_path)
+    for seed in (11, 22):
+        cache.store(keyframes.ref_path(sb, "mother", seed), bytes([seed]), {})
+    sb["references"]["mother"]["chosen_seed"] = 11
+    before = {s["id"]: cache.key(keyframes.inputs(sb, s, "9x16")) for s in sb["shots"]}
+    sb["references"]["mother"]["chosen_seed"] = 22
+    changed = {s["id"] for s in sb["shots"] if cache.key(keyframes.inputs(sb, s, "9x16")) != before[s["id"]]}
+    assert changed == {s["id"] for s in sb["shots"] if "mother" in s["references"]}
+
+
+def test_a_bad_picture_is_redrawn_and_the_best_is_kept(sb, monkeypatch):
+    drawn, worst = [], iter([3, 9])
+    monkeypatch.setattr(providers, "flux", lambda *a, **k: drawn.append(a[5]) or _png())
+    monkeypatch.setattr(providers, "gemini_json", lambda *a, **k: {**dict.fromkeys(qa.KEYS, 10), "identity": next(worst), "problem": "face"})
+    s = sb["shots"][1]
+    _, report = qa.best_of(sb, s, "9x16", keyframes.inputs(sb, s, "9x16"), [])
+    assert drawn == [s["seed"], s["seed"] + qa.SEED_STEP]
+    assert report["status"] == "passed" and report["seed_used"] == drawn[1]
+
+
+def test_no_checker_means_unchecked_not_passed(sb, monkeypatch):
+    def down(*a, **k):
+        raise providers.ProviderError("quota")
+    monkeypatch.setattr(providers, "flux", lambda *a, **k: _png())
+    monkeypatch.setattr(providers, "gemini_json", down)
+    s = sb["shots"][1]
+    assert qa.best_of(sb, s, "9x16", keyframes.inputs(sb, s, "9x16"), [])[1]["status"] == "unchecked"
+
+
+def test_voice_falls_back_keeps_the_voice_and_records_the_model(sb, monkeypatch, tmp_path):
+    asked = []
+
+    def speak(stage, item, text, voice, style, model):
+        asked.append((voice, model))
+        if model == "first":
+            raise providers.ProviderError("quota")
+        return b"x"
+    monkeypatch.setattr(providers, "gemini_tts", speak)
+    sb["models"]["tts_fallbacks"] = ["second", "third"]
+    assert narration._speak(sb, "i", {"text": "t", "voice": "V", "style": "s", "model": "first"}) == (b"x", "second")
+    assert asked == [("V", "first"), ("V", "second")]
+
+
+def test_drafts_without_emotion_look_or_transition_are_rejected(sb):
+    assert script.lint(sb) == []
+    sb["shots"][0].pop("emotion")
+    sb["references"]["mother"].pop("look")
+    assert len(script.lint(sb)) == 2

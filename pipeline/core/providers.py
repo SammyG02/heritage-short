@@ -58,8 +58,17 @@ def _price(n_in, n_out, rate):
     return round((n_in * rate[0] + n_out * rate[1]) / 1e6, 6)
 
 
-def gemini_json(stage, item, prompt, model, seed=None, temperature=0.8):
-    body = {"contents": [{"parts": [{"text": prompt}]}],
+def _small_jpeg(data):
+    im = Image.open(io.BytesIO(data)).convert("RGB")
+    im.thumbnail((768, 768))
+    buf = io.BytesIO()
+    im.save(buf, "JPEG", quality=88)
+    return base64.b64encode(buf.getvalue()).decode()
+
+
+def gemini_json(stage, item, prompt, model, seed=None, temperature=0.8, images=()):
+    parts = [{"inlineData": {"mimeType": "image/jpeg", "data": _small_jpeg(d)}} for d in images] + [{"text": prompt}]
+    body = {"contents": [{"parts": parts}],
             "generationConfig": {"responseMimeType": "application/json", "temperature": temperature}}
     if seed is not None:
         body["generationConfig"]["seed"] = seed

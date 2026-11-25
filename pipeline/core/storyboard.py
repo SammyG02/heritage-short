@@ -32,6 +32,9 @@ def validate(data: dict) -> list[str]:
     for name, ref in data["references"].items():
         if ref["chosen_seed"] not in ref["seeds"]:
             errors.append(f"references/{name}: chosen_seed must be one of seeds")
+        parent = ref.get("from")
+        if parent and (parent not in data["references"] or parent == name or data["references"][parent].get("from")):
+            errors.append(f"references/{name}: 'from' must name a reference that is not itself derived")
     if data["music"]["chosen_seed"] not in data["music"]["seeds"]:
         errors.append("music: chosen_seed must be one of seeds")
     for cue in data["music"]["cues"]:

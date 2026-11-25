@@ -1,0 +1,14 @@
+{
+ "key": "7bf17432d0d4671f0710c722e4d3fcd9a05035cda3c8f79f93d36d54f593be43",
+ "sha256": "b684361b5b9cb887fde73eaeb6336129c8e9a8569ecbe31e8e03446b0f5d8116",
+ "inputs": {
+  "stage": "reference/1",
+  "model": "@cf/black-forest-labs/flux-2-klein-4b",
+  "seed": 22,
+  "size": [
+   1024,
+   1024
+  ],
+  "prompt": "Character portrait of an invented young Ethiopian woman in her twenties, oval face, warm brown skin, dark hair parted in the centre and drawn back under a thin white cotton netela shawl with a narrow green and gold woven border, long white handwoven cotton dress, small plain round silver stud earrings, hopeful calm expression, facing the viewer, plain warm background, upper body. 3D animated film frame with a painted look, sculpted rounded characters with expressive faces, hand-painted textures and visible soft brush strokes on 3D forms, painterly background, warm amber and terracotta palette with deep indigo shadows, gentle cinematic light, subject centred in frame, full-bleed picture reaching every edge"
+ }
+}

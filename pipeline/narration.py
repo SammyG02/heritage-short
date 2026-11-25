@@ -27,14 +27,15 @@ def parts(sb, shot, lang):
     """One set of TTS inputs per speaker turn."""
     v = sb["voices"][lang]
     model, text, who = shot.get("tts_model") or v.get("model", sb["models"]["tts"]), shot["narration"][lang], shot.get("quote_voice")
+    feel = f", {shot['voice_emotion']}" if shot.get("voice_emotion") else ""
     if not who:
-        return [{"stage": "narration/1", "model": model, "text": text, "voice": v["voice"], "style": v["style"]}]
+        return [{"stage": "narration/1", "model": model, "text": text, "voice": v["voice"], "style": v["style"] + feel}]
     rows = []
     for piece in QUOTED.split(text):
         speaker = v["characters"][who] if QUOTED.fullmatch(piece) else v
         words = piece.strip(" «»“”")
         if re.search(r"\w", words):
-            rows.append({"stage": "narration/1", "model": model, "text": words, "voice": speaker["voice"], "style": speaker["style"]})
+            rows.append({"stage": "narration/1", "model": model, "text": words, "voice": speaker["voice"], "style": speaker["style"] + feel})
     return rows
 
 
@@ -87,8 +88,16 @@ def join(files) -> bytes:
 
 
 def _speak(sb, item, inp):
+    """Returns (wav, model used). The same stock voice name is kept when a fallback model has to step in."""
     require_consent(sb)
-    return providers.gemini_tts("narration", item, inp["text"], inp["voice"], inp["style"], inp["model"])
+    error = None
+    for model in dict.fromkeys([inp["model"], *sb["models"].get("tts_fallbacks", [])]):
+        try:
+            return providers.gemini_tts("narration", item, inp["text"], inp["voice"], inp["style"], model), model
+        except providers.ProviderError as e:
+            error = error or e
+            print(f"    {model} unavailable for {item}")
+    raise error
 
 
 def run(sb, lang, force=False):
@@ -99,13 +108,15 @@ def run(sb, lang, force=False):
             continue
         turns = parts(sb, shot, lang)
         if len(turns) == 1:
-            cache.store(p, _speak(sb, f"{lang}/{shot['id']}", inp), inp)
+            data, used = _speak(sb, f"{lang}/{shot['id']}", inp)
+            cache.store(p, data, inp, model_used=used)
         else:
             files = []
             for i, turn in enumerate(turns, 1):
                 f = part_path(sb, shot, lang, i)
                 if force or not cache.fresh(f, turn):
-                    cache.store(f, _speak(sb, f"{lang}/{shot['id']}_{i}", turn), turn)
+                    data, used = _speak(sb, f"{lang}/{shot['id']}_{i}", turn)
+                    cache.store(f, data, turn, model_used=used)
                 files.append(f)
             cache.store(p, join(files), inp)
         made += 1

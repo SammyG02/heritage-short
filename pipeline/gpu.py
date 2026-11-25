@@ -81,7 +81,7 @@ def submit_wan(sb, ratios=("9x16", "16x9"), only=None):
                 continue
             inp = shots.wan_inputs(sb, s, ratio)
             clips.append({"item": f"{s['id']}_{ratio}", "shot": s["id"], "ratio": ratio, "key": cache.key(inp), "inputs": inp,
-                          "motion_prompt": s["motion_prompt"], "seed": s["seed"], "size": inp["size"],
+                          "motion_prompt": inp["motion_prompt"], "seed": s["seed"], "size": inp["size"],
                           "keyframe_file": f"{s['id']}_{ratio}.jpg"})
     if not clips:
         print("  wan: nothing to submit, all clips are cached")

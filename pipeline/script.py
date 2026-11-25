@@ -30,18 +30,23 @@ Narration languages: English{extra}
 Rules:
 - 9 to 11 shots, ids s01, s02 and so on. duration_s 5 to 8 each; total 60 to 80.
 - One idea and one gentle movement per shot. Vary shot size.
-- One invented main character. Never depict, name or identify a real person. No crowds.
+- One or two invented main characters, the same people in every shot, with only a change of age or clothes the story needs. Never depict, name or identify a real person. No crowds.
 - Narration: short spoken sentences, 8 to 16 words, natural in each language, not word-for-word translation.
 - image_prompt: describe only what is visible. Say what is there; never use words like no, without or not. No written text in the image.
-- motion_prompt: only motion and camera, not the subject's appearance.
+- motion_prompt: one small movement and a fixed camera, not the subject's appearance. Faces may speak, blink or smile; bodies move little.
+- emotion: what the faces and bodies visibly feel in this shot, specific and true to this moment of the story; "quiet place, nobody visible" when nobody is seen.
+- voice_emotion: how the narrator should sound on this line, a few words.
+- transition: how this shot arrives from the one before, chosen for meaning: cut (shock or change), dissolve (time or memory), fadeblack (an ending, night, loss),
+  fadewhite (birth, hope, revelation), smoothleft or smoothright (a journey), smoothup (rising), circleopen (a discovery). Give a one-sentence reason. Use cut for s01.
+- Keep the surprise or turn of the story hidden in words AND pictures until its shot.
 - reason: one sentence on why the shot exists.
 - references: names from the references you define; "character" for shots showing the main character, "object" for shots showing the returning object.
 
 Return one JSON object with exactly these keys:
 title (object: language code to text), logline, style_block (palette, light, medium; hand-painted; no artist names),
-references: {{"character": {{"prompt": "portrait..."}}, "object": {{"prompt": "still life..."}}}},
+references: {{"character": {{"prompt": "portrait...", "look": "one sentence: age, face, hair, clothes, colours"}}, "object": {{"prompt": "still life...", "look": "one sentence"}}}},
 music: {{"caption": "Instrumental ... no vocals", "bpm": integer 60-100, "key": "D minor"}},
-shots: array of {{id, size (one of: extreme wide, wide, medium, medium close-up, close-up, insert), duration_s, references, reason,
+shots: array of {{id, size (one of: extreme wide, wide, medium, medium close-up, close-up, insert), duration_s, references, reason, emotion, voice_emotion, transition (object: type, reason),
  image_prompt, motion_prompt, ken_burns (one of: in, out, left, right, up, down), narration: {{"en": "..."{narr}}}}}
 """
 
@@ -66,7 +71,7 @@ def build(draft, *, language, theme, audience, intent, base):
               theme=theme, language=language, audience=audience, intent=intent, style_block=draft["style_block"])
     # The main TTS model allows about 10 free calls a day, fewer than one film can need.
     sb["voices"] = {k: {**base["voices"][k], "model": "gemini-3.8-flash-lite-tts"} for k in dict.fromkeys([language, "en"])}
-    sb["references"] = {k: {"prompt": v["prompt"], "seeds": [11, 22, 33, 44], "chosen_seed": 11, "reason": "Not chosen yet"}
+    sb["references"] = {k: {"prompt": v["prompt"], "seeds": [11, 22, 33, 44], "chosen_seed": 11, "reason": "Not chosen yet", **({"look": v["look"]} if v.get("look") else {})}
                         for k, v in draft["references"].items()}
     ids = [s["id"] for s in draft["shots"]]
     sb["music"].update(caption=draft["music"]["caption"], bpm=int(draft["music"]["bpm"]), key=draft["music"]["key"], reason="Not chosen yet",
@@ -77,6 +82,18 @@ def build(draft, *, language, theme, audience, intent, base):
         s["narration"] = {k: s["narration"][k] for k in sb["voices"] if k in s["narration"]}
     sb["end_card"]["lines"] = [*dict.fromkeys(draft["title"].values())][:2] + ["Pictures, voice and music made with AI", "All characters are invented"]
     return sb
+
+
+def lint(sb):
+    """Rules every film must meet that a JSON Schema cannot express."""
+    problems = [f"{s['id']}: missing {k}" for s in sb["shots"] for k in ("emotion", "transition") if not s.get(k)]
+    problems += [f"references/{n}: missing look" for n, r in sb["references"].items() if not r.get("look")]
+    sizes = [s["size"] for s in sb["shots"]]
+    problems += [f"{sb['shots'][i]['id']}: three shots in a row have the same size" for i in range(2, len(sizes)) if len(set(sizes[i - 2:i + 1])) == 1]
+    for s in sb["shots"]:
+        if len(s["narration"]["en"].split()) > 24:
+            problems.append(f"{s['id']}: narration is too long for one shot")
+    return problems
 
 
 def new(story, language, theme, audience, intent):
@@ -96,7 +113,7 @@ def new(story, language, theme, audience, intent):
         draft = _generate(prompt + (("\nYour last answer had these problems, fix them:\n" + "\n".join(problems)) if problems else ""))
         try:
             sb = build(draft, language=language, theme=theme_text, audience=audience, intent=intent, base=base)
-            problems = validate(sb)
+            problems = validate(sb) + lint(sb)
         except (KeyError, TypeError, ValueError, AttributeError) as e:
             problems = [f"missing or wrong field: {e}"]
         if not problems:
