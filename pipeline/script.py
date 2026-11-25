@@ -64,7 +64,8 @@ def build(draft, *, language, theme, audience, intent, base):
     slug = re.sub(r"[^a-z0-9]+", "-", title.lower()).strip("-")[:28] or "story"
     sb.update(id=f"{slug}-{datetime.now():%m%d%H%M}", version=1, status="draft", title=draft["title"], logline=draft["logline"],
               theme=theme, language=language, audience=audience, intent=intent, style_block=draft["style_block"])
-    sb["voices"] = {k: base["voices"][k] for k in dict.fromkeys([language, "en"])}
+    # The main TTS model allows about 10 free calls a day, fewer than one film can need.
+    sb["voices"] = {k: {**base["voices"][k], "model": "gemini-3.8-flash-lite-tts"} for k in dict.fromkeys([language, "en"])}
     sb["references"] = {k: {"prompt": v["prompt"], "seeds": [11, 22, 33, 44], "chosen_seed": 11, "reason": "Not chosen yet"}
                         for k, v in draft["references"].items()}
     ids = [s["id"] for s in draft["shots"]]

@@ -5,3 +5,5 @@
 *.flac binary
 *.mp4 binary
 *.ttf binary
+*.bat text eol=crlf
+*.sh text eol=lf
