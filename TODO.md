@@ -9,33 +9,33 @@ Rubric: A1 = codebase and report (100). A2 = film 50, walkthrough 30, post 20.
 - [x] (You) Decided: invented characters only, no real people shown
 - [ ] Confirm stock TTS voice only and story does not identify a real person; otherwise get consent
 - [ ] (You) Line up five testers for tonight and tomorrow afternoon
-- [ ] (You) Gemini API key
-- [ ] (You) Cloudflare account ID and Workers AI token
-- [ ] (You) Phone-verified Kaggle account and API token
+- [x] (You) Gemini API key
+- [x] (You) Cloudflare account ID and Workers AI token
+- [x] (You) Phone-verified Kaggle account and API token
 - [ ] (You) Confirm whether the frontier lane is available
 - [ ] (You) Choose where the MP4s, walkthrough and post will be hosted
-- [ ] Install FFmpeg; Python environment with pinned dependencies
+- [x] Install FFmpeg; Python environment with pinned dependencies
 - [ ] .gitignore, .env.example; verify live model names, limits and licences
-- [ ] Smoke test each provider, logged to runs.jsonl
+- [x] Smoke test each provider, logged to runs.jsonl
 
 ## 1. Story and radio cut
-- [ ] DESIGN.md audience and intent, committed before generation
-- [ ] ETHICS.md consent record, committed before generation
-- [ ] JSON Schema and validator
-- [ ] Shared core: hash cache, retries, logger, atomic writes, tests
-- [ ] Story intake command: story, language, theme, audience, feeling -> draft storyboard
-- [ ] storyboard.json v1: 8-12 shots, each with a reason
+- [x] DESIGN.md audience and intent, committed before generation
+- [x] ETHICS.md consent record, committed before generation
+- [x] JSON Schema and validator
+- [x] Shared core: hash cache, retries, logger, atomic writes, tests
+- [x] Story intake command: story, language, theme, audience, feeling -> draft storyboard
+- [x] storyboard.json v1: 8-12 shots, each with a reason
 - [ ] (You) Edit and approve the script; check language and facts
-- [ ] Narration per shot; measure durations; total film 60-90 s
+- [x] Narration per shot; measure durations; total film 60-90 s
 - [ ] (You) Listen for pronunciation errors
-- [ ] Radio cut with placeholder music
+- [x] Radio cut with placeholder music
 - [ ] (You) Test 1 with at least three people; collect their actual words
 - [ ] Record test 1; commit storyboard v2 with visible changes
 
 ## 2. Pictures and music
 - [ ] Reference candidates and style block; (You) approve the golden reference
-- [ ] Keyframes for every shot; check faces, hands, cultural and period details
-- [ ] Ken Burns for every shot (complete fallback film)
+- [x] Keyframes for every shot; check faces, hands, cultural and period details
+- [x] Ken Burns for every shot (complete fallback film)
 - [ ] Kaggle Wan worker, resumable; overnight batch at 480p
 - [ ] Spotting list; three ACE-Step candidates; (You) choose with a reason
 - [ ] Rough cut
@@ -43,7 +43,7 @@ Rubric: A1 = codebase and report (100). A2 = film 50, walkthrough 30, post 20.
 
 ## 3. Edit
 - [ ] Cut to the music, duck, subtitles, loudness, end card, both exports
-- [ ] Automatic check: 60-90 s, dimensions, 24 fps, about -14 LUFS, peak at or below -1 dB
+- [x] Automatic check: 60-90 s, dimensions, 24 fps, about -14 LUFS, peak at or below -1 dB
 - [ ] (You) Check on a phone speaker and headphones
 - [ ] (You) Test 2 with at least three people
 - [ ] Record test 2; apply changes; re-export

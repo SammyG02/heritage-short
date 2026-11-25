@@ -1,0 +1,39 @@
+# Failures
+
+What broke, what was tried, what fixed it. Times are EAT, 25 Nov 2026.
+
+## Gemini 3.8 Flash overloaded (15:58 and 16:41)
+- **Broke:** HTTP 503 "experiencing high demand" in the smoke test and again drafting a storyboard; one attempt ran 171 s before failing and another timed out at 180 s.
+- **Tried:** three attempts with backoff, as built. All failed both times.
+- **Fixed:** the script stage falls through to gemini-3.6-flash, then gemini-3.5-flash-lite. 3.6 succeeded in 38 s.
+
+## Gemini TTS daily quota (16:41)
+- **Broke:** HTTP 429, "10 requests per day on Free Tier", on the first English line after 12 successful calls. An 11-shot film in one language uses a full day's allowance.
+- **Tried:** nothing on the same model; the code recognises a daily limit and does not waste retries on it.
+- **Worked around:** a storyboard can set a TTS model per language. English uses gemini-3.8-flash-lite-tts, which completed all 11 lines.
+- **Cost:** the two languages are not voiced by the same model, so they are not a fair quality comparison.
+
+## TTS moved to a different API
+- **Found:** gemini-3.8-flash-tts is documented on the Interactions API, not `generateContent`, and the documentation moved from ai.google.dev to aistudio.google.com.
+- **Fixed:** built directly on Interactions. It returns a complete WAV file.
+
+## Kaggle command-line tool would not start
+- **Broke:** `ModuleNotFoundError: No module named 'six'` from a clean install of kaggle 2.2.5.
+- **Fixed:** `six` added to requirements.txt.
+
+## FFmpeg installed but not found
+- **Broke:** winget reported FFmpeg installed, but it was not on PATH in the open shell.
+- **Fixed:** `config.ffmpeg()` looks on PATH, then the winget folder, then falls back to the copy in the imageio-ffmpeg package.
+
+## Truncated font
+- **Broke:** the font download stopped at exactly 524,288 bytes of 1,143,168.
+- **Noticed:** the suspiciously round size.
+- **Fixed:** downloaded again and opened it with Pillow before use.
+
+## Network drops
+- **Broke:** one SSL end-of-file error during English line s04 (and one interrupted pip download).
+- **Fixed:** the stage's retry succeeded on attempt 2.
+
+## Culturally wrong objects
+- **Broke:** all four first coffee pots were teapots. See experiment 3.
+- **Still open:** wide s01 contains a fake signature; grass appears indoors in s11; wide s10 shows the hand on the pot instead of the cup. Waiting for the Cloudflare allowance to reset at 03:00.
