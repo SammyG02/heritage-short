@@ -37,3 +37,12 @@ What broke, what was tried, what fixed it. Times are EAT, 25 Nov 2026.
 ## Culturally wrong objects
 - **Broke:** all four first coffee pots were teapots. See experiment 3.
 - **Still open:** wide s01 contains a fake signature; grass appears indoors in s11; wide s10 shows the hand on the pot instead of the cup. Waiting for the Cloudflare allowance to reset at 03:00.
+
+## A network error mistaken for a failed GPU job (16:58 and 17:04)
+- **Broke:** the watcher stopped, reporting Kaggle jobs as failed. Both were still queued.
+- **Cause:** `status` searched the whole command output for the word "error", so a connection message matched.
+- **Fixed:** only Kaggle's own status word is read; anything else is "unknown" and polling continues. A test covers it. `film --gpu` also stops waiting after four hours and uses the fallbacks.
+
+## Kaggle GPU queue
+- **Broke:** both T4 jobs were still queued about 45 minutes after submission, with 0 of 30 GPU hours used.
+- **Worked around:** the film is already complete with Ken Burns moves and a placeholder score; clips replace them when they arrive.

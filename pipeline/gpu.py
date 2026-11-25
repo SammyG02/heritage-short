@@ -1,6 +1,7 @@
 """Kaggle jobs: submit stale GPU work, check it, and fetch finished outputs into the cache."""
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -124,11 +125,17 @@ def status(sb, kind):
     p = _state(sb, kind)
     if not p.exists():
         return "none"
-    text = kaggle("kernels", "status", json.loads(p.read_text(encoding="utf-8"))["kernel"], check=False).lower()
-    for s in ("complete", "error", "cancel", "running", "queued"):
-        if s in text.split("has status")[-1]:
-            return s
-    return text.strip()[-120:]
+    if not os.environ.get("KAGGLE_API_TOKEN") and not os.environ.get("KAGGLE_KEY"):
+        return "no Kaggle login configured"
+    text = kaggle("kernels", "status", json.loads(p.read_text(encoding="utf-8"))["kernel"], check=False)
+    return parse_status(text)
+
+
+def parse_status(text):
+    """Only Kaggle's own status word counts; a network error message is 'unknown', not a failed job."""
+    m = re.search(r'has status "(?:KernelWorkerStatus\.)?(\w+)"', text)
+    word = m.group(1).lower() if m else "unknown"
+    return "cancelled" if word.startswith("cancel") else word
 
 
 def fetch(sb, kind):

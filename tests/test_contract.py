@@ -4,7 +4,7 @@ import json
 
 import pytest
 
-from pipeline import keyframes, narration
+from pipeline import gpu, keyframes, narration
 from pipeline.core import cache, config, providers, runlog, storyboard
 
 
@@ -89,3 +89,9 @@ def test_log_records_failures_and_hides_keys(tmp_path, monkeypatch):
     text = (tmp_path / "runs.jsonl").read_text(encoding="utf-8")
     assert json.loads(text)["status"] == "error"
     assert "super-secret-value" not in text
+
+
+def test_network_error_is_not_a_failed_job():
+    assert gpu.parse_status('x has status "KernelWorkerStatus.QUEUED"') == "queued"
+    assert gpu.parse_status('x has status "KernelWorkerStatus.ERROR"') == "error"
+    assert gpu.parse_status("ConnectionError: Max retries exceeded") == "unknown"

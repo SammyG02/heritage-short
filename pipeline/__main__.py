@@ -7,6 +7,8 @@ from pathlib import Path
 from . import assemble, gpu, keyframes, narration, script, shots, smoke
 from .core import config, runlog, storyboard
 
+GPU_WAIT_S = 4 * 3600
+
 
 def film(sb, lang, use_gpu):
     print("1/5 narration")
@@ -20,9 +22,13 @@ def film(sb, lang, use_gpu):
         for kind, kernel in submitted.items():
             if not kernel:
                 continue
-            while (state := gpu.status(sb, kind)) in ("queued", "running"):
-                print(f"  {kind}: {state}")
+            deadline = time.time() + GPU_WAIT_S
+            while (state := gpu.status(sb, kind)) in ("queued", "running", "unknown") and time.time() < deadline:
+                print(f"  {kind}: {state}", flush=True)
                 time.sleep(60)
+            if state in ("queued", "running", "unknown"):
+                print(f"  {kind}: still {state}; continuing with the fallback. Later: python -m pipeline gpu fetch {kind}")
+                continue
             try:
                 gpu.fetch(sb, kind)
             except config.PipelineError as e:

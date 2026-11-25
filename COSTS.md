@@ -17,6 +17,8 @@ Money spent: **0**. Measured from `runs.jsonl` up to 16:50 EAT, 25 Nov 2026 (92 
 
 Prices used: gemini-3.8-flash $0.75 in and $3.75 out per million tokens; 3.8 Flash TTS $0.50 in and $9.00 out (from a page summary, less certain); klein 4B $0.000059 per input and $0.000287 per output 512 px tile. GPU time will be priced separately once measured.
 
+A clean clone with no keys rebuilt the film in 14 min 40 s with 0 model calls on the same 8 GB laptop and FFmpeg; both MP4s had the same SHA-256 prefix as the originals.
+
 ## Free limits found
 
 - Gemini 3.8 Flash TTS: an error reported **10 requests a day**. We had 12 successes before it triggered.
