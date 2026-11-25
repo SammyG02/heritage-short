@@ -54,5 +54,13 @@ def load(path: Path) -> dict:
     return data
 
 
+def require_consent(data: dict) -> None:
+    """Called before any model call. A true story stays locked until ETHICS.md holds the consent."""
+    p = data["people"]
+    if p.get("based_on_real_people") and p.get("consent") != "recorded":
+        raise config.PipelineError("This storyboard tells a real person's story and consent is still pending. Record it in "
+                                   "ETHICS.md, then set people.consent to 'recorded'.")
+
+
 def out(data: dict, *parts: str) -> Path:
     return config.OUTPUTS.joinpath(data["id"], *parts)

@@ -1,5 +1,17 @@
 # Design
 
+## Change of story, 25 Nov 2026 (before anything of the new story was generated)
+
+The applicant replaced the invented sample "The Extra Cup" (kept below, and in `storyboards/the-extra-cup.json`) with their own family's story, "One Percent". The narration is the applicant's text. Amharic is an agent's translation, shortened to fit 90 seconds, and no native speaker has checked it yet.
+
+- **Audience (draft, applicant to confirm):** families and couples in Ethiopia and the diaspora who are waiting for something they have been told is unlikely. They watch vertically on a phone.
+- **Intent:** feel that a small chance is still a chance, and want to keep trying.
+- **Shape:** an empty basket opens and closes the film; two coffee cups become five. The peak is the mother's own line, on her face.
+- **Motion:** the applicant asked for people who move and speak rather than still pictures, so motion prompts ask for lips, heads, hands and breath. Narration is voice-over; mouths are not lip-synced.
+- **Every shot's reason** is in its `reason` field.
+
+## First version: the sample story
+
 Written before any image, voice, music or video was generated.
 
 > **Status: sample story.** "The Extra Cup" is an invented story used to build and test the pipeline. The applicant has not yet replaced it or adopted it as their own. No user test has been run yet.

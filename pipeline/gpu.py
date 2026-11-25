@@ -14,7 +14,7 @@ from PIL import Image
 
 from . import keyframes, music, shots
 from .core import cache, config, runlog
-from .core.storyboard import out
+from .core.storyboard import out, require_consent
 
 WORKERS = Path(__file__).parent / "kaggle_jobs"
 DATASET = "heritage-short-jobs"
@@ -73,6 +73,7 @@ def _push_dataset(folder, job_id):
 
 
 def submit_wan(sb, ratios=("9x16", "16x9"), only=None):
+    require_consent(sb)
     clips = []
     for ratio in ratios:
         for s in sb["shots"]:
@@ -105,6 +106,7 @@ def submit_wan(sb, ratios=("9x16", "16x9"), only=None):
 
 
 def submit_music(sb):
+    require_consent(sb)
     cands = []
     for seed in sb["music"]["seeds"]:
         inp = music.inputs(sb, seed)
@@ -173,7 +175,8 @@ def fetch(sb, kind):
             runlog.write({"run_id": runlog.RUN_ID, "ts": time.strftime("%Y-%m-%dT%H:%M:%S+00:00", time.gmtime()),
                           "stage": "shots" if kind == "wan" else "music", "item": name, "provider": "kaggle-2xT4",
                           "model": sb["models"]["video" if kind == "wan" else "music"], "params": inp, "seed": seed, "attempt": 1,
-                          "status": "error" if error else r.get("status", "ok"), "latency_s": r["seconds"], "gpu_s": r["seconds"],
+                          "status": "error" if error else r.get("status", "job_event"), "latency_s": r["seconds"],
+                          "gpu_s": r["seconds"] if target is not None else 0.0,  # job events are running totals, not calls
                           "cost_usd": 0.0, "list_price_usd": None,
                           "output": {k: v for k, v in r.items() if k not in ("item", "key", "status", "error")}, "error": error})
             logged.add(name)

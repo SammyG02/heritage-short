@@ -2,16 +2,23 @@
 
 ## Consent
 
-No real person is shown or voiced. Recorded before generation:
+**Status: PENDING. Nothing of "One Percent" has been generated.** The pipeline refuses to call a model for it until `people.consent` in `storyboard.json` is `recorded` (`require_consent` in `pipeline/core/storyboard.py`, with a test).
 
-- **Characters** are invented and drawn from text descriptions only. No photograph of anyone is used as input.
-- **Voice** is a stock prebuilt Gemini voice. No voice is cloned.
-- **Story** is an invented sample. If it is replaced by a family story that identifies a living person, their consent must be recorded here before generating again.
-- **Uploads:** the tool accepts text only, not photos or voice recordings.
+"One Percent" is the applicant's true family story. It tells private medical history and quotes their mother.
 
-| Person | Shown | Voiced | Consent |
+- **Faces** are invented and drawn from text only. No photograph is used as input.
+- **Voice** is a stock Gemini voice. No voice is cloned. It reads the mother's quoted words, so she must agree to them.
+- **Siblings** are mentioned without names and seen only from behind.
+
+| Person | How they appear | Agreed to the story, the public film and the words | When and how |
 |---|---|---|---|
-| None | - | - | Not applicable |
+| Applicant (narrator in the story) | Told in first person, stock voice | Supplied the story, 25 Nov 2026 | Written instruction to the agent |
+| Mother | Invented drawing; one quoted line | **Not recorded yet** | |
+| Father | Invented drawing | **Not recorded yet** | |
+| Sister | Mentioned, seen from behind | **Not recorded yet** | |
+| Brother | Mentioned, seen from behind | **Not recorded yet** | |
+
+The earlier sample, "The Extra Cup", was invented: no real person was shown or voiced.
 
 ## Labelling
 
@@ -21,7 +28,7 @@ No real person is shown or voiced. Recorded before generation:
 
 ## Private data
 
-Google states that free-tier Gemini content is used to improve its products. Only the invented story is sent. Do not enter names, addresses or private family details.
+Google states that free-tier Gemini content is used to improve its products. For "The Extra Cup" only the invented story was sent. The narration of "One Percent" would be sent to Gemini TTS, so the consent above must cover that. It contains no names. Do not enter names, addresses or private family details.
 
 ## Licences
 

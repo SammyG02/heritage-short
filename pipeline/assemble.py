@@ -11,7 +11,7 @@ from . import music, narration, shots
 from .core import cache, config
 from .core.storyboard import out
 
-FPS, LEAD, TAIL = 24, 0.45, 0.65
+FPS, LEAD, TAIL = 24, 0.3, 0.3
 
 
 def timeline(sb, lang):

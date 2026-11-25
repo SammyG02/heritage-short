@@ -95,3 +95,18 @@ def test_network_error_is_not_a_failed_job():
     assert gpu.parse_status('x has status "KernelWorkerStatus.QUEUED"') == "queued"
     assert gpu.parse_status('x has status "KernelWorkerStatus.ERROR"') == "error"
     assert gpu.parse_status("ConnectionError: Max retries exceeded") == "unknown"
+
+
+def test_true_story_is_locked_until_consent_is_recorded(sb, monkeypatch, tmp_path):
+    calls = []
+    monkeypatch.setattr(config, "OUTPUTS", tmp_path)
+    for name in ("gemini_tts", "flux"):
+        monkeypatch.setattr(providers, name, lambda *a, **k: calls.append(a) or b"x")
+    sb["people"].update(based_on_real_people=True, consent="pending")
+    for stage in (lambda: narration.run(sb, "am"), lambda: keyframes.run_references(sb), lambda: keyframes.run(sb),
+                  lambda: gpu.submit_wan(sb), lambda: gpu.submit_music(sb)):
+        with pytest.raises(config.PipelineError, match="consent"):
+            stage()
+    assert calls == []
+    sb["people"]["consent"] = "recorded"
+    storyboard.require_consent(sb)

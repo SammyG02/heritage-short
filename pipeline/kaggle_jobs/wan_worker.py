@@ -1,10 +1,12 @@
 """Runs on Kaggle (2x T4). Animates keyframes with Wan 2.2 TI2V-5B, saving each clip as it finishes."""
 import gc
 import json
+import os
 import subprocess
 import sys
 import time
 from pathlib import Path
+from types import SimpleNamespace
 
 JOB_ID = "@@JOB_ID@@"
 OUT = Path("/kaggle/working")
@@ -12,6 +14,7 @@ START = time.time()
 
 subprocess.run([sys.executable, "-m", "pip", "install", "-q", "-U", "diffusers", "ftfy", "imageio", "imageio-ffmpeg", "accelerate"], check=True)
 
+os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
 import torch  # noqa: E402
 from diffusers import AutoencoderKLWan, WanImageToVideoPipeline  # noqa: E402
 from diffusers.utils import export_to_video  # noqa: E402
@@ -41,10 +44,37 @@ del enc
 gc.collect()
 torch.cuda.empty_cache()
 
-vae = AutoencoderKLWan.from_pretrained(model, subfolder="vae", torch_dtype=torch.float32)
-pipe = WanImageToVideoPipeline.from_pretrained(model, vae=vae, text_encoder=None, tokenizer=None, torch_dtype=torch.float16).to("cuda:0")
-decoder = AutoencoderKLWan.from_pretrained(model, subfolder="vae", torch_dtype=torch.float32).to(second)
-decoder.enable_tiling()
+# Both VAE jobs (first-frame encoding and decoding) live on the second GPU, so the transformer has GPU 0 to itself.
+# See FAILURES.md: with a float32 VAE beside it, the fp16 transformer ran out of memory before step 1.
+vae = AutoencoderKLWan.from_pretrained(model, subfolder="vae", torch_dtype=torch.float32).to(second)
+WanImageToVideoPipeline._execution_device = property(lambda self: torch.device("cuda:0"))
+pipe = WanImageToVideoPipeline.from_pretrained(model, vae=vae, text_encoder=None, tokenizer=None, torch_dtype=torch.float16)
+pipe.vae.to(second, torch.float32)
+pipe.transformer.to("cuda:0")
+vae_encode = pipe.vae.encode
+
+
+def encode_elsewhere(x, *args, **kwargs):
+    """Encode on the VAE's GPU and hand the latents back to the caller's GPU."""
+    dist = vae_encode(x.to(second, torch.float32)).latent_dist
+    return SimpleNamespace(latents=dist.mode().to(x.device))
+
+
+pipe.vae.encode = encode_elsewhere
+decoder = pipe.vae
+
+
+def decode(z):
+    try:
+        return decoder.decode(z, return_dict=False)[0]
+    except torch.cuda.OutOfMemoryError:
+        print("decode ran out of memory; retrying in tiles", flush=True)
+    torch.cuda.empty_cache()
+    decoder.enable_tiling()
+    return decoder.decode(z, return_dict=False)[0]
+
+
+print("GPU GB after load", [round(torch.cuda.memory_allocated(i) / 1e9, 2) for i in range(torch.cuda.device_count())], flush=True)
 log(event="loaded", seconds=round(time.time() - START, 1))
 
 for j in job["clips"]:
@@ -65,7 +95,7 @@ for j in job["clips"]:
             z = latents.to(second, torch.float32)
             mean = torch.tensor(decoder.config.latents_mean).view(1, -1, 1, 1, 1).to(z)
             std = torch.tensor(decoder.config.latents_std).view(1, -1, 1, 1, 1).to(z)
-            video = decoder.decode(z * std + mean, return_dict=False)[0]
+            video = decode(z * std + mean)
         frames = pipe.video_processor.postprocess_video(video.cpu(), output_type="np")[0]
         export_to_video(frames, str(OUT / f"{j['item']}.mp4"), fps=24, quality=9)
         log(event="clip", item=j["item"], key=j["key"], status="ok", seconds=round(time.time() - t0, 1), denoise_s=round(denoise, 1),

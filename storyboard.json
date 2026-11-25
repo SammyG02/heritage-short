@@ -1,306 +1,338 @@
 {
-  "id": "extra-cup",
-  "version": 1,
-  "status": "sample",
-  "title": {
-    "am": "ትርፍ ሲኒ",
-    "en": "The Extra Cup"
+ "id": "one-percent",
+ "version": 1,
+ "status": "draft",
+ "title": {
+  "am": "አንድ በመቶ",
+  "en": "One Percent"
+ },
+ "logline": "Told their chance of a child is under one percent, a young Ethiopian couple wait nine years and cross a border to become a family.",
+ "theme": "Family and perseverance",
+ "language": "am",
+ "audience": "Draft, to be confirmed by the applicant: families and couples in Ethiopia and the diaspora who are waiting for something they have been told is unlikely",
+ "intent": "Feel that a small chance is still a chance, and want to keep trying",
+ "style_block": "Hand-painted gouache illustration, visible brush texture, soft film grain, warm amber and terracotta palette with deep indigo shadows, gentle firelight, quiet and intimate, subject centred in frame, full-bleed painting reaching every edge",
+ "people": {
+  "real_people": false,
+  "based_on_real_people": true,
+  "consent": "pending",
+  "statement": "Based on the applicant's own family story. Faces are invented drawings made from text and the narrator is a stock synthetic voice. Nobody's photograph or recording is used. Consent is recorded in ETHICS.md."
+ },
+ "models": {
+  "tts": "gemini-3.8-flash-tts",
+  "image": "@cf/black-forest-labs/flux-2-klein-4b",
+  "video": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+  "music": "ACE-Step/ACE-Step-1.5 acestep-v15-turbo"
+ },
+ "voices": {
+  "am": {
+   "voice": "Sulafat",
+   "style": "warm, calm and unhurried, like telling a family story at night"
   },
-  "logline": "A grandmother always sets out one coffee cup too many, until the night we learn who it is for.",
-  "theme": "Hospitality and home",
-  "language": "am",
-  "audience": "Young Ethiopians living away from home, and the relatives who would send them this film",
-  "intent": "Feel that home is a habit of welcome you can carry with you, and want to call someone",
-  "style_block": "Hand-painted gouache illustration, visible brush texture, soft film grain, warm amber and terracotta palette with deep indigo shadows, gentle firelight, quiet and intimate, subject centred in frame, full-bleed painting reaching every edge",
-  "people": {
-    "real_people": false,
-    "statement": "All characters are invented. The narrator is a stock synthetic voice."
-  },
-  "models": {
-    "tts": "gemini-3.8-flash-tts",
-    "image": "@cf/black-forest-labs/flux-2-klein-4b",
-    "video": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
-    "music": "ACE-Step/ACE-Step-1.5 acestep-v15-turbo"
-  },
-  "voices": {
-    "am": {
-      "voice": "Sulafat",
-      "style": "warm, calm and unhurried, like telling a family story at night"
-    },
-    "en": {
-      "voice": "Sulafat",
-      "style": "warm, calm and unhurried, like telling a family story at night",
-      "model": "gemini-3.8-flash-lite-tts"
-    }
-  },
-  "references": {
-    "grandmother": {
-      "prompt": "Character portrait of an invented elderly Ethiopian highland grandmother, kind lined face, deep brown skin, silver hair under a plain white cotton netela shawl with a narrow green and gold woven border, long white handwoven cotton dress, small plain round silver stud earrings, facing the viewer, gentle closed-mouth smile, plain warm background, upper body",
-      "seeds": [
-        11,
-        22,
-        33,
-        44
-      ],
-      "chosen_seed": 33,
-      "reason": "Provisional agent choice, awaiting applicant approval: distinct shawl border, plain earrings, full-bleed"
-    },
-    "coffee_set": {
-      "prompt": "Still life of a traditional Ethiopian coffee set. A jebena: a matte black clay bottle with a round ball-shaped base and one tall slender vertical tube neck like a narrow bottle, a small woven straw stopper in the top of the neck, a curved clay loop handle joining neck and base. Beside it four small white porcelain bowl-shaped cups, smooth round sides, thin green rim, on a low dark wooden tray. Fresh green grass on an earthen floor, soft firelight from the side",
-      "seeds": [
-        11,
-        22,
-        33,
-        44
-      ],
-      "chosen_seed": 33,
-      "reason": "Provisional agent choice, awaiting applicant approval: long-necked jebena, four handleless cups, full-bleed"
-    }
-  },
-  "video": {
-    "fps": 24,
-    "frames": 121,
-    "steps": 30,
-    "guidance": 5.0,
-    "negative_prompt": "text, letters, subtitles, watermark, extra fingers, deformed hands, distorted face, morphing, flicker, fast motion, camera shake, blurry, low quality"
-  },
-  "music": {
-    "caption": "Instrumental, intimate Ethiopian highland mood, solo krar lyre plucked gently, soft washint flute answering far away, warm low drone, sparse and tender, pentatonic, acoustic, close room sound, no drums, no vocals",
-    "bpm": 72,
-    "key": "D minor",
-    "duration_s": 90,
-    "seeds": [
-      101,
-      202,
-      303
-    ],
-    "chosen_seed": 101,
-    "reason": "Not chosen yet",
-    "cues": [
-      {
-        "shot": "s01",
-        "action": "start",
-        "note": "A few plucked notes before the voice"
-      },
-      {
-        "shot": "s06",
-        "action": "lower",
-        "note": "Near silence for the knock at the door"
-      },
-      {
-        "shot": "s07",
-        "action": "lift",
-        "note": "Warmth returns with the cup"
-      },
-      {
-        "shot": "s11",
-        "action": "end",
-        "note": "The opening notes return, then fade on the end card"
-      }
-    ]
-  },
-  "mix": {
-    "duck_threshold": 0.02,
-    "duck_ratio": 6,
-    "duck_attack_ms": 300,
-    "duck_release_ms": 1500,
-    "target_lufs": -14,
-    "true_peak_db": -1,
-    "music_lufs": -20
-  },
-  "shots": [
-    {
-      "id": "s01",
-      "size": "wide",
-      "duration_s": 6,
-      "seed": 1001,
-      "ken_burns": "in",
-      "references": [],
-      "reason": "Establishes place, dusk and warmth before any person appears",
-      "image_prompt": "Wide view of a small round Ethiopian highland house with a thatched roof at dusk, warm light in the open doorway, thin smoke rising, green hills and heavy rain clouds behind",
-      "motion_prompt": "Smoke drifts slowly upward, grass moves in a soft wind, the camera pushes in very gently",
-      "narration": {
-        "am": "አያቴ ቡና ስታፈላ፣ ሁልጊዜ አንድ ትርፍ ሲኒ ታስቀምጥ ነበር።",
-        "en": "Whenever my grandmother made coffee, she always set out one extra cup."
-      }
-    },
-    {
-      "id": "s02",
-      "size": "insert",
-      "duration_s": 5.5,
-      "seed": 1002,
-      "ken_burns": "right",
-      "references": [
-        "coffee_set"
-      ],
-      "reason": "Introduces the cup, the object that returns through the film",
-      "image_prompt": "View from above of a low dark wooden tray on an earthen floor with green grass: three small white bowl-shaped cups with a thin green rim in a close group, and one more identical cup standing apart on its own at the edge of the tray, warm firelight",
-      "motion_prompt": "Firelight flickers softly on the cups, the camera slides slowly sideways",
-      "narration": {
-        "am": "ሦስት ሰዎች ብንሆን፣ አራት ሲኒ። አራት ብንሆን፣ አምስት።",
-        "en": "If we were three, four cups. If we were four, five."
-      }
-    },
-    {
-      "id": "s03",
-      "size": "medium",
-      "duration_s": 5.5,
-      "seed": 1003,
-      "ken_burns": "in",
-      "references": [
-        "grandmother",
-        "coffee_set"
-      ],
-      "reason": "Meets the grandmother in action, at the centre of her home",
-      "image_prompt": "The same grandmother from the reference, in her white shawl with green and gold border, seated on a low stool, pouring coffee from the black clay jebena bottle with tall slender neck into a small white cup, dim warm room",
-      "motion_prompt": "A thin stream of coffee pours steadily, steam rises, the camera is fixed",
-      "narration": {
-        "am": "«አያቴ፣ ይሄ የማነው?» ብዬ ጠየቅኳት።",
-        "en": "“Grandmother, whose is this one?” I asked her."
-      }
-    },
-    {
-      "id": "s04",
-      "size": "close-up",
-      "duration_s": 5.5,
-      "seed": 1004,
-      "ken_burns": "in",
-      "references": [
-        "grandmother"
-      ],
-      "reason": "Her face carries the answer, the idea the film turns on",
-      "image_prompt": "Tight close-up of the face of the same grandmother from the reference filling the frame, white shawl with green and gold border around her head, looking up with a gentle knowing smile, firelight on one side of her face, dark room behind",
-      "motion_prompt": "She smiles softly and blinks once, firelight flickers, the camera is fixed",
-      "narration": {
-        "am": "ፈገግ ብላ፣ «መንገድ ላይ ላለው ሰው ነው» አለችኝ።",
-        "en": "She smiled and said, “It is for the one still on the road.”"
-      }
-    },
-    {
-      "id": "s05",
-      "size": "close-up",
-      "duration_s": 5,
-      "seed": 1005,
-      "ken_burns": "out",
-      "references": [
-        "coffee_set"
-      ],
-      "reason": "The empty cup makes us wait with the child",
-      "image_prompt": "One single small white bowl-shaped cup like a tiny porcelain bowl, smooth round sides, thin green rim, empty, alone on a low dark wooden tray, morning light from a small window, dust in the air",
-      "motion_prompt": "Dust drifts slowly through the light, the camera pulls back very gently",
-      "narration": {
-        "am": "ለብዙ ዓመታት፣ ያ ሲኒ ባዶውን ይቀመጥ ነበር።",
-        "en": "For many years, that cup sat empty."
-      }
-    },
-    {
-      "id": "s06",
-      "size": "wide",
-      "duration_s": 5,
-      "seed": 1006,
-      "ken_burns": "in",
-      "references": [],
-      "reason": "The turn: something arrives from outside",
-      "image_prompt": "Inside a dark earthen highland house at night, looking at a closed rough wooden plank door, thin lines of cold blue light glowing between the planks and under the door, warm firelight on the earthen floor and walls",
-      "motion_prompt": "Rain falls outside, firelight trembles on the door, the camera pushes in slowly",
-      "narration": {
-        "am": "አንድ ዝናባማ ምሽት ግን፣ በሩ ተንኳኳ።",
-        "en": "But one rainy evening, there was a knock at the door."
-      }
-    },
-    {
-      "id": "s07",
-      "size": "insert",
-      "duration_s": 7.5,
-      "seed": 1007,
-      "ken_burns": "in",
-      "references": [
-        "coffee_set"
-      ],
-      "reason": "The promise is kept; hands keep it about the gesture, not the stranger's face",
-      "image_prompt": "Close view of two pairs of hands, an elderly woman's hands in white cotton sleeves offering a small white bowl-shaped cup with a thin green rim to the rain-wet hands of a traveller wrapped in a dark soaked blanket, steam rising, dark earthen room with warm firelight all around",
-      "motion_prompt": "Steam curls slowly upward, the hands hold still, firelight flickers, the camera is fixed",
-      "narration": {
-        "am": "በዝናብ የራሰ መንገደኛ ነበር። ስሙን እንኳ ሳትጠይቅ፣ ቡናውን ሰጠችው።",
-        "en": "It was a traveller, soaked by the rain. Without even asking his name, she gave him the coffee."
-      }
-    },
-    {
-      "id": "s08",
-      "size": "medium close-up",
-      "duration_s": 5.5,
-      "seed": 1008,
-      "ken_burns": "left",
-      "references": [
-        "grandmother"
-      ],
-      "reason": "States what she believed, in her own words, before we lose her",
-      "image_prompt": "Medium close-up of the same grandmother from the reference, white shawl with green and gold border, seated in her dark room, head turned in three quarter view toward a small clay charcoal brazier glowing at her side, calm and content",
-      "motion_prompt": "Embers glow and dim, she breathes calmly, the camera drifts slowly left",
-      "narration": {
-        "am": "«ቤት የሚሞላው በሰው ነው» ትል ነበር።",
-        "en": "“It is people who fill a house,” she used to say."
-      }
-    },
-    {
-      "id": "s09",
-      "size": "wide",
-      "duration_s": 6.5,
-      "seed": 1009,
-      "ken_burns": "out",
-      "references": [
-        "coffee_set"
-      ],
-      "reason": "Time jump: cool light and height show distance and loss",
-      "image_prompt": "Small modern city apartment at evening, a large window with rain and blurred city lights, the same round black clay jebena bottle with tall slender neck and small white cups with a thin green rim on a low table, cool blue light with one warm lamp, no people",
-      "motion_prompt": "Rain runs down the window, city lights shimmer, the camera pulls back very slowly",
-      "narration": {
-        "am": "ዛሬ እሷ የለችም። እኔም ከቤት ርቄ እኖራለሁ።",
-        "en": "Today she is gone, and I live far from home."
-      }
-    },
-    {
-      "id": "s10",
-      "size": "insert",
-      "duration_s": 6,
-      "seed": 1010,
-      "ken_burns": "in",
-      "references": [
-        "coffee_set"
-      ],
-      "reason": "The habit survives: the grandchild repeats her gesture",
-      "image_prompt": "Close view of a low table in a modern room with three small white bowl-shaped cups with a thin green rim, a young adult's hand with deep brown skin and a plain dark sleeve setting down one cup apart from the others, warm lamp light, rain on the window behind",
-      "motion_prompt": "The hand gently sets the cup down and rests, steam rises, the camera is fixed",
-      "narration": {
-        "am": "ግን ቡና ሳፈላ፣ አሁንም አንድ ትርፍ ሲኒ አስቀምጣለሁ።",
-        "en": "But when I make coffee, I still set out one extra cup."
-      }
-    },
-    {
-      "id": "s11",
-      "size": "close-up",
-      "duration_s": 6.5,
-      "seed": 1011,
-      "ken_burns": "in",
-      "references": [
-        "coffee_set"
-      ],
-      "reason": "Turns to the viewer: the cup is now full and waiting for them",
-      "image_prompt": "One small white bowl-shaped cup like a tiny porcelain bowl, smooth round sides, thin green rim, filled with dark coffee, steam rising, on a low wooden table in a modern apartment, behind it the apartment door slightly open with warm light spilling in",
-      "motion_prompt": "Steam rises slowly from the cup, warm light grows through the door, the camera pushes in gently",
-      "narration": {
-        "am": "ምናልባት፣ መንገድ ላይ ያሉት እርስዎ ይሆናሉ።",
-        "en": "Perhaps the one still on the road is you."
-      }
-    }
-  ],
-  "end_card": {
-    "duration_s": 3,
-    "lines": [
-      "ትርፍ ሲኒ",
-      "The Extra Cup",
-      "Pictures, voice and music made with AI",
-      "All characters are invented"
-    ]
+  "en": {
+   "voice": "Sulafat",
+   "style": "warm, calm and unhurried, like telling a family story at night",
+   "model": "gemini-3.8-flash-lite-tts"
   }
+ },
+ "references": {
+  "mother": {
+   "prompt": "Character portrait of an invented young Ethiopian woman in her twenties, oval face, warm brown skin, dark hair parted in the centre and drawn back under a thin white cotton netela shawl with a narrow green and gold woven border, long white handwoven cotton dress, small plain round silver stud earrings, hopeful calm expression, facing the viewer, plain warm background, upper body",
+   "seeds": [
+    11,
+    22,
+    33,
+    44
+   ],
+   "chosen_seed": 11,
+   "reason": "Not chosen yet"
+  },
+  "father": {
+   "prompt": "Character portrait of an invented young Ethiopian man in his late twenties, slim face, warm brown skin, short dark hair, trimmed short beard, white handwoven cotton collared shirt, kind steady expression, facing the viewer, plain warm background, upper body",
+   "seeds": [
+    11,
+    22,
+    33,
+    44
+   ],
+   "chosen_seed": 11,
+   "reason": "Not chosen yet"
+  },
+  "coffee_set": {
+   "prompt": "Still life of a traditional Ethiopian coffee set on a low dark wooden tray. A matte black clay jebena: a wide round ball-shaped belly, a narrow straight neck, a thin short pouring spout rising from the shoulder, a curved clay loop handle from neck to belly, a small straw lid on the neck. Beside it small white porcelain handleless cups with a thin green rim. Plain wooden floor, soft warm side light",
+   "seeds": [
+    11,
+    22,
+    33,
+    44
+   ],
+   "chosen_seed": 11,
+   "reason": "Not chosen yet"
+  }
+ },
+ "video": {
+  "fps": 24,
+  "frames": 121,
+  "steps": 30,
+  "guidance": 5.0,
+  "negative_prompt": "text, letters, subtitles, watermark, extra fingers, deformed hands, distorted face, morphing, flicker, fast motion, camera shake, blurry, low quality"
+ },
+ "music": {
+  "caption": "Instrumental, intimate Ethiopian highland mood, solo krar lyre plucked gently, soft washint flute answering far away, warm low drone, sparse and tender, pentatonic, acoustic, close room sound, no drums, no vocals",
+  "bpm": 72,
+  "key": "D minor",
+  "duration_s": 90,
+  "seeds": [
+   101,
+   202,
+   303
+  ],
+  "chosen_seed": 101,
+  "reason": "Not chosen yet",
+  "cues": [
+   {
+    "shot": "s01",
+    "action": "start",
+    "note": "A few plucked notes under the number"
+   },
+   {
+    "shot": "s05",
+    "action": "lower",
+    "note": "Near silence for the doctor"
+   },
+   {
+    "shot": "s08",
+    "action": "lift",
+    "note": "Warmth returns with the birth"
+   },
+   {
+    "shot": "s12",
+    "action": "end",
+    "note": "The opening notes return, then fade on the end card"
+   }
+  ]
+ },
+ "mix": {
+  "duck_threshold": 0.02,
+  "duck_ratio": 6,
+  "duck_attack_ms": 300,
+  "duck_release_ms": 1500,
+  "target_lufs": -14,
+  "true_peak_db": -1,
+  "music_lufs": -20
+ },
+ "shots": [
+  {
+   "id": "s01",
+   "size": "insert",
+   "duration_s": 5,
+   "seed": 2001,
+   "ken_burns": "in",
+   "references": [],
+   "reason": "Opens on the number and an empty place, before we know whose it is",
+   "image_prompt": "An empty small handwoven Ethiopian straw baby basket lined with a folded white cotton blanket, on a wooden floor beside a window, pale dawn light falling on it, dust in the light",
+   "motion_prompt": "The curtain sways in a soft breeze, dust drifts through the light, the camera pushes in very slowly",
+   "narration": {
+    "am": "እኔ ከመወለዴ በፊት አንድ ቁጥር ነበር፤ አንድ በመቶ።",
+    "en": "Before I was born, there was a number. One percent."
+   }
+  },
+  {
+   "id": "s02",
+   "size": "medium",
+   "duration_s": 5.5,
+   "seed": 2002,
+   "ken_burns": "out",
+   "references": [
+    "mother",
+    "father"
+   ],
+   "reason": "Meets the parents young and certain, so the waiting costs something",
+   "image_prompt": "the same mother from the reference and the same father from the reference as young newlyweds standing side by side in white handwoven cotton clothes with green and gold borders, shoulders touching, smiling at each other, warm afternoon garden behind",
+   "motion_prompt": "The couple turn toward each other and smile, she laughs softly, their clothes move in a light wind, the camera is fixed",
+   "narration": {
+    "am": "እናቴና አባቴ በወጣትነታቸው ተጋቡ፤ ልጅ እንደሚወልዱም እርግጠኛ ነበሩ።",
+    "en": "My mother and father married young, sure that a family would follow."
+   }
+  },
+  {
+   "id": "s03",
+   "size": "insert",
+   "duration_s": 6,
+   "seed": 2003,
+   "ken_burns": "right",
+   "references": [
+    "coffee_set"
+   ],
+   "reason": "The two cups make the waiting visible; this object returns at the end",
+   "image_prompt": "Low dark wooden tray holding one round black clay jebena and exactly two small white cups with a thin green rim, side by side, wide empty space around them, quiet room, light fading at the window",
+   "motion_prompt": "Steam curls up from the two cups, the window light slowly dims, the camera slides gently sideways",
+   "narration": {
+    "am": "አንድ ዓመት። ሁለት። አምስት። በእያንዳንዱ ቡና፣ ያው ሁለት ሲኒ።",
+    "en": "One year passed. Then two. Then five. Every coffee ceremony, the same two cups."
+   }
+  },
+  {
+   "id": "s04",
+   "size": "medium close-up",
+   "duration_s": 4,
+   "seed": 2004,
+   "ken_burns": "in",
+   "references": [
+    "mother"
+   ],
+   "reason": "Their waiting is active: prayer, patience and trying again",
+   "image_prompt": "the same mother from the reference seated by candlelight at night, white shawl over her hair, eyes closed, hands pressed together near her chest, quiet prayer, dark room",
+   "motion_prompt": "Her lips move silently in prayer, she breathes slowly, the candle flame flickers, the camera is fixed",
+   "narration": {
+    "am": "ጸለዩ። ጠበቁ። ደግመው ሞከሩ።",
+    "en": "They prayed. They waited. They tried again."
+   }
+  },
+  {
+   "id": "s05",
+   "size": "medium",
+   "duration_s": 6,
+   "seed": 2005,
+   "ken_burns": "in",
+   "references": [
+    "mother",
+    "father"
+   ],
+   "reason": "The bad news, held on the couple rather than the doctor",
+   "image_prompt": "the same mother from the reference and the same father from the reference seated close together in a plain consulting room, holding hands tightly, heads lowered, cool daylight from a high window",
+   "motion_prompt": "Her shoulders rise and fall with a heavy breath, he slowly squeezes her hand and turns his head to her, the camera is fixed",
+   "narration": {
+    "am": "ከዚያ ሐኪሙ እውነቱን ነገራቸው፦ በኢትዮጵያ ዕድላቸው ከአንድ በመቶ በታች ነበር።",
+    "en": "Then a doctor told them the truth. Here in Ethiopia, their chance was less than one percent."
+   }
+  },
+  {
+   "id": "s06",
+   "size": "medium close-up",
+   "duration_s": 6,
+   "seed": 2006,
+   "ken_burns": "left",
+   "references": [
+    "mother",
+    "father"
+   ],
+   "reason": "The turn: the parents choose a question over an ending",
+   "image_prompt": "the same mother from the reference lifting her face with a determined look toward the same father from the reference beside her, warm lamp light on both faces, night window behind",
+   "motion_prompt": "She raises her head and speaks, her lips moving, he looks at her and nods slowly, the camera pushes in gently",
+   "narration": {
+    "am": "ብዙ ሰው እዚህ ያቆም ነበር። ወላጆቼ ግን ጠየቁ፦ ሌላ የት እንሞክር?",
+    "en": "Most people would have stopped there. My parents asked a different question: where else can we try?"
+   }
+  },
+  {
+   "id": "s07",
+   "size": "wide",
+   "duration_s": 6.5,
+   "seed": 2007,
+   "ken_burns": "up",
+   "references": [
+    "mother",
+    "father"
+   ],
+   "reason": "Distance made visible: far from home, the same two people",
+   "image_prompt": "the same mother from the reference and the same father from the reference seen from behind, walking hand in hand along a sunlit pale stone hillside street with olive trees, one small suitcase, morning light ahead of them",
+   "motion_prompt": "They walk slowly forward, her shawl and the olive leaves move in the wind, the camera follows gently behind",
+   "narration": {
+    "am": "መልሱ ሩቅ ነበር፤ እስራኤል። አዲስ ሐኪሞች፣ አዲስ ቋንቋ፣ ለዓመታት ያው ተስፋ።",
+    "en": "The answer was far from home. Israel. New doctors. A new language. The same hope they had carried for years."
+   }
+  },
+  {
+   "id": "s08",
+   "size": "close-up",
+   "duration_s": 4,
+   "seed": 2008,
+   "ken_burns": "in",
+   "references": [],
+   "reason": "The arrival, in a hand rather than a face; a breath before the peak",
+   "image_prompt": "Extreme close view of a newborn baby hand with tiny fingers wrapped around one adult finger, white blanket, soft golden morning light",
+   "motion_prompt": "The tiny fingers slowly open and close around the finger, the blanket moves with breathing, the camera is fixed",
+   "narration": {
+    "am": "እና ከዚያ… እኔ መጣሁ።",
+    "en": "And then… I arrived."
+   }
+  },
+  {
+   "id": "s09",
+   "size": "close-up",
+   "duration_s": 7,
+   "seed": 2009,
+   "ken_burns": "in",
+   "references": [
+    "mother"
+   ],
+   "reason": "The emotional peak: the line she still says, on her face",
+   "image_prompt": "the same mother from the reference, older now with a few silver hairs, face filling the frame, joyful eyes, mouth open speaking warmly toward the viewer, golden window light",
+   "motion_prompt": "She speaks warmly, her lips and jaw moving naturally, then breaks into a smile and blinks, the camera is fixed",
+   "narration": {
+    "am": "እናቴ ዛሬም ትላለች፦ «ሌሎች ሴቶች በዘጠኝ ወር ይወልዳሉ፤ እኔ ግን በዘጠኝ ዓመት ወለድኩ።»",
+    "en": "My mother still says: “Other women give birth in nine months. I gave birth in nine years.”"
+   }
+  },
+  {
+   "id": "s10",
+   "size": "insert",
+   "duration_s": 5,
+   "seed": 2010,
+   "ken_burns": "right",
+   "references": [
+    "coffee_set"
+   ],
+   "reason": "The tray fills: the two cups become five",
+   "image_prompt": "Low dark wooden tray holding one round black clay jebena and exactly five small white cups with a thin green rim in a neat row, bright warm morning room",
+   "motion_prompt": "Steam rises from the five cups, sunlight moves across the tray, the camera slides gently sideways",
+   "narration": {
+    "am": "ከዚያ ታናሽ እህቴ፣ ከዚያም ታናሽ ወንድሜ መጡ።",
+    "en": "Then came my little sister. Then my little brother."
+   }
+  },
+  {
+   "id": "s11",
+   "size": "wide",
+   "duration_s": 5,
+   "seed": 2011,
+   "ken_burns": "out",
+   "references": [
+    "mother",
+    "father"
+   ],
+   "reason": "The number becomes a family around the same tray",
+   "image_prompt": "the same mother from the reference and the same father from the reference, older, seated around a coffee tray with three invented children seen from behind, warm home, golden light",
+   "motion_prompt": "The family lean together and laugh, shoulders moving, a child reaches toward the tray, steam rises, the camera pulls back slowly",
+   "narration": {
+    "am": "ያ አንድ በመቶ እኔ ነበርኩ። ሁላችንም ነበርን።",
+    "en": "I was the one percent. We all were."
+   }
+  },
+  {
+   "id": "s12",
+   "size": "medium",
+   "duration_s": 7,
+   "seed": 2012,
+   "ken_burns": "up",
+   "references": [],
+   "reason": "Returns to the opening basket in full light and turns to the viewer",
+   "image_prompt": "A small handwoven Ethiopian straw baby basket beside a bright open window, white cotton blanket folded inside with one small bright yellow flower resting on it, golden sunrise light flooding the room",
+   "motion_prompt": "The curtain lifts in the breeze, sunlight grows brighter across the basket, the camera pulls back slowly",
+   "narration": {
+    "am": "ዕድላችሁ አንድ በመቶ ነው ቢሏችሁ፣ አስታውሱ፦ አንድ በመቶ ዜሮ አይደለም። ተስፋ አትቁረጡ።",
+    "en": "So if anyone ever tells you your chance is one percent, remember: one percent is not zero. Never give up."
+   }
+  }
+ ],
+ "end_card": {
+  "duration_s": 3,
+  "lines": [
+   "አንድ በመቶ",
+   "One Percent",
+   "Pictures, voice and music made with AI",
+   "A true family story. All faces are invented."
+  ]
+ }
 }

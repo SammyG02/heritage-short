@@ -1,6 +1,6 @@
 """Keyframe stage: reference sheet first, then one image per shot and aspect ratio."""
 from .core import cache, providers
-from .core.storyboard import out
+from .core.storyboard import out, require_consent
 
 # Multiples of 16, close to the delivery ratios.
 SIZES = {"9x16": (768, 1344), "16x9": (1344, 768)}
@@ -36,6 +36,7 @@ def run_references(sb, force=False):
             p, inp = ref_path(sb, name, seed), ref_inputs(sb, name, seed)
             if not force and cache.fresh(p, inp):
                 continue
+            require_consent(sb)
             data = providers.flux("references", f"{name}_{seed}", inp["prompt"], *inp["size"], seed, inp["model"])
             cache.store(p, data, inp)
             made += 1
@@ -50,6 +51,7 @@ def run(sb, ratios=tuple(SIZES), force=False):
             if not force and cache.fresh(p, inp):
                 continue
             refs = [ref_path(sb, n, sb["references"][n]["chosen_seed"]) for n in shot["references"]]
+            require_consent(sb)
             data = providers.flux("keyframes", f"{shot['id']}_{ratio}", inp["prompt"], *inp["size"],
                                   inp["seed"], inp["model"], refs)
             cache.store(p, data, inp)

@@ -2,7 +2,7 @@
 import wave
 
 from .core import cache, providers
-from .core.storyboard import out
+from .core.storyboard import out, require_consent
 
 
 def path(sb, shot, lang):
@@ -26,6 +26,7 @@ def run(sb, lang, force=False):
         p, inp = path(sb, shot, lang), inputs(sb, shot, lang)
         if not force and cache.fresh(p, inp):
             continue
+        require_consent(sb)
         data = providers.gemini_tts("narration", f"{lang}/{shot['id']}", inp["text"], inp["voice"], inp["style"], inp["model"])
         cache.store(p, data, inp)
         made += 1

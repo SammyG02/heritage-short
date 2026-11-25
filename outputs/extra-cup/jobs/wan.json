@@ -1,15 +1,15 @@
 {
  "kernel": "samuelgosaye/heritage-short-wan",
- "submitted": 1795614027.4254544,
+ "submitted": 1795621799.2162259,
  "job": {
-  "job_id": "job-63b22ca128",
+  "job_id": "job-12afedf000",
   "model": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
   "clips": [
    {
-    "item": "s01_9x16",
-    "shot": "s01",
+    "item": "s03_9x16",
+    "shot": "s03",
     "ratio": "9x16",
-    "key": "d2184c28552b8568e89dc9711e3ab89639c5bbf8b601fb5f61461c3469ba7bbb",
+    "key": "f1bb8e3beebfb6bd543e0d681172e52e46fbe510126bb2ccf444040541231da5",
     "inputs": {
      "stage": "wan/1",
      "model": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
@@ -17,32 +17,56 @@
       480,
       832
      ],
-     "seed": 1001,
-     "motion_prompt": "Smoke drifts slowly upward, grass moves in a soft wind, the camera pushes in very gently",
+     "seed": 1003,
+     "motion_prompt": "She slowly lifts her head and breathes, her arms and hands move gently as she pours, steam rises, the camera is fixed",
      "fps": 24,
      "frames": 121,
      "steps": 30,
      "guidance": 5.0,
      "negative_prompt": "text, letters, subtitles, watermark, extra fingers, deformed hands, distorted face, morphing, flicker, fast motion, camera shake, blurry, low quality",
-     "keyframe": "2119fd5368aaa67cb094f49f306378b0af4403a737a2542837b1979acb4909be"
+     "keyframe": "66e9f8a91d9313547fc958783c7934148d51b46fbbb6788e0c4795d9cf81a236"
     },
-    "motion_prompt": "Smoke drifts slowly upward, grass moves in a soft wind, the camera pushes in very gently",
-    "seed": 1001,
+    "motion_prompt": "She slowly lifts her head and breathes, her arms and hands move gently as she pours, steam rises, the camera is fixed",
+    "seed": 1003,
     "size": [
      480,
      832
     ],
-    "keyframe_file": "s01_9x16.jpg"
+    "keyframe_file": "s03_9x16.jpg"
+   },
+   {
+    "item": "s04_9x16",
+    "shot": "s04",
+    "ratio": "9x16",
+    "key": "c7fd34595306d5dafa08d806ae9242e78be5e80d417207dda52ce6cd3c3f49f8",
+    "inputs": {
+     "stage": "wan/1",
+     "model": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+     "size": [
+      480,
+      832
+     ],
+     "seed": 1004,
+     "motion_prompt": "She speaks gently, her lips and jaw moving naturally, she blinks and tilts her head slightly, firelight flickers, the camera is fixed",
+     "fps": 24,
+     "frames": 121,
+     "steps": 30,
+     "guidance": 5.0,
+     "negative_prompt": "text, letters, subtitles, watermark, extra fingers, deformed hands, distorted face, morphing, flicker, fast motion, camera shake, blurry, low quality",
+     "keyframe": "0069c1e0f6f910233aa798f4904d13372c6bc44577456d8012679d4c3c0049cf"
+    },
+    "motion_prompt": "She speaks gently, her lips and jaw moving naturally, she blinks and tilts her head slightly, firelight flickers, the camera is fixed",
+    "seed": 1004,
+    "size": [
+     480,
+     832
+    ],
+    "keyframe_file": "s04_9x16.jpg"
    }
   ],
   "frames": 121,
   "steps": 30,
   "guidance": 5.0,
   "negative_prompt": "text, letters, subtitles, watermark, extra fingers, deformed hands, distorted face, morphing, flicker, fast motion, camera shake, blurry, low quality"
- },
- "logged": [
-  "done",
-  "loaded",
-  "s01_9x16"
- ]
+ }
 }
