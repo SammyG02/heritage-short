@@ -6,7 +6,14 @@ The applicant replaced the invented sample "The Extra Cup" (kept below, and in `
 
 - **Audience (draft, applicant to confirm):** families and couples in Ethiopia and the diaspora who are waiting for something they have been told is unlikely. They watch vertically on a phone.
 - **Intent:** feel that a small chance is still a chance, and want to keep trying.
-- **Shape:** an empty basket opens and closes the film; two coffee cups become five. The peak is the mother's own line, on her face.
+- **Shape:** a husband and wife we do not know, an empty doorstep, a long wait, a birth. Only then "That baby was me." The peak is the mother's own line, on her face. The doorstep returns full.
+
+### Storyboard version 2: the applicant's review (25 Nov 2026, before any generation; not a user test)
+
+- Removed the opening "number" shot: it spoiled the suspense. The film now starts with a husband and wife.
+- Removed all coffee imagery and the "same two cups" line: the applicant does not want it.
+- Removed "They tried again".
+- "My mother and father" and "my parents" became "they" until the reveal, so the narrator's identity stays hidden. Added the reveal shot, s08.
 - **Motion:** the applicant asked for people who move and speak rather than still pictures, so motion prompts ask for lips, heads, hands and breath. Narration is voice-over; mouths are not lip-synced.
 - **Every shot's reason** is in its `reason` field.
 

@@ -1,12 +1,12 @@
 {
  "id": "one-percent",
- "version": 1,
+ "version": 2,
  "status": "draft",
  "title": {
   "am": "አንድ በመቶ",
   "en": "One Percent"
  },
- "logline": "Told their chance of a child is under one percent, a young Ethiopian couple wait nine years and cross a border to become a family.",
+ "logline": "A young Ethiopian couple, told their chance of a child is under one percent, refuse to stop; only at the birth do we learn who is telling the story.",
  "theme": "Family and perseverance",
  "language": "am",
  "audience": "Draft, to be confirmed by the applicant: families and couples in Ethiopia and the diaspora who are waiting for something they have been told is unlikely",
@@ -57,17 +57,6 @@
    ],
    "chosen_seed": 11,
    "reason": "Not chosen yet"
-  },
-  "coffee_set": {
-   "prompt": "Still life of a traditional Ethiopian coffee set on a low dark wooden tray. A matte black clay jebena: a wide round ball-shaped belly, a narrow straight neck, a thin short pouring spout rising from the shoulder, a curved clay loop handle from neck to belly, a small straw lid on the neck. Beside it small white porcelain handleless cups with a thin green rim. Plain wooden floor, soft warm side light",
-   "seeds": [
-    11,
-    22,
-    33,
-    44
-   ],
-   "chosen_seed": 11,
-   "reason": "Not chosen yet"
   }
  },
  "video": {
@@ -93,15 +82,15 @@
    {
     "shot": "s01",
     "action": "start",
-    "note": "A few plucked notes under the number"
+    "note": "A few gentle plucked notes under the couple"
    },
    {
-    "shot": "s05",
+    "shot": "s04",
     "action": "lower",
     "note": "Near silence for the doctor"
    },
    {
-    "shot": "s08",
+    "shot": "s07",
     "action": "lift",
     "note": "Warmth returns with the birth"
    },
@@ -124,56 +113,42 @@
  "shots": [
   {
    "id": "s01",
-   "size": "insert",
-   "duration_s": 5,
-   "seed": 2001,
-   "ken_burns": "in",
-   "references": [],
-   "reason": "Opens on the number and an empty place, before we know whose it is",
-   "image_prompt": "An empty small handwoven Ethiopian straw baby basket lined with a folded white cotton blanket, on a wooden floor beside a window, pale dawn light falling on it, dust in the light",
-   "motion_prompt": "The curtain sways in a soft breeze, dust drifts through the light, the camera pushes in very slowly",
-   "narration": {
-    "am": "እኔ ከመወለዴ በፊት አንድ ቁጥር ነበር፤ አንድ በመቶ።",
-    "en": "Before I was born, there was a number. One percent."
-   }
-  },
-  {
-   "id": "s02",
    "size": "medium",
-   "duration_s": 5.5,
+   "duration_s": 6.5,
    "seed": 2002,
    "ken_burns": "out",
    "references": [
     "mother",
     "father"
    ],
-   "reason": "Meets the parents young and certain, so the waiting costs something",
-   "image_prompt": "the same mother from the reference and the same father from the reference as young newlyweds standing side by side in white handwoven cotton clothes with green and gold borders, shoulders touching, smiling at each other, warm afternoon garden behind",
+   "reason": "Meets a husband and wife as strangers, so the later reveal is a surprise",
+   "image_prompt": "the same woman from the first reference and the same man from the second reference as young newlyweds standing side by side in white handwoven cotton clothes with green and gold borders, shoulders touching, smiling at each other, warm afternoon garden behind",
    "motion_prompt": "The couple turn toward each other and smile, she laughs softly, their clothes move in a light wind, the camera is fixed",
    "narration": {
-    "am": "እናቴና አባቴ በወጣትነታቸው ተጋቡ፤ ልጅ እንደሚወልዱም እርግጠኛ ነበሩ።",
-    "en": "My mother and father married young, sure that a family would follow."
+    "am": "ባልና ሚስት ነበሩ። በወጣትነታቸው ተጋቡ፤ ልጅ እንደሚወልዱም እርግጠኛ ነበሩ።",
+    "en": "There were a husband and a wife. They married young, sure that a family would follow."
+   }
+  },
+  {
+   "id": "s02",
+   "reason": "Time passes on the couple themselves: the same two people, the same step, no one else",
+   "duration_s": 6,
+   "size": "wide",
+   "references": [
+    "mother",
+    "father"
+   ],
+   "image_prompt": "the same woman from the first reference and the same man from the second reference sitting close together on the stone doorstep of a small house, looking out over an empty quiet yard, dry leaves falling from a tree, late afternoon light",
+   "motion_prompt": "Leaves fall slowly past them, she leans her head onto his shoulder, his chest rises with a breath, the camera pushes in very slowly",
+   "seed": 2013,
+   "ken_burns": "in",
+   "narration": {
+    "am": "አንድ ዓመት አለፈ። ከዚያ ሁለት። ከዚያ አምስት።",
+    "en": "One year passed. Then two. Then five."
    }
   },
   {
    "id": "s03",
-   "size": "insert",
-   "duration_s": 6,
-   "seed": 2003,
-   "ken_burns": "right",
-   "references": [
-    "coffee_set"
-   ],
-   "reason": "The two cups make the waiting visible; this object returns at the end",
-   "image_prompt": "Low dark wooden tray holding one round black clay jebena and exactly two small white cups with a thin green rim, side by side, wide empty space around them, quiet room, light fading at the window",
-   "motion_prompt": "Steam curls up from the two cups, the window light slowly dims, the camera slides gently sideways",
-   "narration": {
-    "am": "አንድ ዓመት። ሁለት። አምስት። በእያንዳንዱ ቡና፣ ያው ሁለት ሲኒ።",
-    "en": "One year passed. Then two. Then five. Every coffee ceremony, the same two cups."
-   }
-  },
-  {
-   "id": "s04",
    "size": "medium close-up",
    "duration_s": 4,
    "seed": 2004,
@@ -181,16 +156,16 @@
    "references": [
     "mother"
    ],
-   "reason": "Their waiting is active: prayer, patience and trying again",
-   "image_prompt": "the same mother from the reference seated by candlelight at night, white shawl over her hair, eyes closed, hands pressed together near her chest, quiet prayer, dark room",
+   "reason": "Their waiting is active: prayer and patience",
+   "image_prompt": "the same woman from the reference seated by candlelight at night, white shawl over her hair, eyes closed, hands pressed together near her chest, quiet prayer, dark room",
    "motion_prompt": "Her lips move silently in prayer, she breathes slowly, the candle flame flickers, the camera is fixed",
    "narration": {
-    "am": "ጸለዩ። ጠበቁ። ደግመው ሞከሩ።",
-    "en": "They prayed. They waited. They tried again."
+    "am": "ጸለዩ። ጠበቁ።",
+    "en": "They prayed. They waited."
    }
   },
   {
-   "id": "s05",
+   "id": "s04",
    "size": "medium",
    "duration_s": 6,
    "seed": 2005,
@@ -200,7 +175,7 @@
     "father"
    ],
    "reason": "The bad news, held on the couple rather than the doctor",
-   "image_prompt": "the same mother from the reference and the same father from the reference seated close together in a plain consulting room, holding hands tightly, heads lowered, cool daylight from a high window",
+   "image_prompt": "the same woman from the first reference and the same man from the second reference seated close together in a plain consulting room, holding hands tightly, heads lowered, cool daylight from a high window",
    "motion_prompt": "Her shoulders rise and fall with a heavy breath, he slowly squeezes her hand and turns his head to her, the camera is fixed",
    "narration": {
     "am": "ከዚያ ሐኪሙ እውነቱን ነገራቸው፦ በኢትዮጵያ ዕድላቸው ከአንድ በመቶ በታች ነበር።",
@@ -208,7 +183,7 @@
    }
   },
   {
-   "id": "s06",
+   "id": "s05",
    "size": "medium close-up",
    "duration_s": 6,
    "seed": 2006,
@@ -217,16 +192,16 @@
     "mother",
     "father"
    ],
-   "reason": "The turn: the parents choose a question over an ending",
-   "image_prompt": "the same mother from the reference lifting her face with a determined look toward the same father from the reference beside her, warm lamp light on both faces, night window behind",
+   "reason": "The turn: the couple choose a question over an ending",
+   "image_prompt": "the same woman from the first reference lifting her face with a determined look toward the same man from the second reference beside her, warm lamp light on both faces, night window behind",
    "motion_prompt": "She raises her head and speaks, her lips moving, he looks at her and nods slowly, the camera pushes in gently",
    "narration": {
-    "am": "ብዙ ሰው እዚህ ያቆም ነበር። ወላጆቼ ግን ጠየቁ፦ ሌላ የት እንሞክር?",
-    "en": "Most people would have stopped there. My parents asked a different question: where else can we try?"
+    "am": "ብዙ ሰው እዚህ ያቆም ነበር። እነሱ ግን ጠየቁ፦ ሌላ የት እንሞክር?",
+    "en": "Most people would have stopped there. They asked a different question: where else can we try?"
    }
   },
   {
-   "id": "s07",
+   "id": "s06",
    "size": "wide",
    "duration_s": 6.5,
    "seed": 2007,
@@ -236,7 +211,7 @@
     "father"
    ],
    "reason": "Distance made visible: far from home, the same two people",
-   "image_prompt": "the same mother from the reference and the same father from the reference seen from behind, walking hand in hand along a sunlit pale stone hillside street with olive trees, one small suitcase, morning light ahead of them",
+   "image_prompt": "the same woman from the first reference and the same man from the second reference seen from behind, walking hand in hand along a sunlit pale stone hillside street with olive trees, one small suitcase, morning light ahead of them",
    "motion_prompt": "They walk slowly forward, her shawl and the olive leaves move in the wind, the camera follows gently behind",
    "narration": {
     "am": "መልሱ ሩቅ ነበር፤ እስራኤል። አዲስ ሐኪሞች፣ አዲስ ቋንቋ፣ ለዓመታት ያው ተስፋ።",
@@ -244,18 +219,36 @@
    }
   },
   {
-   "id": "s08",
+   "id": "s07",
    "size": "close-up",
    "duration_s": 4,
    "seed": 2008,
    "ken_burns": "in",
    "references": [],
-   "reason": "The arrival, in a hand rather than a face; a breath before the peak",
+   "reason": "The birth, in a hand rather than a face; it does not say yet whose life this is",
    "image_prompt": "Extreme close view of a newborn baby hand with tiny fingers wrapped around one adult finger, white blanket, soft golden morning light",
    "motion_prompt": "The tiny fingers slowly open and close around the finger, the blanket moves with breathing, the camera is fixed",
    "narration": {
-    "am": "እና ከዚያ… እኔ መጣሁ።",
-    "en": "And then… I arrived."
+    "am": "እና ከዚያ… ሕፃን ተወለደ።",
+    "en": "And then… a baby was born."
+   }
+  },
+  {
+   "id": "s08",
+   "reason": "The reveal: the narrator was the baby all along",
+   "duration_s": 5,
+   "size": "medium close-up",
+   "references": [
+    "mother",
+    "father"
+   ],
+   "image_prompt": "the same woman from the first reference holding a newborn baby wrapped in a white blanket against her chest, the same man from the second reference leaning in beside her, both looking down at the baby with tears of joy, soft golden window light",
+   "motion_prompt": "She rocks the baby gently and smiles, he bows his head toward them, the baby stirs, the camera pushes in slowly",
+   "seed": 2014,
+   "ken_burns": "in",
+   "narration": {
+    "am": "ያ ሕፃን እኔ ነበርኩ።",
+    "en": "That baby was me."
    }
   },
   {
@@ -268,7 +261,7 @@
     "mother"
    ],
    "reason": "The emotional peak: the line she still says, on her face",
-   "image_prompt": "the same mother from the reference, older now with a few silver hairs, face filling the frame, joyful eyes, mouth open speaking warmly toward the viewer, golden window light",
+   "image_prompt": "the same woman from the reference, older now with a few silver hairs, face filling the frame, joyful eyes, mouth open speaking warmly toward the viewer, golden window light",
    "motion_prompt": "She speaks warmly, her lips and jaw moving naturally, then breaks into a smile and blinks, the camera is fixed",
    "narration": {
     "am": "እናቴ ዛሬም ትላለች፦ «ሌሎች ሴቶች በዘጠኝ ወር ይወልዳሉ፤ እኔ ግን በዘጠኝ ዓመት ወለድኩ።»",
@@ -277,16 +270,14 @@
   },
   {
    "id": "s10",
-   "size": "insert",
+   "reason": "The family keeps growing: one child becomes three",
    "duration_s": 5,
-   "seed": 2010,
+   "size": "wide",
+   "references": [],
+   "image_prompt": "Three small children seen from behind running together across a sunny green field, holding hands, white cotton clothes, warm golden light",
+   "motion_prompt": "The three children run forward hand in hand, clothes and grass move in the wind, the camera follows gently",
+   "seed": 2015,
    "ken_burns": "right",
-   "references": [
-    "coffee_set"
-   ],
-   "reason": "The tray fills: the two cups become five",
-   "image_prompt": "Low dark wooden tray holding one round black clay jebena and exactly five small white cups with a thin green rim in a neat row, bright warm morning room",
-   "motion_prompt": "Steam rises from the five cups, sunlight moves across the tray, the camera slides gently sideways",
    "narration": {
     "am": "ከዚያ ታናሽ እህቴ፣ ከዚያም ታናሽ ወንድሜ መጡ።",
     "en": "Then came my little sister. Then my little brother."
@@ -302,9 +293,9 @@
     "mother",
     "father"
    ],
-   "reason": "The number becomes a family around the same tray",
-   "image_prompt": "the same mother from the reference and the same father from the reference, older, seated around a coffee tray with three invented children seen from behind, warm home, golden light",
-   "motion_prompt": "The family lean together and laugh, shoulders moving, a child reaches toward the tray, steam rises, the camera pulls back slowly",
+   "reason": "The same doorstep that was empty is now full",
+   "image_prompt": "the same woman from the first reference and the same man from the second reference, older, sitting on the stone doorstep of a small house with three children seen from behind around them, all close together, warm golden light",
+   "motion_prompt": "The family lean together and laugh, shoulders moving, a child hugs the mother, the camera pulls back slowly",
    "narration": {
     "am": "ያ አንድ በመቶ እኔ ነበርኩ። ሁላችንም ነበርን።",
     "en": "I was the one percent. We all were."
@@ -312,14 +303,14 @@
   },
   {
    "id": "s12",
-   "size": "medium",
+   "reason": "Turns to the viewer with the light still ahead",
    "duration_s": 7,
-   "seed": 2012,
-   "ken_burns": "up",
+   "size": "extreme wide",
    "references": [],
-   "reason": "Returns to the opening basket in full light and turns to the viewer",
-   "image_prompt": "A small handwoven Ethiopian straw baby basket beside a bright open window, white cotton blanket folded inside with one small bright yellow flower resting on it, golden sunrise light flooding the room",
-   "motion_prompt": "The curtain lifts in the breeze, sunlight grows brighter across the basket, the camera pulls back slowly",
+   "image_prompt": "A family of five seen from far behind as small figures walking together up a green hill toward a huge golden sunrise, long soft shadows, open sky",
+   "motion_prompt": "The family walk slowly up the hill, grass sways, the sunlight grows brighter, the camera rises slowly",
+   "seed": 2016,
+   "ken_burns": "up",
    "narration": {
     "am": "ዕድላችሁ አንድ በመቶ ነው ቢሏችሁ፣ አስታውሱ፦ አንድ በመቶ ዜሮ አይደለም። ተስፋ አትቁረጡ።",
     "en": "So if anyone ever tells you your chance is one percent, remember: one percent is not zero. Never give up."
