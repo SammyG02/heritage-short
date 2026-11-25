@@ -69,7 +69,7 @@ From here on, commands are written for Windows. On Mac or Linux, type `.venv/bin
 .venv\Scripts\python -m pipeline film
 ```
 
-This rebuilds the sample from the saved pictures and voices, without calling any AI service. It took 5 to 15 minutes on an 8 GB laptop. The videos appear here:
+This rebuilds the sample from the saved pictures and voices, without calling any AI service. It took 4 to 15 minutes on an 8 GB laptop. The videos appear here:
 
 ```text
 outputs/extra-cup/film/am/film_9x16.mp4    vertical
