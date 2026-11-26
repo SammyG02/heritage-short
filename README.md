@@ -39,12 +39,14 @@ You need:
 
 You do **not** need to install FFmpeg. If you have it, it is used; if not, a copy is installed with the other packages.
 
-Open a terminal (Windows: PowerShell. Mac or Linux: Terminal) and download the project, using the address on its GitHub page:
+Open a terminal (Windows: PowerShell. Mac or Linux: Terminal) and download the project:
 
 ```bash
-git clone <repository address>
-cd <the folder it created>
+git clone https://github.com/SammyG02/heritage-short.git
+cd heritage-short
 ```
+
+It is about 240 MB, because the film's pictures, voices, clips and score are kept in it so that it can be rebuilt without any AI call.
 
 Then install its packages.
 
