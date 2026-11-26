@@ -1,13 +1,7 @@
-  narration am/s01  6.2s
-  narration am/s02  3.9s
-  narration am/s03  2.1s
-  narration am/s04  5.4s
-  narration am/s05  5.9s
-  narration am/s06  5.4s
-  narration am/s07  1.8s
-  narration am/s08  1.7s
-  narration am/s09  7.0s
-  narration am/s10  3.3s
-  narration am/s11  2.9s
-  narration am/s12  6.8s
-  narration am: 12 generated, 0 cached
+  WaveSpeed balance: $0.74; budget left $0.87
+  motion: 1 clips on WaveSpeed fast, about $0.16
+progress 1 of 1: sending the pictures
+step: WaveSpeed is animating 1 shots at a time, usually 1 to 3 minutes each
+  clip s05_9x16 ready
+progress 1 of 1: 1 of 1 clips back
+  WaveSpeed charged $0.08 for this clip (balance $0.74 -> $0.66)

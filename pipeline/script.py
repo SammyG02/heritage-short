@@ -6,7 +6,7 @@ from datetime import datetime
 from pathlib import Path
 
 from . import narration
-from .core import budget, config, providers, runlog, settings
+from .core import budget, config, providers, runlog, settings, storyboard
 from .core.storyboard import require_consent, validate
 
 LANGUAGES = {"am": "Amharic", "en": "English"}
@@ -83,7 +83,8 @@ def build(draft, *, language, theme, audience, intent, base, narrator="man", peo
             prompt = f"The same person as in the reference image: same face shape, same eyes, same skin tone. Change only this: {prompt}"
         references[k] = {"prompt": prompt, "seeds": [11, 22], "chosen_seed": 11, "reason": "Not chosen yet", **{x: v[x] for x in ("look", "from") if v.get(x)}}
     ids = [s["id"] for s in draft["shots"]]
-    shots = [{**s, "seed": 1000 + i, "narration": {k: s["narration"][k] for k in langs if k in s["narration"]}} for i, s in enumerate(draft["shots"], 1)]
+    # Every shot starts as a free camera move; the person chooses which ones really move, and on which service.
+    shots = [{**s, "seed": 1000 + i, "motion": "camera", "narration": {k: s["narration"][k] for k in langs if k in s["narration"]}} for i, s in enumerate(draft["shots"], 1)]
     for s in shots:
         if not s.get("quote_voice"):
             s.pop("quote_voice", None)
@@ -144,24 +145,33 @@ Return JSON: {{"notes": [{{"shot": "s01", "problem": "...", "suggestion": "the c
 def proofread(sb, lang):
     """One text call. Suggestions only: a person decides."""
     require_consent(sb)
+    storyboard.require_service(sb, "groq" if settings.load()["writer"].startswith("groq:") else "google")
     prompt = PROOF.format(name=LANGUAGES[lang], title=sb["title"].get(lang, ""), lines=json.dumps({s["id"]: s["narration"][lang] for s in sb["shots"]}, ensure_ascii=False))
     return _generate(prompt).get("notes", [])
 
 
-def new(story, language, theme, audience, intent, true_story=False, consent_record="", narrator="man"):
+def new(story, language, theme, audience, intent, true_story=False, consent_record="", narrator="man", people_agreed=None, ai_services=None):
     """Draft a storyboard, save it under storyboards/ and return (path, storyboard)."""
     if language not in LANGUAGES:
         raise config.PipelineError(f"Choose one of {', '.join(LANGUAGES)}. Coming soon: {', '.join(COMING_SOON)}.")
     if len(story.split()) < 12:
         raise config.PipelineError("Please tell the story in at least a few sentences.")
-    if true_story and len(consent_record.split()) < 8:
+    if true_story and people_agreed is not None:  # the studio: one line per person and one box per AI service
+        people_agreed = storyboard.clean_people(people_agreed)
+        ai_services = {k: v is True for k, v in (ai_services or {}).items() if k in storyboard.AI_SERVICES}
+        writer = "groq" if settings.load()["writer"].startswith("groq:") else "google"
+        if not ai_services.get(writer):
+            raise config.PipelineError(f"The script is written by {storyboard.AI_SERVICES[writer][0]}, which reads the story. Tick it only if they agreed.")
+        consent_record = (storyboard.people_lines(people_agreed) + ("\n" + consent_record.strip() if consent_record.strip() else "")).strip()
+    elif true_story and len(consent_record.split()) < 8:
         raise config.PipelineError("This is about real people, and the story is sent to an AI service to write the script. Record consent first: who agreed, when, how and to what.")
-    audience, intent = audience.strip() or "my family", intent.strip() or "close to home"
+    audience, intent = audience.strip() or "the storyteller's family and friends", intent.strip() or "what the story itself calls for"
     theme_text = THEMES.get(theme, theme)
     base = json.loads((Path(__file__).parent / "defaults.json").read_text(encoding="utf-8"))
     people = None
     if true_story:
         people = {"real_people": False, "based_on_real_people": True, "consent": "recorded", "consent_record": consent_record.strip(),
+                  **({"people_agreed": people_agreed, "ai_services": ai_services} if people_agreed else {}),
                   "statement": "Based on a true story. Faces are invented and voices are stock synthetic voices."}
     runlog.use_private()
     extra = f" and {LANGUAGES[language]}" if language != "en" else ""
@@ -172,6 +182,7 @@ def new(story, language, theme, audience, intent, true_story=False, consent_reco
         draft = _generate(prompt + (("\nYour last answer had these problems, fix them:\n" + "\n".join(problems)) if problems else ""))
         try:
             sb = build(draft, language=language, theme=theme_text, audience=audience, intent=intent, base=base, narrator=narrator, people=people)
+            sb["story"] = story.strip()
             problems = validate(sb) or lint(sb) + limits(sb)
         except (KeyError, TypeError, ValueError, AttributeError) as e:
             problems = [f"missing or wrong field: {e}"]

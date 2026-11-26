@@ -15,14 +15,14 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import unquote, urlparse
 
-from . import keyframes, music, narration, script, services, shots
-from .core import approvals, budget, cache, config, providers, runlog, settings
+from . import keyframes, music, narration, script, services, shots, wavespeed
+from .core import approvals, budget, cache, config, providers, runlog, settings, storyboard
 from .core.storyboard import out, root, validate
 
 PORT = 8765
 STATIC = Path(__file__).parent / "web_static"
 MEDIA = {".png", ".jpg", ".wav", ".mp4", ".srt"}
-EDIT_SHOT = {"image_prompt", "motion_prompt", "emotion", "voice_emotion", "seed", "motion"}
+EDIT_SHOT = {"image_prompt", "motion_prompt", "emotion", "voice_emotion", "seed", "motion", "animate"}
 GEMINI_VOICES = [("Algieba", "man"), ("Charon", "man"), ("Iapetus", "man"), ("Orus", "man"), ("Puck", "man"),
                  ("Sulafat", "woman"), ("Achernar", "woman"), ("Kore", "woman"), ("Aoede", "woman"), ("Leda", "woman")]
 lock = threading.RLock()
@@ -93,7 +93,11 @@ def film_state(fid):
             a = {**asset(kf, keyframes.inputs(sb, s, r)), "cost": round(keyframes.cost(sb, s, r))}
             row[f"picture_{r}"] = {**a, "qa": cache.read_meta(kf).get("qa"), "ok": a["fresh"] and approvals.ok(sb, "picture", kf.stem, cache.file_sha(kf)),
                                    "versions": [{"name": v.name, "url": url(v)} for v in keyframes.versions(kf)[-4:]]}
-            row[f"clip_{r}"] = asset(shots.wan_path(sb, s, r), shots.wan_inputs(sb, s, r))
+            wp = shots.wan_path(sb, s, r)
+            made = shots.has_wan(sb, s, r)
+            row["wave"] = {q: shots.wave_price(sb, s, q) for q in shots.WAVESPEED} | {"seconds": shots.wave_seconds(sb, s)}
+            row[f"clip_{r}"] = {"url": url(wp), "fresh": made, "ok": made and approvals.ok(sb, "clip", wp.stem, cache.file_sha(wp)),
+                                "versions": len(list((wp.parent / "versions").glob(wp.stem + "_*.mp4")))}
         rows.append(row)
     refs = {}
     for name, ref in sb["references"].items():
@@ -102,7 +106,8 @@ def film_state(fid):
             f = keyframes.ref_path(sb, name, seed)
             opts.append({"seed": seed, **asset(f, keyframes.ref_inputs(sb, name, seed))})
         refs[name] = {"options": opts, "chosen": ref["chosen_seed"], "decided": ref["reason"] != "Not chosen yet" and any(o["seed"] == ref["chosen_seed"] and o["fresh"] for o in opts), "from": ref.get("from"), "reason": ref["reason"],
-                      "look": ref.get("look", ""), "shots": [s["id"] for s in sb["shots"] if name in s["references"]]}
+                      "look": ref.get("look", ""), "shots": [s["id"] for s in sb["shots"] if name in s["references"]],
+                      "photo": {"person": ref["photo"]["person"], "url": url(keyframes.photo_path(sb, name))} if ref.get("photo") else None}
     scores = [{"seed": x, **asset(music.path(sb, x), music.inputs(sb, x))} for x in sb["music"]["seeds"]]
     folder = out(sb, "film", lang)
     report = folder / "report.json"
@@ -117,13 +122,16 @@ def film_state(fid):
     chosen, left_out, wait, hours = shots.plan(sb)
     todo = narration.stale(sb, lang)
     return {"problems": narration.text_problems(sb, lang), "length": round(narration.estimate_s(sb, lang)), "voice_calls": narration.calls_needed(sb, lang, todo),
-            "engine": narration.engine(sb, lang), "draw_with": keyframes.service(sb), "true_story": bool(sb["people"].get("based_on_real_people")), "addis_agreed": bool(sb["people"].get("addis_consent")), "addis_key": bool(os.environ.get("ADDIS_API_KEY", "").strip()),
+            "engine": narration.engine(sb, lang), "draw_with": keyframes.service(sb), "true_story": bool(sb["people"].get("based_on_real_people")), "addis_agreed": bool(sb["people"].get("addis_consent")), "heard": {v: url(w) for v, w in narration.heard_before(sb, lang).items()}, "ratios": list(keyframes.drawn(sb)), "animate": shots.animator(sb), "wavespeed_key": bool(os.environ.get("WAVESPEED_API_KEY", "").strip()),
+            "wave_todo": [f"{s['id']}_{r}" for s, r in wavespeed.todo(sb)], "wave_model": shots.wave_model(sb), "wavespeed_budget": float(settings.load()["wavespeed_budget"]), "wavespeed_left": wavespeed.left() if os.environ.get("WAVESPEED_API_KEY", "").strip() else budget.wavespeed_left(), "addis_key": bool(os.environ.get("ADDIS_API_KEY", "").strip()),
             "plan": {"clips": [f"{s['id']}_{r}" for s, r in chosen], "left_out": len(left_out), "waiting": len(wait), "hours": round(hours, 1)},
             "storyboard": sb, "main": p.name == "storyboard.json", "rows": rows, "references": refs, "scores": scores, "gpu_jobs": gpu_jobs,
-            "film": {r: url(folder / f"film_{r}.mp4") for r in keyframes.SIZES}, "radio_latest": url(max((folder / n for n in ("radio_cut.mp4", "radio_cut_partial.mp4")), key=lambda f: f.stat().st_mtime if f.exists() else 0)),
+            "film": {r: url(folder / f"film_{r}.mp4") for r in keyframes.SIZES},
+            "preview_file": {r: {"url": url(folder / f"preview_{r}.mp4"), "made": int((folder / f"preview_{r}.mp4").stat().st_mtime) if (folder / f"preview_{r}.mp4").exists() else None} for r in keyframes.SIZES}, "radio_latest": url(max((folder / n for n in ("radio_cut.mp4", "radio_cut_partial.mp4")), key=lambda f: f.stat().st_mtime if f.exists() else 0)),
             "report": json.loads(report.read_text(encoding="utf-8")) if report.exists() else None,
             "feedback": [json.loads(x) for x in fb.read_text(encoding="utf-8").splitlines() if x.strip()] if fb.exists() else [],
-            "locked": bool(sb["people"].get("based_on_real_people") and sb["people"].get("consent") != "recorded")}
+            "locked": bool(sb["people"].get("based_on_real_people") and sb["people"].get("consent") != "recorded"),
+            "ai_services": [{"id": k, "name": v[0], "gets": v[1]} for k, v in storyboard.AI_SERVICES.items()], "agreed_to": storyboard.AGREED_TO}
 
 
 def card(fid, p):
@@ -134,8 +142,8 @@ def card(fid, p):
     try:
         voice = [cache.fresh(narration.path(sb, s, lang), narration.inputs(sb, s, lang)) for s in sb["shots"]]
         heard = [v and approvals.ok(sb, "voice", s["id"], narration.approval_key(sb, s, lang)) for v, s in zip(voice, sb["shots"])]
-        pics = [cache.fresh(keyframes.path(sb, s, r), keyframes.inputs(sb, s, r)) for r in keyframes.SIZES for s in sb["shots"]]
-        clips = [shots.has_wan(sb, s, r) for r in keyframes.SIZES for s in sb["shots"] if s.get("motion", "clip") == "clip"]
+        pics = [cache.fresh(keyframes.path(sb, s, r), keyframes.inputs(sb, s, r)) for r in keyframes.drawn(sb) for s in sb["shots"]]
+        clips = [shots.has_wan(sb, s, r) for r in keyframes.drawn(sb) for s in sb["shots"] if s.get("motion", "clip") == "clip"]
         decided = all(keyframes.cast_ready(sb, s) for s in sb["shots"])
         images = [keyframes.path(sb, s, "9x16") for s in sb["shots"]] + [keyframes.ref_path(sb, k, r["chosen_seed"]) for k, r in sb["references"].items()]
         base["poster"] = url(next((i for i in images if i.exists()), images[0]))
@@ -163,7 +171,7 @@ def limits():
 
 ACTIONS = {
     "voice": "Making voices", "references": "Drawing characters", "pictures": "Drawing pictures", "radio": "Building the radio cut",
-    "motion_submit": "Sending clips to the GPU", "motion_status": "Checking the GPU", "motion_fetch": "Collecting clips",
+    "motion_wavespeed": "Making moving clips", "preview_video": "Making a preview video", "motion_submit": "Sending clips to the GPU", "motion_status": "Checking the GPU", "motion_fetch": "Collecting clips",
     "pictures_submit": "Sending pictures to the GPU", "pictures_status": "Checking the GPU", "pictures_fetch": "Collecting pictures", "voice_submit": "Sending voices to the GPU", "voice_fetch": "Collecting voices", "music_submit": "Sending music to the GPU", "music_status": "Checking the GPU", "music_fetch": "Collecting music", "build": "Editing the film"}
 
 
@@ -178,6 +186,15 @@ def command(sb, action, body):
     name = body.get("name")
     if name is not None and name not in sb["references"]:
         raise Refused("Unknown character.")
+    if action == "build":
+        lang = sb["language"]
+        waiting = [s["id"] for s in sb["shots"] if not approvals.ok(sb, "voice", s["id"], narration.approval_key(sb, s, lang))]
+        waiting += [p.stem for s in sb["shots"] for r in keyframes.drawn(sb) if (p := keyframes.path(sb, s, r)).exists()
+                    and not approvals.ok(sb, "picture", p.stem, cache.file_sha(p))]
+        waiting += [f"{p.stem} movement" for s in sb["shots"] for r in keyframes.drawn(sb) if shots.has_wan(sb, s, r)
+                    and not approvals.ok(sb, "clip", (p := shots.wan_path(sb, s, r)).stem, cache.file_sha(p))]
+        if waiting:
+            raise Refused(f"Approve these first: {', '.join(waiting[:8])}{'...' if len(waiting) > 8 else ''}")
     pick = [y for x in only for y in ("--shot", x)]
     size = [y for x in ratios for y in ("--ratio", x)]
     force = ["--force"] if body.get("force") is True else []
@@ -193,6 +210,12 @@ def command(sb, action, body):
         if waiting:
             raise Refused("Choose these characters first: " + ", ".join(waiting))
         return ["keyframes", *(pick or [y for s in sb["shots"] for y in ("--shot", s["id"])]), *size, *force]
+    if action == "motion_wavespeed":
+        if len(only) != 1:  # paid: only ever the one shot the person confirmed
+            raise Refused("WaveSpeed animates one chosen shot at a time, from that shot's Animate button.")
+        return ["motion", *size, *pick]
+    if action == "preview_video":
+        return ["preview", "--ratio", ratios[0] if ratios else "9x16"]
     return {"voice": ["narration", *pick, *force], "radio": ["radio", "--partial"], "build": ["assemble"],
             "pictures_submit": ["gpu", "submit", "pictures", *size, *pick], "pictures_status": ["gpu", "status", "pictures"], "pictures_fetch": ["gpu", "fetch", "pictures"],
             "voice_submit": ["gpu", "submit", "voice"], "voice_fetch": ["gpu", "fetch", "voice"],
@@ -293,13 +316,18 @@ def stop():
 
 # ---------------------------------------------------------------- edits
 
+# Jobs that read the storyboard once at the start, never write it, and never use the voice settings.
+VOICE_FREE_DURING = ("pictures", "references")
+
+
 def edit(fid, body):
     """Apply one set of edits. Anything that would break the contract is refused and nothing is saved."""
     with lock:
-        if running() and job["film"] == fid:
+        if running() and job["film"] == fid and not (set(body) == {"voice"} and job["action"] in VOICE_FREE_DURING):
             raise Refused("Wait for the running job to finish before editing.")
         p, sb = open_board(fid)
         before = json.dumps(sb, sort_keys=True)
+        planned_before = wave_planned(sb)
         by_id = {s["id"]: s for s in sb["shots"]}
         for sid, change in (body.get("shots") or {}).items():
             if sid not in by_id:
@@ -315,6 +343,8 @@ def edit(fid, body):
                     s.pop(k, None)
                 elif k == "redraw" and v in keyframes.SIZES:
                     new_take(s, v)
+                elif k == "reanimate" and v is True:
+                    new_take(s, "clip")
                 elif k in EDIT_SHOT:
                     s[k] = v if k == "seed" else str(v).strip()
                 else:
@@ -331,20 +361,205 @@ def edit(fid, body):
             approve(sb, kind, names, body.get("value") is not False)
         if "services" in body:
             set_service(sb, body["services"])
+        if "character" in body:
+            character(sb, body["character"])
+        if "consent_add" in body:
+            text = str(body["consent_add"]).strip()
+            if len(text.split()) < 6:
+                raise Refused("Write who agreed, when and how, in a sentence.")
+            old = sb["people"].get("consent_record") or "Recorded in ETHICS.md."
+            sb["people"]["consent_record"] = f"{old}\n{datetime.now().strftime('%d %b %Y %H:%M')}: {text}"
+        if "ai_services" in body:
+            from .core.storyboard import AI_SERVICES
+            ticks = body["ai_services"]
+            if not isinstance(ticks, dict) or any(k not in AI_SERVICES or not isinstance(v, bool) for k, v in ticks.items()):
+                raise Refused("Unknown AI service.")
+            have = sb["people"].setdefault("ai_services", {})
+            changed = {k: v for k, v in ticks.items() if have.get(k) is not v}
+            have.update(ticks)
+            if changed:
+                old = sb["people"].get("consent_record") or "Recorded in ETHICS.md."
+                said = "; ".join(f"{AI_SERVICES[k][0]}: {'agreed' if v else 'not agreed'}" for k, v in changed.items())
+                sb["people"]["consent_record"] = f"{old}\n{datetime.now().strftime('%d %b %Y %H:%M')}: {said}"
+        if "people_agreed" in body:
+            try:
+                rows = storyboard.clean_people(body["people_agreed"])
+            except config.PipelineError as e:
+                raise Refused(str(e))
+            sb["people"]["people_agreed"] = rows
+            _note(sb, f"who agreed, as now recorded:\n{storyboard.people_lines(rows)}")
+            yes = {r["role"] for r in rows if r.get("photo")}
+            for n, r in list(sb["references"].items()):
+                if r.get("photo") and r["photo"]["person"] not in yes:
+                    drop_photo(sb, n, f"the {r['photo']['person']}'s consent to it is no longer recorded")
+        if "photo_remove" in body:
+            n = str(body["photo_remove"])
+            if not sb["references"].get(n, {}).get("photo"):
+                raise Refused("That character is not drawn from a photo.")
+            drop_photo(sb, n, "chosen in the studio")
+        if body.get("consent_withdraw") is True:
+            old = sb["people"].get("consent_record") or "Recorded in ETHICS.md."
+            sb["people"].update(consent="pending", consent_record=f"{old}\n{datetime.now().strftime('%d %b %Y %H:%M')}: consent withdrawn in the studio; nothing more is made until it is recorded again.")
         if "consent" in body:
             text = str(body["consent"]).strip()
             if len(text.split()) < 8:
                 raise Refused("Please write who agreed, when, how and to what.")
             sb["people"].update(consent="recorded", consent_record=text)
+        if any(x.get("animate") not in (None, "kaggle", "wavespeed") for x in sb["shots"]):
+            raise Refused("Unknown animator.")
+        need = wave_planned(sb)
+        if need > planned_before + 1e-9 and need > (room := wavespeed.left()) + 1e-9:  # only a change that adds paid clips past the money left
+            raise Refused(f"The WaveSpeed shots would need about ${need:.2f}; ${room:.2f} can be spent. Set one to Kaggle first.")
         if json.dumps(sb, sort_keys=True) != before:
             sb["version"] += 1
             save_board(p, sb)
+
+
+def wave_planned(sb):
+    """Dollars the WaveSpeed shots without a clip would cost."""
+    return sum(shots.wave_price(sb, x) for x in sb["shots"] if x.get("motion", "clip") == "clip" and shots.animator(sb, x) == "wavespeed"
+               and not all(shots.has_wan(sb, x, r) for r in keyframes.drawn(sb)))
 
 
 def new_take(shot, ratio):
     """Another take of one format only."""
     takes = shot.setdefault("takes", {})
     takes[ratio] = takes.get(ratio, 0) + 1
+
+
+NAME = re.compile(r"^[a-z][a-z_]{1,30}$")
+
+
+def ref_prompt(ref):
+    look = ref.get("look", "")
+    if ref.get("photo"):
+        return f"The person in the reference photo, drawn as a character in this style: keep their face shape, skin tone, hair and age. {look}. Upper body, facing the viewer, plain warm background"
+    if ref.get("from"):
+        return f"The same person as in the reference image, same face and features. Change only this: {look}. Upper body, facing the viewer, plain warm background"
+    return f"{look}. Upper body, facing the viewer, plain warm background"
+
+
+def _note(sb, text):
+    old = sb["people"].get("consent_record") or "Recorded in ETHICS.md."
+    sb["people"]["consent_record"] = f"{old}\n{datetime.now().strftime('%d %b %Y %H:%M')}: {text}"
+
+
+def drop_photo(sb, name, why):
+    ref = sb["references"][name]
+    person = ref.pop("photo")["person"]
+    keyframes.photo_path(sb, name).unlink(missing_ok=True)
+    ref["prompt"], ref["reason"] = ref_prompt(ref), "Not chosen yet"
+    for other in sb["references"].values():
+        if other.get("from") == name:
+            other["reason"] = "Not chosen yet"
+    if not any(r.get("photo") for r in sb["references"].values()):
+        pe = sb["people"]
+        pe["real_people"] = False
+        pe["statement"] = pe["statement"].replace(" " + storyboard.PHOTO_NOTE, "").replace(storyboard.PHOTO_NOTE, "").strip()
+    _note(sb, f"The {name.replace('_', ' ')} is no longer drawn from the {person}'s photo ({why}); the photo was deleted from this computer.")
+
+
+def set_photo(fid, body):
+    """Draw a character from a photo, only with that person's recorded yes. The photo is scaled down, stripped of metadata and kept out of git."""
+    import base64
+    import io
+    from PIL import Image
+    with lock:
+        if running() and job["film"] == fid:
+            raise Refused("Wait for the running job to finish.")
+        p, sb = open_board(fid)
+        name, person = str(body.get("name") or ""), str(body.get("person") or "")
+        if name not in sb["references"]:
+            raise Refused("Unknown character.")
+        pe = sb["people"]
+        if not pe.get("based_on_real_people") or pe.get("consent") != "recorded":
+            raise Refused("Photos are only for a true story with consent recorded. Otherwise the faces are invented.")
+        if not any(x["role"] == person and x.get("photo") for x in pe.get("people_agreed", [])):
+            raise Refused(f"On the Story tab, tick \u201ctheir photo used as a reference\u201d for the {person or 'person'}, only if they agreed.")
+        if not storyboard.allowed(sb, keyframes.service(sb)):
+            raise Refused("The faces are drawn by a service this family has not agreed to. Tick it on the Story tab first, only if they did.")
+        try:
+            raw = base64.b64decode(str(body.get("image") or "").split(",", 1)[-1], validate=True)
+            im = Image.open(io.BytesIO(raw))
+            im = im.convert("RGB")  # drops metadata such as GPS and camera details
+        except Exception:
+            raise Refused("That file is not a picture the studio can read. Use a JPEG or PNG photo.")
+        im.thumbnail((1024, 1024))
+        target = keyframes.photo_path(sb, name)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        im.save(target, "PNG")
+        ref = sb["references"][name]
+        ref["photo"] = {"person": person}
+        ref["prompt"], ref["reason"] = ref_prompt(ref), "Not chosen yet"
+        for other in sb["references"].values():
+            if other.get("from") == name:
+                other["reason"] = "Not chosen yet"
+        pe["real_people"] = True
+        if storyboard.PHOTO_NOTE not in pe["statement"]:
+            pe["statement"] = (pe["statement"].replace("Nobody's photograph or recording is used. ", "").replace("All faces are invented", "Faces are invented unless noted") + " " + storyboard.PHOTO_NOTE).strip()
+        _note(sb, f"The {name.replace('_', ' ')} is now drawn from a photo of the {person}, with their recorded consent. The photo stays on this computer, out of git; it is sent scaled down to {keyframes.service(sb).capitalize()} to draw the faces.")
+        problems = validate(sb)
+        if problems:
+            target.unlink(missing_ok=True)
+            raise Refused("; ".join(problems[:3]))
+        sb["version"] += 1
+        save_board(p, sb)
+
+
+def character(sb, c):
+    """One change to the cast. Pictures of the shots it touches go out of date by themselves, through their inputs."""
+    refs, name = sb["references"], str(c.get("name") or "").strip().lower().replace(" ", "_")
+    if not NAME.match(name):
+        raise Refused("Give the character a short name in plain letters, for example grandmother.")
+    if c.get("remove") is True:
+        if name not in refs:
+            raise Refused("Unknown character.")
+        if any(r.get("from") == name for r in refs.values()):
+            raise Refused("Another character is drawn from this one. Remove that one first.")
+        if len(refs) == 1:
+            raise Refused("A film keeps at least one character.")
+        if refs[name].get("photo"):
+            drop_photo(sb, name, "the character was removed")
+        del refs[name]
+        for s in sb["shots"]:
+            if name in s["references"]:
+                s["references"].remove(name)
+        return
+    look = str(c.get("look") or "").strip()
+    if name not in refs:  # a new character
+        if len(look.split()) < 4:
+            raise Refused("Describe the character in a few words: age, face, hair, clothes.")
+        parent = c.get("from") or None
+        if parent and parent not in refs:
+            raise Refused("Unknown character to draw from.")
+        refs[name] = {"prompt": (f"The same person as in the reference image, same face and features. Change only this: {look}. Upper body, facing the viewer, plain warm background" if parent
+                                 else f"{look}. Upper body, facing the viewer, plain warm background"),
+                      "seeds": [11, 22], "chosen_seed": 11, "reason": "Not chosen yet", "look": look, **({"from": parent} if parent else {})}
+    else:
+        ref = refs[name]
+        if look and look != ref.get("look"):
+            ref["look"] = look
+            ref["prompt"] = ref_prompt(ref)
+            ref["reason"] = "Not chosen yet"  # new faces must be drawn and chosen
+            for other in refs.values():
+                if other.get("from") == name:
+                    other["reason"] = "Not chosen yet"
+        more = int(c.get("more_faces") or 0)
+        if more:
+            if not 1 <= more <= 4:
+                raise Refused("Up to 4 more faces at a time.")
+            top = max(ref["seeds"])
+            ref["seeds"] += [top + 11 * k for k in range(1, more + 1)]
+    if "shots" in c:
+        want = {str(x) for x in c["shots"]}
+        for s in sb["shots"]:
+            has = name in s["references"]
+            if s["id"] in want and not has:
+                if len(s["references"]) >= 3:
+                    raise Refused(f"Shot {sb['shots'].index(s) + 1} already shows three characters.")
+                s["references"].append(name)
+            elif s["id"] not in want and has:
+                s["references"].remove(name)
 
 
 def choose_face(sb, name, seed, reason):
@@ -362,9 +577,17 @@ def set_service(sb, choice):
         if choice["pictures"] not in ("cloudflare", "kaggle"):
             raise Refused("Unknown picture service.")
         sb.setdefault("services", {})["pictures"] = choice["pictures"]
+    if "wavespeed" in choice:
+        if choice["wavespeed"] not in shots.WAVESPEED:
+            raise Refused("Unknown WaveSpeed quality.")
+        sb.setdefault("services", {})["wavespeed"] = choice["wavespeed"]
     if "motion" in choice:
+        if choice["motion"] == "wavespeed":
+            raise Refused("WaveSpeed is chosen shot by shot, on the Shots tab.")
         if choice["motion"] not in ("clip", "camera"):
             raise Refused("Unknown motion.")
+        if choice["motion"] == "clip":
+            sb.setdefault("services", {})["animate"] = "kaggle"  # every shot moves; the few chosen for WaveSpeed keep it
         for s in sb["shots"]:
             s["motion"] = choice["motion"]
 
@@ -418,6 +641,11 @@ def approve(sb, kind, names, yes):
             if not key:
                 raise Refused(f"{sid} has no current voice.")
             approvals.give(sb, kind, sid, key)
+        elif kind == "clip" and ratio in keyframes.SIZES:
+            p = shots.wan_path(sb, s, ratio)
+            if not shots.has_wan(sb, s, ratio):
+                raise Refused(f"{name} has no current moving clip.")
+            approvals.give(sb, kind, name, cache.file_sha(p))
         elif kind == "picture" and ratio in keyframes.SIZES:
             p = keyframes.path(sb, s, ratio)
             if not cache.fresh(p, keyframes.inputs(sb, s, ratio)):
@@ -532,7 +760,10 @@ class Handler(BaseHTTPRequestHandler):
             if path == "/api/home":
                 return self.json([card(i, p) for i, p in index().items()])
             if path == "/api/options":
-                return self.json({"languages": script.LANGUAGES, "soon": script.COMING_SOON, "themes": script.THEMES, "writer": "Groq" if settings.load()["writer"].startswith("groq:") else "Google"})
+                return self.json({"languages": script.LANGUAGES, "soon": script.COMING_SOON, "themes": script.THEMES, "writer": "Groq" if settings.load()["writer"].startswith("groq:") else "Google",
+                                  "writer_service": "groq" if settings.load()["writer"].startswith("groq:") else "google",
+                                  "ai_services": [{"id": k, "name": v[0], "gets": v[1]} for k, v in storyboard.AI_SERVICES.items()],
+                                  "agreed_to": storyboard.AGREED_TO})
             if path == "/geist.ttf":
                 return self.send((config.ROOT / "assets" / "fonts" / "Geist.ttf").read_bytes(), kind="font/ttf")
             if path == "/api/voices/gemini":
@@ -557,16 +788,20 @@ class Handler(BaseHTTPRequestHandler):
     def do_POST(self):
         size = int(self.headers.get("Content-Length") or 0)
         kind = (self.headers.get("Content-Type") or "").split(";")[0]
-        if not self.allowed() or size > 200_000 or kind != "application/json":
+        if not self.allowed() or size > (12_000_000 if self.path.endswith("/photo") else 200_000) or kind != "application/json":
             self.close_connection = True
             return self.json({"error": "Forbidden"}, 403)
         try:
             body = json.loads(self.rfile.read(size) or b"{}")
             if not isinstance(body, dict):
                 raise ValueError
+            if m := re.fullmatch(r"/api/film/([a-z0-9-]+)/photo", self.path):
+                set_photo(m[1], body)
+                return self.json({"ok": True})
             if self.path == "/api/draft":
                 args = (str(body.get(k, "")).strip() for k in ("story", "language", "theme", "audience", "intent"))
-                return self.json({"id": script.new(*args, true_story=body.get("true_story") is True, consent_record=str(body.get("consent") or ""), narrator=body.get("narrator") if body.get("narrator") in ("man", "woman") else "man")[1]["id"]})
+                return self.json({"id": script.new(*args, true_story=body.get("true_story") is True, consent_record=str(body.get("consent") or ""), narrator=body.get("narrator") if body.get("narrator") in ("man", "woman") else "man",
+                                                   people_agreed=body.get("people_agreed") if body.get("true_story") is True else None, ai_services=body.get("ai_services"))[1]["id"]})
             if self.path == "/api/settings":
                 services.check_writer(str(body.get("writer")))
                 settings.save(writer=str(body["writer"]))

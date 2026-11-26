@@ -438,3 +438,19 @@ def test_omnivoice_only_runs_when_chosen(sb):
     sb["voices"]["am"]["engine"] = "omnivoice"
     with pytest.raises(config.PipelineError):
         narration.run(sb, "am")
+
+
+def test_tied_pauses_are_told_apart_by_the_lines_lengths():
+    """Measured on a real recording, 26 Nov: lines of 24, 20 and 43 letters, and a pause inside the last line as long as those between lines."""
+    from pipeline import voice_take
+    wav = _take([3.9, 3.7, 5.6, 1.6], [0.88, 0.82, 0.82])
+    got = voice_take.split(wav, ["a" * 24, "b" * 20, "c" * 43])
+    assert [round(len(voice_take.read(g)[0]) / 24000, 1) for g in got] == [4.0, 3.9, 8.1]
+
+
+def test_only_vertical_pictures_are_drawn_and_the_wide_film_comes_from_them(sb):
+    from pipeline import keyframes, shots
+    assert keyframes.drawn(sb) == ("9x16",)
+    assert all(r == "9x16" for _, r in shots.plan(sb)[2])          # nothing waits for a wide picture
+    sb["wide_from_vertical"] = False
+    assert keyframes.drawn(sb) == ("9x16", "16x9")

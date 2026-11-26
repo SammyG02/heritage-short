@@ -6,7 +6,7 @@ story + language + theme --> script.py (or web.py) --> storyboard JSON --> a per
                                             validated before every run
                                                             |
    narration.py --> one WAV per shot ----------------------+--> timeline (voice length, snapped to the beat)
-   keyframes.py --> references --> one PNG per shot/ratio --+--> shots.py --> Wan clip, or Ken Burns
+   keyframes.py --> references --> one vertical PNG per shot -+--> shots.py --> Wan clip, or Ken Burns; wide shot = vertical shot over its own blurred copy
    gpu.py (Kaggle) --> Wan clips, ACE-Step scores ----------+--> music.py --> chosen score, or placeholder
                                                             |
                                                        assemble.py --> film_9x16.mp4, film_16x9.mp4, report.json
@@ -23,6 +23,10 @@ story + language + theme --> script.py (or web.py) --> storyboard JSON --> a per
 | shots | keyframe, motion prompt, timeline | `shots/wan/` (model), `shots/cut/` (rebuilt locally, not committed) |
 | music | caption, bpm, key, seeds | `music/score_<seed>.wav` |
 | assemble | all of the above | `film/<lang>/` |
+
+## One film, two shapes
+
+Only vertical pictures are drawn (`wide_from_vertical`, default true). Each wide shot is the finished vertical shot, sharp in the middle, over a blurred and darkened copy of itself (`shots.from_vertical`, FFmpeg only). The two films therefore match frame for frame, the moving clips appear in both, and no picture or GPU minute is spent twice. Chosen on 26 Nov, deadline day: drawing 12 wide pictures would have cost 12 more picture calls and approvals, and wide Wan clips about 2.5 more GPU hours. Set it to false to draw wide pictures again.
 
 ## Caching
 

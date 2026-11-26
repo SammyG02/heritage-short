@@ -1,0 +1,25 @@
+{
+ "key": "bd732e592e1f541d7323dc4d7703c36be20395bce99d9956389e5fc437754efb",
+ "sha256": "6f2eb3c4467f09b3f3a83035424b544269a3fc1b05db1b88c6b0665cbbc3c4d0",
+ "inputs": {
+  "stage": "keyframe/1",
+  "model": "@cf/black-forest-labs/flux-2-klein-4b",
+  "seed": 3008,
+  "size": [
+   768,
+   1344
+  ],
+  "prompt": "close-up shot. Extreme close view of a newborn brown baby white blanket, soft golden morning light. Visible emotion: peace and wonder in a tender touch, nobody's face visible. tall vertical scene, subject large in the middle third, the painted scene continues down to the bottom edge. 3D animated film frame with a painted look, sculpted rounded characters with expressive faces, hand-painted textures and visible soft brush strokes on 3D forms, painterly background, warm amber and terracotta palette with deep indigo shadows, gentle cinematic light, subject centred in frame, full-bleed picture reaching every edge",
+  "references": []
+ },
+ "qa": {
+  "status": "unchecked",
+  "seed_used": 3008,
+  "tries": [
+   {
+    "seed": 3008,
+    "check": null
+   }
+  ]
+ }
+}

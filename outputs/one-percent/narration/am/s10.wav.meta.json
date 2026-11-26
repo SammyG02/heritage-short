@@ -1,11 +1,12 @@
 {
- "key": "f02500e5490d4270574a1225cf1a994e96fcc90b50a0daeec5ce8c3df59b94f3",
- "sha256": "6f0b388df42e3f5e8d46ecc0ba5a811ae3ddf53ca2de9ddd2fa4659e4ec97185",
+ "key": "6e69908108311182ca5867d641ad70c9de7db864253dd403b71231f1d365608f",
+ "sha256": "7083112e629331bc85cfadb69b795d013c4a000197992d7b034fb197877bb7a0",
  "inputs": {
   "stage": "narration/1",
-  "model": "gemini-3.1-flash-tts-preview",
-  "text": "ከዚያ ታናሽ እህቴ፣ ከዚያም ታናሽ ወንድሜ መጡ።",
+  "model": "gemini-3.8-flash-tts",
+  "text": "ከዚያ ታናሽ እህቴ፣ ከዚያም ታናሽ ወንድሜ ተወለዱ።",
   "voice": "Algieba",
   "style": "a young man, warm, calm and unhurried, like telling a family story at night"
- }
+ },
+ "model_used": "gemini-3.8-flash-tts"
 }

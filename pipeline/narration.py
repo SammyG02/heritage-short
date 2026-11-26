@@ -10,8 +10,8 @@ import re
 import wave
 
 from . import voice_take
-from .core import approvals, budget, cache, config, providers, settings
-from .core.storyboard import out, require_consent
+from .core import approvals, budget, cache, config, providers, runlog, settings
+from .core.storyboard import out, require_consent, require_service
 
 QUOTED = re.compile(r"(«[^»]*»|“[^”]*”)")
 GAP_S = 0.2
@@ -64,6 +64,17 @@ def folder(sb, lang):
     """Each service keeps its own files, so switching service never loses a voice already made."""
     eng = engine(sb, lang)
     return out(sb, "narration", lang, *([] if eng == "gemini" else [eng]))
+
+
+def heard_before(sb, lang):
+    """One recording of this film for each Google voice it has used, the shortest, so a voice can be heard again for free."""
+    base, found = out(sb, "narration", lang), {}
+    for meta in [*base.glob("*.wav.meta.json"), *(base / "parts").glob("*.wav.meta.json")]:
+        wav = meta.with_name(meta.name[:-len(".meta.json")])
+        voice = cache.read_meta(wav).get("inputs", {}).get("voice")
+        if voice and wav.exists() and (voice not in found or wav.stat().st_size < found[voice].stat().st_size):
+            found[voice] = wav
+    return found
 
 
 def path(sb, shot, lang):
@@ -156,6 +167,7 @@ def _speak(sb, item, inp, turns=1):
     """One line. Returns (wav, model used). The same stock voice name is kept when a fallback model has to step in."""
     require_consent(sb)
     lang = item.split("/")[0]
+    require_service(sb, {"gemini": "google", "addis": "addis", "omnivoice": "kaggle"}[engine(sb, lang)])
     if engine(sb, lang) == "addis":
         addis_consent(sb, lang)
         return providers.addis_tts("narration", item, inp["text"], inp["voice"], lang), inp["model"]
@@ -225,6 +237,7 @@ def addis_consent(sb, lang):
 def check_ready(sb, lang, todo):
     """Everything that can be wrong without hearing it, checked before a call is spent."""
     require_consent(sb)
+    require_service(sb, {"gemini": "google", "addis": "addis", "omnivoice": "kaggle"}[engine(sb, lang)])
     addis_consent(sb, lang)
     ids = {s["id"] for s in todo}
     if bad := [x for x in text_problems(sb, lang) if x.split(":")[0] in ids]:
@@ -255,6 +268,7 @@ def run(sb, lang, force=False, only=None):
             raise config.PipelineError(f"Not enough free voice calls: {least} needed, {free} left until {budget.local(budget.tts_reset())}. "
                                        "Nothing was made. Wait, or choose another voice service.")
         together = [s for s in todo if not s.get("tts_model")]  # a line pinned to a model is made on its own
+        runlog.step(f"Google is reading {len(together)} lines in one recording, then the studio cuts it into lines")
         if one_call(sb, lang, together):
             half = (len(together) + 1) // 2
             for group in ([together], [together[:half], together[half:]] if len(together) > 3 else []):
@@ -279,9 +293,11 @@ def run(sb, lang, force=False, only=None):
     _store(sb, lang, todo, made)
     rest = [s for s in todo if s["id"] not in made]
     left_turns = sum(len(parts(sb, s, lang)) for s in rest)
-    for shot in rest:
+    for k, shot in enumerate(rest, 1):
         p, inp = path(sb, shot, lang), inputs(sb, shot, lang)
         turns = parts(sb, shot, lang)
+        runlog.progress(k, len(rest), f"line {sb['shots'].index(shot) + 1}")
+        runlog.step(f"{ {'gemini': 'Google', 'addis': 'Addis AI', 'omnivoice': 'OmniVoice'}.get(engine(sb, lang), 'The voice service')} is reading the line")
         if len(turns) == 1:
             data, used = _speak(sb, f"{lang}/{shot['id']}", inp, left_turns)
             left_turns -= 1

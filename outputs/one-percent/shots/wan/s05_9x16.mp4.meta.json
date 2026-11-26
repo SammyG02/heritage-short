@@ -1,0 +1,14 @@
+{
+ "key": "9f241dc4539ff01cd21ad0e05e28f9e68a70b403d5c426d337e78fa49fa2056d",
+ "sha256": "698f9ed739c2c4b2961a158b3f8e2eea343395a7a4e90ad8815d549ca4afa3b3",
+ "inputs": {
+  "stage": "wan/1",
+  "model": "wavespeed-ai/wan-2.2/i2v-480p-ultra-fast",
+  "seconds": 8,
+  "seed": 2006,
+  "motion_prompt": "She speaks gently, her lips moving naturally, the camera is fixed. Emotion: fear giving way to determination, steady eyes, lifted chin",
+  "negative_prompt": "text, letters, subtitles, watermark, extra fingers, deformed hands, distorted face, morphing, flicker, fast motion, camera shake, blurry, low quality",
+  "keyframe": "d7e8ebcc3a966ebcaedd1c1093eb51ea20ade78c6d768ae79b33b5b25ab0d6c2"
+ },
+ "seconds": 8.03
+}

@@ -1,0 +1,37 @@
+{
+ "key": "526514eefdb32fa27c9500cd195847be2e5afc61b7049bd8c79225438237ef18",
+ "sha256": "4610dd81b8dfaffdcd7465de35c5ba8819ee52548a1d106e1d993cc4f708a617",
+ "inputs": {
+  "stage": "keyframe/1",
+  "model": "@cf/black-forest-labs/flux-2-klein-4b",
+  "seed": 2007,
+  "size": [
+   768,
+   1344
+  ],
+  "prompt": "wide shot. The woman and the man seen from behind, walking hand in hand along a sunlit pale stone hillside street with olive trees, one small suitcase, morning light ahead of them. Visible emotion: courage and hope, upright steady walk. Reference image 1 is the mother: young Ethiopian woman in her twenties, oval face, warm brown skin, dark centre-parted hair under a thin white netela shawl with a green and gold border, long white cotton dress, small round silver stud earrings. Same face, hair and clothes as reference image 1. Reference image 2 is the father: young Ethiopian man in his late twenties, slim face, warm brown skin, short dark hair, trimmed short beard, white cotton collared shirt. Same face, hair and clothes as reference image 2. tall vertical scene, subject large in the middle third, the painted scene continues down to the bottom edge. 3D animated film frame with a painted look, sculpted rounded characters with expressive faces, hand-painted textures and visible soft brush strokes on 3D forms, painterly background, warm amber and terracotta palette with deep indigo shadows, gentle cinematic light, subject centred in frame, full-bleed picture reaching every edge",
+  "references": [
+   "89f1ae563a0f1565e899379b2fb289bba5d1eb2d2aeddb316e6641c8e73029ce",
+   "46b379832e98df62e85c157d8a20f098bf6bccbb03e7e3b235781b93df2bd875"
+  ]
+ },
+ "qa": {
+  "status": "passed",
+  "seed_used": 2007,
+  "tries": [
+   {
+    "seed": 2007,
+    "check": {
+     "identity": 9.0,
+     "emotion": 10.0,
+     "content": 10.0,
+     "anatomy": 10.0,
+     "style": 10.0,
+     "worst": 9.0,
+     "problem": "none",
+     "model": "gemini-3.5-flash-lite"
+    }
+   }
+  ]
+ }
+}

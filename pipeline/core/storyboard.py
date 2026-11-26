@@ -18,6 +18,13 @@ def validate(data: dict) -> list[str]:
     ids = [s["id"] for s in data["shots"]]
     if len(ids) != len(set(ids)):
         errors.append("shots: ids must be unique")
+    p = data["people"]
+    photos = {r["photo"]["person"] for r in data["references"].values() if r.get("photo")}
+    agreed = {x["role"] for x in p.get("people_agreed", []) if x.get("photo")}
+    if p.get("real_people") and not photos:
+        errors.append("people: real_people is true, but no character is drawn from a photo")
+    if photos and not (p.get("real_people") and p.get("based_on_real_people") and photos <= agreed):
+        errors.append("references: a character is drawn from a photo without that person's recorded consent to it")
     if data["language"] not in data["voices"]:
         errors.append(f"voices: no voice for the main language {data['language']!r}")
     for s in data["shots"]:
@@ -65,6 +72,63 @@ def require_consent(data: dict) -> None:
     if p.get("based_on_real_people") and p.get("consent") != "recorded":
         raise config.PipelineError("This storyboard tells a real person's story and consent is still pending. Record it in "
                                    "ETHICS.md, then set people.consent to 'recorded'.")
+
+
+# What each service receives, said plainly; the studio shows these beside the boxes.
+AI_SERVICES = {
+    "google": ("Google Gemini", "the script, the voice lines and pictures to check"),
+    "cloudflare": ("Cloudflare", "picture descriptions, to draw the pictures"),
+    "addis": ("Addis AI", "the narration, to read it aloud; it may train on it"),
+    "kaggle": ("Kaggle", "pictures and descriptions, for moving clips and music on its free GPU"),
+    "wavespeed": ("WaveSpeed", "pictures and movement words, for paid moving clips; kept up to 7 days"),
+    "groq": ("Groq", "pictures to check, only if chosen for checking"),
+}
+
+
+AGREED_TO = {"story": "their story told", "likeness": "drawn as a character", "words": "their words quoted", "photo": "their photo used as a reference"}
+PHOTO_NOTE = "Some characters are drawn from family photos, each with that person's recorded consent; the others are invented."
+
+
+def clean_people(rows) -> list:
+    """Each person in a true story, by role: what they agreed to, and when and how. Refuses anything incomplete."""
+    if not isinstance(rows, list) or not rows:
+        raise config.PipelineError("Add at least one person who agreed.")
+    out = []
+    for r in rows:
+        role, how = str((r or {}).get("role") or "").strip(), str((r or {}).get("how") or "").strip()
+        if not role and not how:
+            continue  # an empty row the person did not fill in
+        if not role or len(role) > 40:
+            raise config.PipelineError("Give each person a role, not a name: mother, brother, grandfather.")
+        if len(how.split()) < 3:
+            raise config.PipelineError(f"Say when and how the {role} agreed, for example: in person, 26 November.")
+        agreed = {k: r.get(k) is True for k in AGREED_TO}
+        if not any(agreed.values()):
+            raise config.PipelineError(f"Tick what the {role} agreed to.")
+        out.append({"role": role, **agreed, "how": how})
+    if not out:
+        raise config.PipelineError("Add at least one person who agreed.")
+    return out
+
+
+def people_lines(rows) -> str:
+    return "\n".join(f"{r['role'].capitalize()}: agreed to {', '.join(v for k, v in AGREED_TO.items() if r[k])}; {r['how']}." for r in rows)
+
+
+def require_service(data: dict, service: str) -> None:
+    """A true story goes only to the services its people agreed to, ticked one by one on the Story tab."""
+    p = data["people"]
+    if p.get("based_on_real_people") and "ai_services" in p and not p["ai_services"].get(service):
+        raise config.PipelineError(f"The people in this true story have not agreed to {AI_SERVICES[service][0]}. "
+                                   "Tick it on the Story tab, under Consent, only if they did.")
+
+
+def allowed(data: dict, service: str) -> bool:
+    try:
+        require_service(data, service)
+        return True
+    except config.PipelineError:
+        return False
 
 
 def root(film_id: str) -> Path:

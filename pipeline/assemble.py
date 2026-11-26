@@ -7,7 +7,7 @@ import textwrap
 
 from PIL import Image, ImageDraw, ImageFont
 
-from . import music, narration, shots
+from . import keyframes, music, narration, shots
 from .core import cache, config
 from .core.storyboard import out
 
@@ -189,6 +189,62 @@ def radio(sb, lang, unvoiced=()):
     return p
 
 
+PREVIEW = {"9x16": (540, 960), "16x9": (960, 540)}
+
+
+def preview(sb, lang, ratio="9x16"):
+    """A draft to download and share before the film is built: the pictures or clips that exist now, the voices,
+    the chosen music (or the placeholder), English subtitles and the end card. Small and fast; calls no model.
+    A missing picture shows as a card saying so. The wide draft is the vertical one over its blurred copy, as in the film."""
+    from . import keyframes
+    folder, work = _folder(sb, lang), _folder(sb, lang) / "preview_work"
+    work.mkdir(exist_ok=True)
+    unvoiced = [s["id"] for s in sb["shots"] if not cache.fresh(narration.path(sb, s, lang), narration.inputs(sb, s, lang))]
+    rows, total = lay(sb, lang, unvoiced)  # no length check: a draft may still be too long
+    audio, _ = mix(sb, lang, rows, total, work)
+    w, h = PREVIEW["9x16"]
+    fit = f"scale={w}:{h}:force_original_aspect_ratio=increase,crop={w}:{h},fps=24,format=yuv420p"
+    enc = ["-c:v", "libx264", "-preset", "ultrafast", "-crf", 26, "-pix_fmt", "yuv420p", "-an"]
+    parts = []
+    for i, r in enumerate(rows):
+        s, seconds, seg = r["shot"], r["frames"] / FPS, work / f"part_{i:02d}.mp4"
+        clip, pic = shots.wan_path(sb, s, "9x16"), keyframes.path(sb, s, "9x16")
+        if shots.has_wan(sb, s, "9x16"):
+            src = ["-stream_loop", -1, "-i", clip]
+        elif pic.exists():
+            src = ["-loop", 1, "-i", pic]
+        else:  # not drawn yet: say so on screen
+            card = work / f"missing_{i:02d}.png"
+            im = Image.new("RGB", (w, h), (20, 20, 20))
+            ImageDraw.Draw(im).text((w / 2, h / 2), f"Shot {i + 1}\nnot drawn yet", font=ImageFont.truetype(str(config.FONT), 34), fill=(200, 200, 200), anchor="mm", align="center")
+            im.save(card)
+            src = ["-loop", 1, "-i", card]
+        config.run_ffmpeg([*src, "-t", f"{seconds:.3f}", "-vf", fit, "-r", 24, *enc, seg])
+        parts.append(seg)
+        print(f"progress {i + 1} of {len(rows) + 1}: shot {i + 1}", flush=True)
+    card = end_card(sb, "9x16", work)
+    seg = work / "part_end.mp4"
+    config.run_ffmpeg(["-loop", 1, "-i", card, "-t", sb["end_card"]["duration_s"], "-vf", fit, "-r", 24, *enc, seg])
+    parts.append(seg)
+    (work / "list.txt").write_text("".join(f"file '{x.name}'\n" for x in parts), encoding="utf-8")
+    write_subtitles(sb, subtitles(sb, rows), "9x16", work)
+    shutil.copy(config.FONT, work / "font.ttf")
+    tall = folder / "preview_9x16.mp4"
+    print("step: joining the shots, the sound and the subtitles", flush=True)
+    config.run_ffmpeg(["-f", "concat", "-safe", 0, "-i", "list.txt", "-i", audio, "-vf", "subtitles=subs_9x16.ass:fontsdir=.",
+                       "-c:v", "libx264", "-preset", "veryfast", "-crf", 24, "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "160k",
+                       "-shortest", "-movflags", "+faststart", "-metadata", "comment=Draft preview, made with AI", tall], cwd=work)
+    result = tall
+    if ratio == "16x9":
+        ww, wh = PREVIEW["16x9"]
+        result = folder / "preview_16x9.mp4"
+        config.run_ffmpeg(["-i", tall, "-filter_complex", f"[0:v]split[a][b];[a]scale=240:135:force_original_aspect_ratio=increase,crop=240:135,boxblur=8:2,eq=brightness=-0.12,scale={ww}:{wh}[bg];[b]scale=-2:{wh}[fg];[bg][fg]overlay=(W-w)/2:0,format=yuv420p",
+                           "-c:v", "libx264", "-preset", "veryfast", "-crf", 24, "-c:a", "copy", "-movflags", "+faststart", result])
+    shutil.rmtree(work, ignore_errors=True)
+    print(f"  preview {lang} {ratio}: {total:.1f}s{', ' + str(len(unvoiced)) + ' lines without a voice' if unvoiced else ''}  {result}")
+    return result
+
+
 def join_shots(rows, clips, tails, target):
     """Join shots with their transitions. Cuts are one-frame fades, so every shot still starts exactly on its beat."""
     args, parts = [], []
@@ -240,7 +296,7 @@ def film(sb, lang, ratios=("9x16", "16x9")):
                            "-movflags", "+faststart", "-t", f"{total:.3f}", "-metadata", "comment=Made with AI", p], cwd=work)
         results.append(p)
     shutil.rmtree(work)
-    wan = {r: sum(shots.has_wan(sb, s, r) for s in sb["shots"]) for r in ratios}
+    wan = {r: sum(shots.has_wan(sb, s, r if r in keyframes.drawn(sb) else "9x16") for s in sb["shots"]) for r in ratios}
     report = {"language": lang, "seconds": round(total, 2), "music": kind, "wan_shots": wan, "shots": len(sb["shots"]),
               "files": [verify(p, sb) for p in results],
               "timeline": [{"shot": r["shot"]["id"], "start": round(r["start"], 2), "seconds": round(r["frames"] / FPS, 2),

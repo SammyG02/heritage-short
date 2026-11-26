@@ -1,0 +1,12 @@
+{
+ "key": "4369dd808ea04692bf5ff228db4b7183812f2ea016b5b2a71cbf5d098b0c989b",
+ "sha256": "6850660449111d1f3f63efab77958e57302479f8e72d3fc05d9bdc5677fed83f",
+ "inputs": {
+  "stage": "narration/1",
+  "model": "gemini-3.8-flash-tts",
+  "text": "ዕድላችሁ አንድ በመቶ ነው ቢሏችሁ፣ አስታውሱ፦ አንድ በመቶ ዜሮ አይደለም። ተስፋ አትቁረጡ።",
+  "voice": "Algieba",
+  "style": "a young man, warm, calm and unhurried, like telling a family story at night"
+ },
+ "model_used": "gemini-3.8-flash-tts"
+}

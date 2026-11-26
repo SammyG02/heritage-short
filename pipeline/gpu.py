@@ -14,20 +14,34 @@ from PIL import Image
 
 from . import keyframes, music, narration, shots
 from .core import budget, cache, config, runlog
-from .core.storyboard import out, require_consent
+from .core.storyboard import out, require_consent, require_service
 
 WORKERS = Path(__file__).parent / "kaggle_jobs"
 DATASET = "heritage-short-jobs"
 
 
-def kaggle(*args, check=True, timeout=600):
-    p = subprocess.run([sys.executable, "-X", "utf8", "-m", "kaggle", *map(str, args)], capture_output=True, text=True,
-                       encoding="utf-8", errors="replace", timeout=timeout,
-                       env={**os.environ, "PYTHONIOENCODING": "utf-8"})
-    text = runlog.redact(p.stdout + p.stderr)
-    if check and (p.returncode or "error" in text.lower()):
-        raise config.PipelineError("Kaggle: " + text[-600:])
-    return text
+NETWORK = re.compile(r"timed out|ConnectTimeout|Max retries exceeded|ConnectionError|Connection reset|Temporary failure|getaddrinfo", re.I)
+
+
+def kaggle(*args, check=True, timeout=600, tries=3):
+    """One Kaggle command. A connection that times out is tried again (twice, after 20 and 40 s): on 26 Nov an upload
+    finished but Kaggle did not answer in time, and nothing had been started, so trying again is safe."""
+    for attempt in range(1, tries + 1):
+        p = subprocess.run([sys.executable, "-X", "utf8", "-m", "kaggle", *map(str, args)], capture_output=True, text=True,
+                           encoding="utf-8", errors="replace", timeout=timeout,
+                           env={**os.environ, "PYTHONIOENCODING": "utf-8"})
+        text = runlog.redact(p.stdout + p.stderr)
+        failed = p.returncode or "error" in text.lower() or "request failed" in text.lower()
+        if not (check and failed):
+            return text
+        if NETWORK.search(text) and attempt < tries:
+            print(f"step: Kaggle did not answer in time; trying again ({attempt + 1} of {tries})", flush=True)
+            time.sleep(20 * attempt)
+            continue
+        if NETWORK.search(text):
+            raise config.PipelineError("Kaggle did not answer in time, three times: a network problem. Nothing was started on Kaggle. Try again in a few minutes.")
+        last = [x for x in text.splitlines() if x.strip() and "%|" not in x]  # not the upload progress bars
+        raise config.PipelineError("Kaggle: " + "\n".join(last[-4:])[-600:])
 
 
 def user():
@@ -72,16 +86,18 @@ def _push_dataset(folder, job_id, name=DATASET):
     raise config.PipelineError("Kaggle dataset did not become ready")
 
 
-def submit_wan(sb, ratios=("9x16", "16x9"), only=None, hours=None):
+def submit_wan(sb, ratios=None, only=None, hours=None):
     require_consent(sb)
+    require_service(sb, "kaggle")
+    ratios = ratios or keyframes.drawn(sb)
     clips = []
     chosen, left_out, wait, need_h = shots.plan(sb, ratios, only, hours)
     print(f"  motion: {len(chosen)} clips, about {need_h:.1f} of {budget.gpu_left_h():.1f} GPU hours left; "
           f"{len(left_out)} left out by the limit, {len(wait)} waiting for an approved picture")
     for s, ratio in chosen:
-        inp = shots.wan_inputs(sb, s, ratio)
+        inp = shots.wan_inputs(sb, s, ratio, "kaggle")
         clips.append({"item": f"{s['id']}_{ratio}", "shot": s["id"], "ratio": ratio, "key": cache.key(inp), "inputs": inp,
-                      "motion_prompt": inp["motion_prompt"], "seed": s["seed"], "size": inp["size"],
+                      "motion_prompt": inp["motion_prompt"], "seed": inp["seed"], "size": inp["size"],
                       "keyframe_file": f"{s['id']}_{ratio}.jpg"})
     if not clips:
         print("  wan: nothing to submit")
@@ -107,6 +123,7 @@ def submit_wan(sb, ratios=("9x16", "16x9"), only=None, hours=None):
 
 def submit_music(sb):
     require_consent(sb)
+    require_service(sb, "kaggle")
     cands = []
     for seed in sb["music"]["seeds"]:
         inp = music.inputs(sb, seed)
@@ -123,9 +140,11 @@ def submit_music(sb):
     return kernel
 
 
-def submit_pictures(sb, ratios=("9x16", "16x9"), only=None):
+def submit_pictures(sb, ratios=None, only=None):
     """Backup for the picture limit: the same model on the free GPU. Pictures come back marked as unchecked."""
     require_consent(sb)
+    require_service(sb, "kaggle")
+    ratios = ratios or keyframes.drawn(sb)
     rows, files, wait = [], {}, []
     for ratio in ratios:
         for s in sb["shots"]:

@@ -1,0 +1,25 @@
+{
+ "key": "180349a36a466c5395f9c1edef0fb6f323c844c0052c050530884a48c439ff0b",
+ "sha256": "6515168fb67e2c1d2f58b4a06f0891aef5c0d45910e0d2aa454f2cce7970040d",
+ "inputs": {
+  "stage": "keyframe/1",
+  "model": "@cf/black-forest-labs/flux-2-klein-4b",
+  "seed": 2015,
+  "size": [
+   768,
+   1344
+  ],
+  "prompt": "wide shot. An older boy, a younger girl and a small boy seen from behind running together across a sunny green field, holding hands, white cotton clothes, warm golden light. Visible emotion: carefree happiness in the children's running bodies. tall vertical scene, subject large in the middle third, the painted scene continues down to the bottom edge. 3D animated film frame with a painted look, sculpted rounded characters with expressive faces, hand-painted textures and visible soft brush strokes on 3D forms, painterly background, warm amber and terracotta palette with deep indigo shadows, gentle cinematic light, subject centred in frame, full-bleed picture reaching every edge",
+  "references": []
+ },
+ "qa": {
+  "status": "unchecked",
+  "seed_used": 2015,
+  "tries": [
+   {
+    "seed": 2015,
+    "check": null
+   }
+  ]
+ }
+}

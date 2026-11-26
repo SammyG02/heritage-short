@@ -4,13 +4,13 @@ A failing picture is drawn again with another seed, up to MAX_TRIES and EXTRA_PE
 available the picture is kept and marked unchecked, so a quota never stops a film but also never hides.
 """
 from . import keyframes
-from .core import budget, config, providers, settings
+from .core import budget, config, providers, runlog, settings, storyboard
 
 MAX_TRIES = 2
 EXTRA_PER_RUN = 6  # redraws allowed in one run, whatever the checker thinks
 PASS = 7
 SEED_STEP = 101
-MODELS = ["gemini-3.8-flash", "gemini-3.6-flash", "gemini-3.5-flash-lite"]
+MODELS = ["gemini-3.6-flash", "gemini-3.8-flash", "gemini-3.5-flash-lite"]  # 3.8 answered 1 of 17 by 26 Nov, 3.6 all 3
 GROQ_SEES, GROQ_IMAGES = "qwen/qwen3.8-27b", 3  # Groq's vision page, 26 Nov 2026
 PROMPT = """You check one frame of an animated film before it is used. The first {n} image(s) are the approved character references, in this order: {names}.
 The last image is the new frame. It should show: {shot}
@@ -27,6 +27,8 @@ def check(sb, shot, ratio, png, refs):
     text = PROMPT.format(n=len(refs), names=", ".join(shot["references"]) or "no references", shot=shot["image_prompt"],
                          emotion=shot.get("emotion", "not specified"), style=sb["style_block"])
     choice = settings.load()["writer"]
+    if not storyboard.allowed(sb, "groq" if choice.startswith("groq:") else "google"):
+        return None  # not agreed to: the picture stays unchecked, for a person to look at
     images = [p.read_bytes() for p in refs] + [png]
     if choice.startswith("groq:") and (choice != "groq:" + GROQ_SEES or len(images) > GROQ_IMAGES):
         return None
@@ -49,12 +51,15 @@ def best_of(sb, shot, ratio, inp, refs, extra=None):
                 break
             extra[0] -= 1
         seed = inp["seed"] + i * SEED_STEP
+        runlog.step("Cloudflare is drawing the picture" if not i else "drawing it again to get a better one")
         try:
-            png = providers.flux("keyframes", f"{shot['id']}_{ratio}", inp["prompt"], *inp["size"], seed, inp["model"], refs)
+            png, seed = keyframes.flagged_retry(lambda s: providers.flux("keyframes", f"{shot['id']}_{ratio}", inp["prompt"], *inp["size"], s, inp["model"], refs), seed)
         except providers.ProviderError:
             if best:
                 break  # out of picture quota: keep the best so far
             raise
+        if refs:
+            runlog.step("comparing the faces with your cast")
         score = check(sb, shot, ratio, png, refs) if refs else None  # no character to compare: save the call
         tries.append({"seed": seed, "check": score})
         rank = score["worst"] if score else -1

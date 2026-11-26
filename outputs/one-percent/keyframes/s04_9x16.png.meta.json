@@ -1,0 +1,50 @@
+{
+ "key": "7d27fd9b44034f8d36881d4dde47aeedfc8ad09472d766c120ac60c817221ccb",
+ "sha256": "c2e24bdee693c4f08461e073704e55ee661c02f3f67edee32db2008803e55b93",
+ "inputs": {
+  "stage": "keyframe/1",
+  "model": "@cf/black-forest-labs/flux-2-klein-4b",
+  "seed": 2005,
+  "size": [
+   768,
+   1344
+  ],
+  "prompt": "medium shot. The woman and the man seated close together in a plain consulting room, holding hands tightly, heads lowered, cool daylight from a high window. Visible emotion: shock and grief held in, eyes lowered, lips pressed together. Reference image 1 is the mother: young Ethiopian woman in her twenties, oval face, warm brown skin, dark centre-parted hair under a thin white netela shawl with a green and gold border, long white cotton dress, small round silver stud earrings. Same face, hair and clothes as reference image 1. Reference image 2 is the father: young Ethiopian man in his late twenties, slim face, warm brown skin, short dark hair, trimmed short beard, white cotton collared shirt. Same face, hair and clothes as reference image 2. tall vertical scene, subject large in the middle third, the painted scene continues down to the bottom edge. 3D animated film frame with a painted look, sculpted rounded characters with expressive faces, hand-painted textures and visible soft brush strokes on 3D forms, painterly background, warm amber and terracotta palette with deep indigo shadows, gentle cinematic light, subject centred in frame, full-bleed picture reaching every edge",
+  "references": [
+   "89f1ae563a0f1565e899379b2fb289bba5d1eb2d2aeddb316e6641c8e73029ce",
+   "46b379832e98df62e85c157d8a20f098bf6bccbb03e7e3b235781b93df2bd875"
+  ]
+ },
+ "qa": {
+  "status": "below target, needs a person to look",
+  "seed_used": 2005,
+  "tries": [
+   {
+    "seed": 2005,
+    "check": {
+     "identity": 7.0,
+     "emotion": 6.0,
+     "content": 7.0,
+     "anatomy": 6.0,
+     "style": 7.0,
+     "worst": 6.0,
+     "problem": "Slight distortion in the interlaced hands.",
+     "model": "gemini-3.6-flash"
+    }
+   },
+   {
+    "seed": 2106,
+    "check": {
+     "identity": 7.0,
+     "emotion": 7.0,
+     "content": 7.0,
+     "anatomy": 6.0,
+     "style": 7.0,
+     "worst": 6.0,
+     "problem": "The clasped hands are slightly distorted at the point of contact.",
+     "model": "gemini-3.6-flash"
+    }
+   }
+  ]
+ }
+}

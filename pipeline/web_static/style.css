@@ -132,3 +132,36 @@ html,body{height:auto}
 .next{margin-top:auto;padding-top:14px;font-weight:500}
 .pick{display:grid;grid-template-columns:minmax(0,1fr) 84px;gap:10px;align-items:end}.pick button{min-height:46px;padding:0}
 .tell{display:flex;flex-direction:column;gap:14px;padding:24px 30px;min-height:0}.tell textarea{flex:1;min-height:220px;resize:none;font-size:19px;line-height:1.6;padding:18px 20px}
+#top nav span{padding:9px 18px;color:#6a6a6a;cursor:default}
+label small{font-size:13px;color:var(--soft)}.new .side{gap:20px}
+.told{flex:1;overflow-y:auto;white-space:pre-line;font-size:20px;line-height:1.65}
+@media(max-width:900px){#top nav span{padding:9px 14px}}
+#work{position:relative}#work .txt{flex:1;min-width:0}#work .txt strong{display:block}#work .acts{display:flex;gap:10px}
+#work .now{display:flex;align-items:center;gap:9px;margin:2px 0 0}#work .now span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#work .time{white-space:nowrap}
+#work .track{position:absolute;left:0;right:0;top:-1px;height:3px;background:#262626;overflow:hidden}
+#work .fill{height:100%;background:var(--ink,#f2f2f2);transition:width .6s}
+#work .slide{position:absolute;top:0;height:100%;width:22%;background:var(--ink,#f2f2f2);animation:slide 1.6s ease-in-out infinite}
+@keyframes slide{0%{left:-22%}100%{left:100%}}
+.spin{width:15px;height:15px;border:2px solid #3a3a3a;border-top-color:var(--ink,#f2f2f2);border-radius:50%;animation:turn .9s linear infinite;flex:none}
+@keyframes turn{to{transform:rotate(1turn)}}
+@media (prefers-reduced-motion:reduce){#work .slide,.spin{animation:none}#work .slide{left:0;width:30%}}
+@media(min-width:901px){.side.pinned{overflow:hidden}.side.pinned>.body{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:18px;margin:0 -30px;padding:0 30px}
+.side.pinned>.foot{position:static;margin:0;padding-bottom:0!important;border-top:1px solid var(--line);padding-top:16px}}
+@media(max-width:900px){.side.pinned>.body{display:flex;flex-direction:column;gap:12px}#work .acts .btn{padding:8px 12px}}
+.frame .blurred{filter:blur(28px) brightness(.85);transform:scale(1.15)}.frame .blurred.drift{animation:none}
+.frame.wide img.tall,.frame.wide video.tall{left:50%;width:auto;aspect-ratio:9/16;transform:translateX(-50%)}
+.frame.wide img.tall.drift{animation-name:drift-tall}
+@keyframes drift-tall{from{transform:translateX(-50%) scale(1)}to{transform:translateX(-50%) scale(1.1)}}
+.framecol{display:flex;flex-direction:column;align-items:center;gap:12px;height:100%;min-height:0;min-width:0}.seg.view{flex:none;width:auto}.seg.view .btn,.seg.view button{min-width:96px}
+.strip small{display:flex;align-items:center;justify-content:center;gap:4px}.strip .dot{width:7px;height:7px;border-radius:50%;background:#f2b84b;display:inline-block}
+.seg.three{grid-template-columns:1fr 1fr 1fr}
+.people .acts{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 10px}.people .look{font-size:13px;line-height:1.45}
+.checks{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:6px}.checks label{display:flex;align-items:center;gap:5px}
+.consent{display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--line);padding-top:14px}.consent h2{margin:0;font-size:18px}
+.consent .record{max-height:150px;overflow-y:auto;border:1px solid var(--line);border-radius:8px;padding:8px 12px}.consent .record p{margin:4px 0;font-size:14px}
+.agreed{display:flex;flex-direction:column;gap:6px}.agreed label.row{align-items:flex-start;gap:10px}.agreed input{margin-top:4px}.agreed small{color:var(--soft);font-size:13px}
+.consentform{display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--line);padding-top:12px}
+.agreers{display:flex;flex-direction:column;gap:10px}.agreer{display:flex;flex-direction:column;gap:6px;border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.agreer input:not([type]){width:100%}.agreer .between input{flex:1;margin-right:8px}.need{color:var(--ink)}
+.fromphoto{display:flex;align-items:center;gap:10px;margin:4px 0}.fromphoto img{width:44px;height:44px;border-radius:8px;object-fit:cover}.fromphoto span{flex:1}

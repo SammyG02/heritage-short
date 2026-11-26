@@ -35,3 +35,9 @@ Thumbs.db
 outputs/*/shots/cut/
 outputs/*/film/*/mix.wav
 outputs/*/film/*/work/
+
+# Family photos used as character references: they stay on this computer
+**/references/photos/
+
+# Draft previews: remade any time, not part of the record
+outputs/*/film/*/preview_*.mp4

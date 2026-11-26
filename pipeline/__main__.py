@@ -54,7 +54,7 @@ def approve(path, sb, kind, only, ratios):
                 continue
             approvals.give(sb, kind, s["id"], key)
         else:
-            for r in ratios or keyframes.SIZES:
+            for r in ratios or keyframes.drawn(sb):
                 p = keyframes.path(sb, s, r)
                 if not cache.fresh(p, keyframes.inputs(sb, s, r)):
                     print(f"  {p.stem}: no current picture to approve")
@@ -67,7 +67,7 @@ def approve(path, sb, kind, only, ratios):
 def missing(sb, lang):
     """Stop before editing if any voice or picture is missing or out of date."""
     gaps = [f"voice {s['id']}" for s in sb["shots"] if not cache.fresh(narration.path(sb, s, lang), narration.inputs(sb, s, lang))]
-    gaps += [f"picture {s['id']} {r}" for s in sb["shots"] for r in keyframes.SIZES
+    gaps += [f"picture {s['id']} {r}" for s in sb["shots"] for r in keyframes.drawn(sb)
              if not cache.fresh(keyframes.path(sb, s, r), keyframes.inputs(sb, s, r))]
     if gaps:
         raise config.PipelineError(f"Not ready to edit, {len(gaps)} missing: " + ", ".join(gaps[:12]) + ("..." if len(gaps) > 12 else ""))
@@ -78,11 +78,16 @@ def status(sb, langs):
     for lang in langs:
         stale = [s["id"] for s in sb["shots"] if not cache.fresh(narration.path(sb, s, lang), narration.inputs(sb, s, lang))]
         print(f"narration {lang}: {', '.join(stale) or 'all cached'}")
-    for ratio in keyframes.SIZES:
+    for ratio in keyframes.drawn(sb):
         stale = [s["id"] for s in sb["shots"] if not cache.fresh(keyframes.path(sb, s, ratio), keyframes.inputs(sb, s, ratio))]
         print(f"keyframes {ratio}: {', '.join(stale) or 'all cached'}")
-        stale = [s["id"] for s in sb["shots"] if not shots.has_wan(sb, s, ratio)]
-        print(f"wan clips {ratio}: {'Ken Burns for ' + ', '.join(stale) if stale else 'all cached'}")
+        moving = [s for s in sb["shots"] if s.get("motion", "clip") == "clip"]
+        stale = [s["id"] for s in moving if not shots.has_wan(sb, s, ratio)]
+        camera = [s["id"] for s in sb["shots"] if s not in moving]
+        print(f"wan clips {ratio}: {'not made yet, a camera move stands in: ' + ', '.join(stale) if stale else 'all cached'}"
+              + (f"; camera move by choice: {', '.join(camera)}" if camera else ""))
+    if len(keyframes.drawn(sb)) == 1:
+        print("wide film: made from the vertical film, the same frames with blurred sides")
     for kind in ("wan", "music"):
         print(f"kaggle {kind}: {gpu.status(sb, kind)}")
 
@@ -111,6 +116,11 @@ def main(argv=None):
     na.add_argument("--shot", action="append")
     for x in (rf, kf, na):
         x.add_argument("--force", action="store_true", help="make again even if cached")
+    pv = sub.add_parser("preview", help="a quick draft video of what exists now; calls no model")
+    pv.add_argument("--ratio", choices=list(keyframes.SIZES), default="9x16")
+    mo = sub.add_parser("motion", help="moving clips on WaveSpeed (paid); approved pictures only")
+    mo.add_argument("--shot", action="append")
+    mo.add_argument("--ratio", choices=list(keyframes.SIZES), action="append")
     sub.add_parser("assemble", help="edit the film from what exists; calls no model")
     ap_ = sub.add_parser("approve", help="approve a step so the next one unlocks")
     ap_.add_argument("kind", choices=["script", "voice", "picture"])
@@ -152,9 +162,14 @@ def main(argv=None):
         elif a.cmd == "film":
             film(sb, lang, a.gpu)
         elif a.cmd == "status":
-            status(sb, list(sb["voices"]))
+            status(sb, [lang])  # the film's language; -l en shows the English voice
         elif a.cmd == "narration":
             narration.run(sb, lang, a.force, a.shot)
+        elif a.cmd == "preview":
+            assemble.preview(sb, lang, a.ratio)
+        elif a.cmd == "motion":
+            from . import wavespeed
+            wavespeed.run(sb, a.ratio, a.shot)
         elif a.cmd == "assemble":
             missing(sb, lang)
             assemble.film(sb, lang)
@@ -170,7 +185,7 @@ def main(argv=None):
         elif a.cmd == "keyframes":
             if not a.shot:
                 keyframes.run_references(sb)
-            keyframes.run(sb, a.ratio or tuple(keyframes.SIZES), a.force, a.shot)
+            keyframes.run(sb, a.ratio or keyframes.drawn(sb), a.force, a.shot)
         elif a.cmd == "approve":
             approve(a.storyboard, sb, a.kind, a.shot, a.ratio)
         elif a.cmd == "check":
@@ -183,12 +198,12 @@ def main(argv=None):
                 print(f"{n.get('shot')}: {n.get('problem')}\n    {n.get('suggestion')}")
         elif a.cmd == "gpu":
             if a.action == "plan":
-                chosen, left_out, wait, hours = shots.plan(sb, a.ratio or list(keyframes.SIZES), a.shot, a.hours)
+                chosen, left_out, wait, hours = shots.plan(sb, a.ratio or keyframes.drawn(sb), a.shot, a.hours)
                 name = lambda xs: ", ".join(f"{s['id']}_{r}" for s, r in xs) or "none"  # noqa: E731
                 print(f"now ({hours:.1f} h): {name(chosen)}\nleft out by the limit: {name(left_out)}\nwaiting for approval: {name(wait)}")
                 return 0
             if a.action == "submit":
-                gpu.submit_wan(sb, a.ratio or list(keyframes.SIZES), a.shot, a.hours) if a.kind == "wan" else gpu.submit_pictures(sb, a.ratio or list(keyframes.SIZES), a.shot) if a.kind == "pictures" else gpu.submit_voice(sb, lang) if a.kind == "voice" else gpu.submit_music(sb)
+                gpu.submit_wan(sb, a.ratio or keyframes.drawn(sb), a.shot, a.hours) if a.kind == "wan" else gpu.submit_pictures(sb, a.ratio or keyframes.drawn(sb), a.shot) if a.kind == "pictures" else gpu.submit_voice(sb, lang) if a.kind == "voice" else gpu.submit_music(sb)
             elif a.action == "status":
                 print(gpu.status(sb, a.kind))
             else:

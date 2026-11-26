@@ -4,7 +4,13 @@ import re
 import statistics
 from datetime import datetime, timedelta, timezone
 
-from . import config
+from . import config, runlog
+
+
+def mine(r):
+    """Made with the account in .env now. Rows from before accounts were noted (26 Nov, 08:40 EAT) belong to the first accounts,
+    which are no longer in .env, so a new key starts with its full free limit."""
+    return r.get("account") == runlog.account(r.get("provider"))
 
 TTS_PER_DAY = 10
 FLUX_PER_DAY = 10000
@@ -46,7 +52,7 @@ def _since(r, t):
 def tts_used():
     used, t = {}, windows()["tts"]
     for r in rows():
-        if "tts" in (r.get("model") or "") and _since(r, t):
+        if "tts" in (r.get("model") or "") and _since(r, t) and mine(r):
             m = used.setdefault(r["model"], {"used": 0, "blocked": False})
             m["used"] += r["status"] == "ok"
             m["blocked"] |= r["status"] == "error" and re.search(r"per day|limit: 0\b", r.get("error") or "", re.I) is not None
@@ -57,7 +63,7 @@ def google_used():
     """Calls each Google model answered since Google's last daily reset."""
     used, t = {}, windows()["tts"]
     for r in rows():
-        if r.get("provider") == "gemini" and r["status"] == "ok" and _since(r, t):
+        if r.get("provider") == "gemini" and r["status"] == "ok" and _since(r, t) and mine(r):
             used[r["model"]] = used.get(r["model"], 0) + 1
     return used
 
@@ -69,7 +75,7 @@ def worked(provider, stage=None):
 
 def google_blocked(model):
     t = windows()["tts"]
-    return any(r.get("model") == model and r["status"] == "error" and _since(r, t) and re.search(r"per day", r.get("error") or "", re.I) for r in rows())
+    return any(r.get("model") == model and r["status"] == "error" and _since(r, t) and mine(r) and re.search(r"per day", r.get("error") or "", re.I) for r in rows())
 
 
 def day_limit(model):
@@ -96,9 +102,38 @@ def groq_limits():
     return found
 
 
+def _flux_rows():
+    return [r for r in rows() if "flux" in (r.get("model") or "") and r.get("provider") == "cloudflare" and mine(r)]
+
+
+def _neurons(r):
+    return (r.get("list_price_usd") or 0) / 0.011 * 1000
+
+
+def _flux_blocked():
+    """When Cloudflare last said the free allocation was used up, if nothing was drawn since."""
+    last = None
+    for r in _flux_rows():
+        if r["status"] == "ok":
+            last = None
+        elif re.search("free allocation|free pictures are used up", r.get("error") or ""):
+            last = datetime.fromisoformat(r["ts"])
+    return last
+
+
+def wavespeed_spent():
+    """Dollars spent with the WaveSpeed key in .env, redos included."""
+    return round(sum(r.get("cost_usd") or 0 for r in rows() if r.get("provider") == "wavespeed" and r["status"] == "ok" and mine(r)), 2)
+
+
+def wavespeed_left():
+    from . import settings
+    return round(max(0.0, float(settings.load()["wavespeed_budget"]) - wavespeed_spent()), 2)
+
+
 def flux_drawn():
     t = windows()["flux"]
-    return sum(1 for r in rows() if "flux" in (r.get("model") or "") and r.get("provider") == "cloudflare" and r["status"] == "ok" and _since(r, t))
+    return sum(1 for r in _flux_rows() if r["status"] == "ok" and _since(r, t))
 
 
 def tts_left(model):
@@ -111,16 +146,32 @@ def tts_reset():
 
 
 def flux_used():
-    t = windows()["flux"]
-    return round(sum((r.get("list_price_usd") or 0) for r in rows() if "flux" in (r.get("model") or "") and _since(r, t)) / 0.011 * 1000)
+    """Cloudflare counts the last 24 hours, not since midnight: on 26 Nov it refused at 08:22 EAT,
+    when our log showed 10,095 units drawn in the 24 hours before and only 220 since midnight UTC."""
+    return FLUX_PER_DAY - flux_left()
 
 
-def flux_left():
-    return max(0, FLUX_PER_DAY - flux_used())
+def flux_left(now=None):
+    now = now or datetime.now(timezone.utc)
+    left = FLUX_PER_DAY - sum(_neurons(r) for r in _flux_rows() if _since(r, now - timedelta(days=1)))
+    b = _flux_blocked()
+    if b:  # Cloudflare's count beats ours: only what has dropped out of its window since it refused is free
+        left = min(left, sum(_neurons(r) for r in _flux_rows() if b - timedelta(days=1) <= datetime.fromisoformat(r["ts"]) < now - timedelta(days=1)))
+    return max(0, round(left))
 
 
-def flux_reset():
-    return windows()["flux"] + timedelta(days=1)
+def flux_reset(need=2000):
+    """When there is room again for about a dozen pictures: each one drops out 24 hours after it was drawn.
+    With room now, when the oldest counted picture drops out. Always in the future: the page reloads when it passes."""
+    now = datetime.now(timezone.utc)
+    if flux_left(now) >= need:
+        counted = [datetime.fromisoformat(r["ts"]) + timedelta(days=1) for r in _flux_rows()]
+        return min([t for t in counted if t > now], default=now + timedelta(days=1))
+    for r in _flux_rows():
+        at = datetime.fromisoformat(r["ts"]) + timedelta(days=1, seconds=1)
+        if at > now and flux_left(at) >= need:
+            return at
+    return now + timedelta(days=1)
 
 
 def gpu_used_h():

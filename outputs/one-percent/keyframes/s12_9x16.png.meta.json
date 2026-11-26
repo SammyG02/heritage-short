@@ -1,0 +1,25 @@
+{
+ "key": "be4cb06006cec5719d4fb1dbbb459e88f415044de9393f91fd6e92abdbb93801",
+ "sha256": "a2f791e6e5cb37020417d2b79c238bb59b5b83a6d90500f65ae4a54cb3e62f20",
+ "inputs": {
+  "stage": "keyframe/1",
+  "model": "@cf/black-forest-labs/flux-2-klein-4b",
+  "seed": 2016,
+  "size": [
+   768,
+   1344
+  ],
+  "prompt": "extreme wide shot. A family of five seen from far behind as small figures walking together up a green hill toward a huge golden sunrise, long soft shadows, open sky. Visible emotion: calm hope, shoulders relaxed, walking toward light. tall vertical scene, subject large in the middle third, the painted scene continues down to the bottom edge. 3D animated film frame with a painted look, sculpted rounded characters with expressive faces, hand-painted textures and visible soft brush strokes on 3D forms, painterly background, warm amber and terracotta palette with deep indigo shadows, gentle cinematic light, subject centred in frame, full-bleed picture reaching every edge",
+  "references": []
+ },
+ "qa": {
+  "status": "unchecked",
+  "seed_used": 2016,
+  "tries": [
+   {
+    "seed": 2016,
+    "check": null
+   }
+  ]
+ }
+}

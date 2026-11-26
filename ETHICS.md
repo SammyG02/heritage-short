@@ -20,6 +20,8 @@
 
 **Addis AI (26 Nov 2026, recorded in the studio before the first line was sent at 01:32 EAT).** Addis AI's privacy policy says content may be used to train by default. The applicant wrote: "My Mother,father,brother and sister all agreed that i can use them as characters in my ai video and share data with addis AI and any other AI..." The studio refuses to send a true story to Addis AI without such a record (`people.addis_consent`).
 
+**Each AI service, one by one (26 Nov 2026, 13:59 EAT).** The studio now asks which AI services the people in a true story agreed to, one checkbox each, and never calls a service left unticked (`people.ai_services`, checked by `require_service` before every call). The applicant ticked all six (Google Gemini, Cloudflare, Addis AI, Kaggle, WaveSpeed, Groq) on the basis of the family statement quoted above, "addis AI and any other AI". The ticks were made by the applicant, not by each family member; both the ticks and that basis are saved, dated, in `people.consent_record`.
+
 The earlier sample, "The Extra Cup", was invented: no real person was shown or voiced.
 
 ## Labelling
@@ -43,6 +45,7 @@ Google states that free-tier Gemini content is used to improve its products. For
 | Gemini 3.1 Flash TTS preview | Google API terms, as above | Model page, 25 Nov 2026 |
 | Addis AI Voices 2 (used for this film's Amharic voices from 26 Nov) | Its terms allow use in your own products, no resale. Its privacy policy says content may be used to train by default, so a true story needs fresh consent before choosing it | Terms and privacy pages, 25 Nov 2026 |
 | Groq (optional, never used) | Terms not checked yet; check them before sending a true story | Model list only, 26 Nov 2026 |
+| WaveSpeed, Wan 2.2 I2V 480p (optional, paid, not used yet) | Receives the approved vertical picture and the movement words, no narration. Keeps uploads and clips up to 7 days (its retention page). Whether it trains on inputs: not stated on the pages read; terms not checked yet | API docs and retention page, 26 Nov 2026 |
 | OmniVoice Amharic (optional last resort, not used) | Amharic card: Apache 2.0. Base model card: code Apache 2.0, weights CC-BY-NC. Treated as non-commercial. No recording of a person is used | Model cards, 25 Nov 2026 |
 | Geist | SIL Open Font License 1.1 | Bundled in assets/fonts with its licence |
 | Noto Sans Ethiopic | SIL Open Font License 1.1 | Bundled in assets/fonts with its licence |

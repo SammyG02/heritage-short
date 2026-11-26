@@ -1,6 +1,6 @@
 {
  "id": "one-percent",
- "version": 31,
+ "version": 79,
  "status": "draft",
  "title": {
   "am": "አንድ በመቶ",
@@ -17,30 +17,36 @@
   "based_on_real_people": true,
   "consent": "recorded",
   "statement": "Based on the applicant's own family story. Faces are invented drawings made from text and the narrator is a stock synthetic voice. Nobody's photograph or recording is used. Consent is recorded in ETHICS.md.",
-  "addis_consent": "My Mother,father,brother and sister all agreed that i can use them as characters in my ai video and share data with addis AI and any other AI..."
+  "addis_consent": "My Mother,father,brother and sister all agreed that i can use them as characters in my ai video and share data with addis AI and any other AI...",
+  "ai_services": {
+   "google": true,
+   "cloudflare": true,
+   "addis": true,
+   "kaggle": true,
+   "wavespeed": true,
+   "groq": true
+  },
+  "consent_record": "Recorded in ETHICS.md.\n26 Nov 2026 13:59: Google Gemini: agreed; Cloudflare: agreed; Addis AI: agreed; Kaggle: agreed; WaveSpeed: agreed; Groq: agreed\n26 Nov 2026 13:59: The filmmaker ticked all six AI services above in the studio, based on the family statement already recorded: they agreed to Addis AI and any other AI.\n26 Nov 2026 14:10: Cloudflare: not agreed\n26 Nov 2026 14:10: Cloudflare: agreed\n26 Nov 2026 15:01: Addis AI: not agreed\n26 Nov 2026 15:01: Addis AI: agreed"
  },
  "models": {
   "tts": "gemini-3.8-flash-tts",
   "image": "@cf/black-forest-labs/flux-2-klein-4b",
   "video": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
   "music": "ACE-Step/ACE-Step-1.5 acestep-v15-turbo",
-  "tts_fallbacks": [
-   "gemini-3.8-flash-lite-tts",
-   "gemini-3.8-flash-tts"
-  ]
+  "tts_fallbacks": []
  },
  "voices": {
   "am": {
-   "voice": "am-amanuel",
+   "voice": "Algieba",
    "style": "a young man, warm, calm and unhurried, like telling a family story at night",
    "characters": {
     "mother": {
-     "voice": "am-nejat",
+     "voice": "Sulafat",
      "style": "a mother, warm and heartfelt, speaking gently to her family"
     }
    },
-   "model": "gemini-3.1-flash-tts-preview",
-   "engine": "addis"
+   "model": "gemini-3.8-flash-tts",
+   "engine": "gemini"
   },
   "en": {
    "voice": "Algieba",
@@ -86,7 +92,7 @@
     22
    ],
    "chosen_seed": 22,
-   "reason": "Not chosen yet",
+   "reason": "Chosen by the filmmaker in the studio",
    "look": "the same woman about fifteen years older, same oval face and large dark eyes, deep warm brown skin, black hair with two or three thin grey strands under a thin white netela shawl with a green and gold border, long white cotton dress, small round silver stud earrings",
    "from": "mother"
   },
@@ -176,7 +182,9 @@
    "transition": {
     "type": "cut",
     "reason": "Opening"
-   }
+   },
+   "motion": "clip",
+   "animate": "wavespeed"
   },
   {
    "id": "s02",
@@ -200,7 +208,10 @@
     "type": "dissolve",
     "reason": "Years pass on the same two people",
     "seconds": 0.6
-   }
+   },
+   "tts_model": "gemini-3.1-flash-tts-preview",
+   "motion": "clip",
+   "animate": "wavespeed"
   },
   {
    "id": "s03",
@@ -223,7 +234,10 @@
     "type": "fadeblack",
     "reason": "Night falls on their waiting",
     "seconds": 0.8
-   }
+   },
+   "tts_model": "gemini-3.1-flash-tts-preview",
+   "motion": "clip",
+   "animate": "wavespeed"
   },
   {
    "id": "s04",
@@ -247,7 +261,9 @@
     "type": "cut",
     "reason": "The news lands without warning"
    },
-   "motion": "camera"
+   "motion": "clip",
+   "tts_model": "gemini-3.1-flash-tts-preview",
+   "animate": "wavespeed"
   },
   {
    "id": "s05",
@@ -272,7 +288,10 @@
     "type": "dissolve",
     "reason": "One feeling grows out of the other",
     "seconds": 0.6
-   }
+   },
+   "tts_model": "gemini-3.1-flash-tts-preview",
+   "motion": "clip",
+   "animate": "wavespeed"
   },
   {
    "id": "s06",
@@ -296,7 +315,10 @@
     "type": "smoothleft",
     "reason": "They travel",
     "seconds": 0.6
-   }
+   },
+   "tts_model": "gemini-3.1-flash-tts-preview",
+   "motion": "camera",
+   "animate": "kaggle"
   },
   {
    "id": "s07",
@@ -306,7 +328,7 @@
    "ken_burns": "in",
    "references": [],
    "reason": "The birth, in a hand rather than a face; it does not say yet whose life this is",
-   "image_prompt": "Extreme close view of a newborn baby hand with tiny fingers wrapped around one adult finger, white blanket, soft golden morning light",
+   "image_prompt": "Extreme close view of a newborn brown baby white blanket, soft golden morning light",
    "motion_prompt": "The tiny fingers slowly close around the finger, the camera is fixed",
    "narration": {
     "am": "እና ከዚያ… ሕፃን ተወለደ።",
@@ -318,7 +340,12 @@
     "reason": "A birth arrives as light",
     "seconds": 0.8
    },
-   "motion": "camera"
+   "motion": "camera",
+   "tts_model": "gemini-3.1-flash-tts-preview",
+   "animate": "wavespeed",
+   "takes": {
+    "9x16": 1
+   }
   },
   {
    "id": "s08",
@@ -342,7 +369,10 @@
     "type": "dissolve",
     "reason": "The small hand becomes the reveal",
     "seconds": 0.6
-   }
+   },
+   "tts_model": "gemini-3.1-flash-tts-preview",
+   "motion": "camera",
+   "animate": "wavespeed"
   },
   {
    "id": "s09",
@@ -366,7 +396,10 @@
     "type": "dissolve",
     "reason": "Many years later, the same woman",
     "seconds": 0.6
-   }
+   },
+   "tts_model": "gemini-3.1-flash-tts-preview",
+   "motion": "clip",
+   "animate": "wavespeed"
   },
   {
    "id": "s10",
@@ -388,7 +421,8 @@
     "reason": "The children run into the story",
     "seconds": 0.6
    },
-   "motion": "camera"
+   "motion": "camera",
+   "animate": "wavespeed"
   },
   {
    "id": "s11",
@@ -412,7 +446,12 @@
     "type": "dissolve",
     "reason": "The family gathers where two people once sat",
     "seconds": 0.6
-   }
+   },
+   "motion": "camera",
+   "takes": {
+    "9x16": 1
+   },
+   "animate": "kaggle"
   },
   {
    "id": "s12",
@@ -434,7 +473,8 @@
     "reason": "The light of the birth returns for the viewer",
     "seconds": 0.8
    },
-   "motion": "camera"
+   "motion": "clip",
+   "animate": "wavespeed"
   }
  ],
  "end_card": {
@@ -456,7 +496,10 @@
    "s06": "bbc0e1a53512f2329a6ac43bcf2852466d0fb63c6c62aaa41b50d5bc2a290371:dbad433bb62809e721739c3db75e6a45d92f69762e0180f7377738fc487e175c",
    "s07": "9b0a0a1a65f12e61963b7e5d08ca1217d536519dd6427c5e441e1b95cdf02eea:042a4a85f72646f776daed36cc8a88b2cdfdfd1226b29df004130a0e1b90fc36",
    "s08": "02efaaab61c2efbb4f81f69c7f8c14a15eeb5ebac50f19a2e474c2c9fb0da2d6:b614fd47a669f0596d61b97938042299c039cf81e68568a6f3929be2fb41b482",
-   "s09": "a551b9e4bc03990cf3c5d9a2557d0442f8d3501c5e0c0a1fdbd13c943a453b5a:dc58576657c480853e7078c4279c453a0c916b4b58c6e904f8e768da5a6b9284"
+   "s09": "a551b9e4bc03990cf3c5d9a2557d0442f8d3501c5e0c0a1fdbd13c943a453b5a:dc58576657c480853e7078c4279c453a0c916b4b58c6e904f8e768da5a6b9284",
+   "s10": "6e69908108311182ca5867d641ad70c9de7db864253dd403b71231f1d365608f:7083112e629331bc85cfadb69b795d013c4a000197992d7b034fb197877bb7a0",
+   "s11": "8c61f6e49cf03bf520d2a1be8158d9d90f2b0c3a346fe7461a8b8d13a586df67:bd9f431b44cc60f18452551d93cb5dc07af3ff07d5d3ad0b561d0b11f8929253",
+   "s12": "4369dd808ea04692bf5ff228db4b7183812f2ea016b5b2a71cbf5d098b0c989b:6850660449111d1f3f63efab77958e57302479f8e72d3fc05d9bdc5677fed83f"
   },
   "script": {
    "s01": "c03513bd5964b46e1ef52bce6443a2eae61211fe772225c30df6cab38412eec4",
@@ -471,6 +514,25 @@
    "s10": "e812a1e24d476f5395b46955e065b6ff4296d3d22a1b166ffdb2146de0679004",
    "s11": "4aa8613b952107f3cb61fa71b62e0eb485bea68c6b64537ef739df589ce3f20a",
    "s12": "a7c7da303f2cff066aa388c135924ea99117a5659f8cc22293501565d380006b"
+  },
+  "picture": {
+   "s01_9x16": "b950633d2a42741246e91b4e06eabd08a614241680c7cb57382a02abe9751a52",
+   "s02_9x16": "08dab42187152700508db80bee0c1c437eafa629d244fe2bcb986c4f43afa820",
+   "s03_9x16": "5bc319aeeba4857b6876fb9b45ab00d0b8b07644c76783beeeaac874488deca5",
+   "s04_9x16": "c2e24bdee693c4f08461e073704e55ee661c02f3f67edee32db2008803e55b93",
+   "s05_9x16": "d7e8ebcc3a966ebcaedd1c1093eb51ea20ade78c6d768ae79b33b5b25ab0d6c2",
+   "s08_9x16": "5655cd4a0c020b0664facdd5d2ac6eccd14bc91e71c2784c564bdb3f9b969aa6",
+   "s09_9x16": "091b89ccfaf2b44b00da6b20f832027bba94d6f79d4bf979dca3ae26463bfed6",
+   "s10_9x16": "6515168fb67e2c1d2f58b4a06f0891aef5c0d45910e0d2aa454f2cce7970040d",
+   "s11_9x16": "e0577c0a0ca30160f8af1e26a2833b80098b55e56292c4a17558c7c841361672",
+   "s12_9x16": "a2f791e6e5cb37020417d2b79c238bb59b5b83a6d90500f65ae4a54cb3e62f20",
+   "s06_9x16": "4610dd81b8dfaffdcd7465de35c5ba8819ee52548a1d106e1d993cc4f708a617",
+   "s07_9x16": "6f2eb3c4467f09b3f3a83035424b544269a3fc1b05db1b88c6b0665cbbc3c4d0"
+  },
+  "clip": {
+   "s03_9x16": "4607dd8bb0836e590178580d57fbb4268cec4aeeed95fb78dfbd27e557cf9988",
+   "s01_9x16": "0be20460f766b5a506ee90661fd44b71abb830179312eaaa38f4bb2349faab2c",
+   "s05_9x16": "698f9ed739c2c4b2961a158b3f8e2eea343395a7a4e90ad8815d549ca4afa3b3"
   }
  }
 }

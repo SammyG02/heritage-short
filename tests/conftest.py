@@ -13,7 +13,7 @@ def own_log(tmp_path, monkeypatch):
     """Tests never read or write the real call log, personal films or settings."""
     monkeypatch.setattr(config, "RUNS", tmp_path / "runs.jsonl")
     monkeypatch.setattr(config, "FILMS", tmp_path / "my-films")
-    for name in ("SHOW_REPO_FILM", "ADDIS_API_KEY", "GROQ_API_KEY"):
+    for name in ("SHOW_REPO_FILM", "ADDIS_API_KEY", "GROQ_API_KEY", "GEMINI_API_KEY", "CLOUDFLARE_ACCOUNT_ID", "WAVESPEED_API_KEY"):
         monkeypatch.delenv(name, raising=False)
     token = runlog._private.set(False)
     review = approvals._review.set(True)

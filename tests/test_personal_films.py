@@ -112,6 +112,7 @@ def test_voices_follow_the_people_in_the_story(monkeypatch, narrator):
 def test_moving_shots_are_drawn_small_and_still_shots_full(monkeypatch):
     _, sb = make(monkeypatch)
     s = sb["shots"][0]
+    s["motion"] = "clip"  # new films start as camera moves; this one is chosen to move
     small = keyframes.cost(sb, s, "9x16")
     assert keyframes.inputs(sb, s, "9x16")["size"] == [512, 896]
     s["motion"] = "camera"
@@ -195,4 +196,5 @@ def test_a_film_can_be_started_without_saying_who_it_is_for(monkeypatch):
     calls = []
     monkeypatch.setattr(providers, "gemini_json", lambda *a, **k: calls.append(1) or draft())
     _, sb = script.new("word " * 20, "am", "home", "", " ")
-    assert (sb["audience"], sb["intent"], len(calls)) == ("my family", "close to home", 1)
+    assert (sb["audience"], sb["intent"], len(calls)) == ("the storyteller's family and friends", "what the story itself calls for", 1)
+    assert sb["story"] == ("word " * 20).strip()

@@ -1,0 +1,50 @@
+{
+ "key": "c88717e1a6d33202ffd2f060372d88257db4de0df193869ac787b8354553f40a",
+ "sha256": "e0577c0a0ca30160f8af1e26a2833b80098b55e56292c4a17558c7c841361672",
+ "inputs": {
+  "stage": "keyframe/1",
+  "model": "@cf/black-forest-labs/flux-2-klein-4b",
+  "seed": 3011,
+  "size": [
+   768,
+   1344
+  ],
+  "prompt": "wide shot. The woman and the man, older, sitting on the stone doorstep of a small house with two boys and one girl seen from behind around them, all close together, warm golden light. Visible emotion: deep contentment, everyone smiling. Reference image 1 is the mother older: the same woman about fifteen years older, same oval face and large dark eyes, deep warm brown skin, black hair with two or three thin grey strands under a thin white netela shawl with a green and gold border, long white cotton dress, small round silver stud earrings. Same face, hair and clothes as reference image 1. Reference image 2 is the father older: the same man in his fifties, slim face, warm brown skin, short dark hair and trimmed beard with some grey, white cotton collared shirt. Same face, hair and clothes as reference image 2. tall vertical scene, subject large in the middle third, the painted scene continues down to the bottom edge. 3D animated film frame with a painted look, sculpted rounded characters with expressive faces, hand-painted textures and visible soft brush strokes on 3D forms, painterly background, warm amber and terracotta palette with deep indigo shadows, gentle cinematic light, subject centred in frame, full-bleed picture reaching every edge",
+  "references": [
+   "c071a0c6209d4e2a3a5e0223c6a946e89c4871da61b737b1e6ea8f1c235cd69a",
+   "580e742881bc562c5a4d318c2ceb2f277af6fb30792b0cdfec0d9f55a2051994"
+  ]
+ },
+ "qa": {
+  "status": "below target, needs a person to look",
+  "seed_used": 3011,
+  "tries": [
+   {
+    "seed": 3011,
+    "check": {
+     "identity": 5.0,
+     "emotion": 8.0,
+     "content": 3.0,
+     "anatomy": 8.0,
+     "style": 7.0,
+     "worst": 3.0,
+     "problem": "The man from the second reference is missing from the scene, and the characters are standing instead of sitting on the stone doorstep.",
+     "model": "gemini-3.5-flash-lite"
+    }
+   },
+   {
+    "seed": 3112,
+    "check": {
+     "identity": 4.0,
+     "emotion": 8.0,
+     "content": 3.0,
+     "anatomy": 7.0,
+     "style": 6.0,
+     "worst": 3.0,
+     "problem": "The frame incorrectly depicts only the woman with children instead of both the older woman and the older man sitting on a stone doorstep as requested.",
+     "model": "gemini-3.5-flash-lite"
+    }
+   }
+  ]
+ }
+}

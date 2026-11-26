@@ -1,0 +1,14 @@
+{
+ "key": "93d73c5bac7b417c58671a689a042034818d5208552d99122b5127ac3921f9b6",
+ "sha256": "0be20460f766b5a506ee90661fd44b71abb830179312eaaa38f4bb2349faab2c",
+ "inputs": {
+  "stage": "wan/1",
+  "model": "wavespeed-ai/wan-2.2/i2v-480p-ultra-fast",
+  "seconds": 8,
+  "seed": 2002,
+  "motion_prompt": "She smiles warmly at him, their clothes stir in a light breeze, the camera is fixed. Emotion: young love, shining eyes, easy open smiles",
+  "negative_prompt": "text, letters, subtitles, watermark, extra fingers, deformed hands, distorted face, morphing, flicker, fast motion, camera shake, blurry, low quality",
+  "keyframe": "b950633d2a42741246e91b4e06eabd08a614241680c7cb57382a02abe9751a52"
+ },
+ "seconds": 8.03
+}

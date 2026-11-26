@@ -1,0 +1,37 @@
+{
+ "key": "c6434e53be199af5fd0651cbe1f217743c5f712dfc02203b31628b3c99ed69a8",
+ "sha256": "08dab42187152700508db80bee0c1c437eafa629d244fe2bcb986c4f43afa820",
+ "inputs": {
+  "stage": "keyframe/1",
+  "model": "@cf/black-forest-labs/flux-2-klein-4b",
+  "seed": 2013,
+  "size": [
+   768,
+   1344
+  ],
+  "prompt": "wide shot. The woman and the man sitting close together on the stone doorstep of a small house, looking out over an empty quiet yard, dry leaves falling from a tree, late afternoon light. Visible emotion: hope slowly turning to quiet worry, tired eyes, still close to each other. Reference image 1 is the mother: young Ethiopian woman in her twenties, oval face, warm brown skin, dark centre-parted hair under a thin white netela shawl with a green and gold border, long white cotton dress, small round silver stud earrings. Same face, hair and clothes as reference image 1. Reference image 2 is the father: young Ethiopian man in his late twenties, slim face, warm brown skin, short dark hair, trimmed short beard, white cotton collared shirt. Same face, hair and clothes as reference image 2. tall vertical scene, subject large in the middle third, the painted scene continues down to the bottom edge. 3D animated film frame with a painted look, sculpted rounded characters with expressive faces, hand-painted textures and visible soft brush strokes on 3D forms, painterly background, warm amber and terracotta palette with deep indigo shadows, gentle cinematic light, subject centred in frame, full-bleed picture reaching every edge",
+  "references": [
+   "89f1ae563a0f1565e899379b2fb289bba5d1eb2d2aeddb316e6641c8e73029ce",
+   "46b379832e98df62e85c157d8a20f098bf6bccbb03e7e3b235781b93df2bd875"
+  ]
+ },
+ "qa": {
+  "status": "passed",
+  "seed_used": 2013,
+  "tries": [
+   {
+    "seed": 2013,
+    "check": {
+     "identity": 7.0,
+     "emotion": 7.0,
+     "content": 7.0,
+     "anatomy": 7.0,
+     "style": 7.0,
+     "worst": 7.0,
+     "problem": "none",
+     "model": "gemini-3.6-flash"
+    }
+   }
+  ]
+ }
+}

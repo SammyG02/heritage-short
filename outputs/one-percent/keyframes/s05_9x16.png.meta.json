@@ -1,0 +1,50 @@
+{
+ "key": "cb0ce7d36e806d217a3f711c96a413b86e8c47227d8f46a7f1cde17698b9d371",
+ "sha256": "d7e8ebcc3a966ebcaedd1c1093eb51ea20ade78c6d768ae79b33b5b25ab0d6c2",
+ "inputs": {
+  "stage": "keyframe/1",
+  "model": "@cf/black-forest-labs/flux-2-klein-4b",
+  "seed": 2006,
+  "size": [
+   768,
+   1344
+  ],
+  "prompt": "medium close-up shot. The woman lifting her face with a determined look toward the man beside her, warm lamp light on both faces, night window behind. Visible emotion: fear giving way to determination, steady eyes, lifted chin. Reference image 1 is the mother: young Ethiopian woman in her twenties, oval face, warm brown skin, dark centre-parted hair under a thin white netela shawl with a green and gold border, long white cotton dress, small round silver stud earrings. Same face, hair and clothes as reference image 1. Reference image 2 is the father: young Ethiopian man in his late twenties, slim face, warm brown skin, short dark hair, trimmed short beard, white cotton collared shirt. Same face, hair and clothes as reference image 2. tall vertical scene, subject large in the middle third, the painted scene continues down to the bottom edge. 3D animated film frame with a painted look, sculpted rounded characters with expressive faces, hand-painted textures and visible soft brush strokes on 3D forms, painterly background, warm amber and terracotta palette with deep indigo shadows, gentle cinematic light, subject centred in frame, full-bleed picture reaching every edge",
+  "references": [
+   "89f1ae563a0f1565e899379b2fb289bba5d1eb2d2aeddb316e6641c8e73029ce",
+   "46b379832e98df62e85c157d8a20f098bf6bccbb03e7e3b235781b93df2bd875"
+  ]
+ },
+ "qa": {
+  "status": "below target, needs a person to look",
+  "seed_used": 2006,
+  "tries": [
+   {
+    "seed": 2006,
+    "check": {
+     "identity": 7.0,
+     "emotion": 6.0,
+     "content": 6.0,
+     "anatomy": 7.0,
+     "style": 7.0,
+     "worst": 6.0,
+     "problem": "The woman is looking forward rather than turning toward the man.",
+     "model": "gemini-3.6-flash"
+    }
+   },
+   {
+    "seed": 2107,
+    "check": {
+     "identity": 7.0,
+     "emotion": 4.0,
+     "content": 5.0,
+     "anatomy": 7.0,
+     "style": 7.0,
+     "worst": 4.0,
+     "problem": "The woman faces forward with a worried look rather than turning toward the man.",
+     "model": "gemini-3.6-flash"
+    }
+   }
+  ]
+ }
+}

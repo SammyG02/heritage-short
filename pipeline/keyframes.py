@@ -2,8 +2,8 @@
 import shutil
 
 from . import narration
-from .core import approvals, budget, cache, config, providers
-from .core.storyboard import out, require_consent
+from .core import approvals, budget, cache, config, providers, runlog
+from .core.storyboard import out, require_consent, require_service
 
 # Multiples of 16, close to the delivery ratios.
 SIZES = {"9x16": (768, 1344), "16x9": (1344, 768)}
@@ -22,13 +22,24 @@ def ref_path(sb, name, seed):
     return out(sb, "references", f"{name}_{seed}.png")
 
 
+def photo_path(sb, name):
+    """A family photo, scaled down and without its metadata. Never committed (.gitignore: references/photos/)."""
+    return out(sb, "references", "photos", f"{name}.png")
+
+
+def ref_base(sb, name):
+    """The pictures a character's faces are drawn from: the face it changes, and the photo it is drawn from."""
+    ref = sb["references"][name]
+    return ([ref_path(sb, ref["from"], sb["references"][ref["from"]]["chosen_seed"])] if ref.get("from") else []) + ([photo_path(sb, name)] if ref.get("photo") else [])
+
+
 def ref_inputs(sb, name, seed):
     ref = sb["references"][name]
     inp = {"stage": "reference/1", "model": sb["models"]["image"], "seed": seed, "size": [1024, 1024],
            "prompt": f"{ref['prompt']}. {sb['style_block']}"}
-    if ref.get("from"):
-        p = ref_path(sb, ref["from"], sb["references"][ref["from"]]["chosen_seed"])
-        inp["references"] = [cache.file_sha(p) if p.exists() else "missing"]
+    base = ref_base(sb, name)
+    if base:
+        inp["references"] = [cache.file_sha(p) if p.exists() else "missing" for p in base]
     return inp
 
 
@@ -69,8 +80,25 @@ def inputs(sb, shot, ratio):
             "references": [cache.file_sha(r) if r.exists() else "missing" for r in refs]}
 
 
+FLAG_TRIES, FLAG_STEP = 3, 1009  # not 101, the step qa uses for its own redraws
+
+
+def flagged_retry(draw, seed):
+    """Cloudflare sometimes blocks a harmless picture. Another seed gives another picture: try up to 3. Returns (png, seed used)."""
+    for k in range(FLAG_TRIES):
+        try:
+            return draw(seed + k * FLAG_STEP), seed + k * FLAG_STEP
+        except providers.Flagged:
+            print(f"    seed {seed + k * FLAG_STEP} blocked by Cloudflare's safety filter")
+            runlog.step("Cloudflare's filter refused that picture, drawing another")
+    raise providers.ProviderError(f"Cloudflare's safety filter blocked this picture {FLAG_TRIES} times, with different seeds. "
+                                  "Change a few words in its description and draw again.")
+
+
 def run_references(sb, force=False, only=None):
     made = 0
+    total = sum(force or not cache.fresh(ref_path(sb, n, s), ref_inputs(sb, n, s))
+                for n, r in sb["references"].items() if not only or n in only for s in r["seeds"])
     for name, ref in sorted(sb["references"].items(), key=lambda kv: bool(kv[1].get("from"))):  # parents first
         if only and name not in only:
             continue
@@ -79,10 +107,13 @@ def run_references(sb, force=False, only=None):
             if not force and cache.fresh(p, inp):
                 continue
             require_consent(sb)
-            base = [ref_path(sb, ref["from"], sb["references"][ref["from"]]["chosen_seed"])] if ref.get("from") else []
-            data = providers.flux("references", f"{name}_{seed}", inp["prompt"], *inp["size"], seed, inp["model"], base)
+            require_service(sb, service(sb))
+            runlog.progress(made + 1, total, name.replace("_", " "))
+            runlog.step("Cloudflare is drawing the character")
+            base = ref_base(sb, name)
+            data, used = flagged_retry(lambda s: providers.flux("references", f"{name}_{seed}", inp["prompt"], *inp["size"], s, inp["model"], base), seed)
             keep_version(p)
-            cache.store(p, data, inp)
+            cache.store(p, data, inp, **({"seed_used": used} if used != seed else {}))
             made += 1
     print(f"  references: {made} generated")
 
@@ -128,16 +159,25 @@ def restore(sb, shot, ratio, name):
     old.unlink()
 
 
-def run(sb, ratios=tuple(SIZES), force=False, only=None):
+def drawn(sb):
+    """The shapes whose pictures are drawn. By default only the vertical: the wide film is made from it, the same frames
+    with blurred sides, so the two films match exactly, moving shots included, and no picture is drawn twice."""
+    return ("9x16",) if sb.get("wide_from_vertical", True) else tuple(SIZES)
+
+
+def run(sb, ratios=None, force=False, only=None):
     from . import qa  # qa needs this module
+    ratios = ratios or drawn(sb)
     made, waiting, extra = 0, [], [qa.EXTRA_PER_RUN]
     todo = [s for s in sb["shots"] if not only or s["id"] in only]
+    total = sum(force or not cache.fresh(path(sb, s, r), inputs(sb, s, r)) for s in todo for r in ratios if voice_ok(sb, s))
     for shot in todo:
         for ratio in ratios:
             p, inp = path(sb, shot, ratio), inputs(sb, shot, ratio)
             if not force and cache.fresh(p, inp):
                 continue
             require_consent(sb)
+            require_service(sb, service(sb))
             if not voice_ok(sb, shot):
                 waiting.append(shot["id"])
                 continue
@@ -148,6 +188,7 @@ def run(sb, ratios=tuple(SIZES), force=False, only=None):
             refs = [ref_path(sb, n, sb["references"][n]["chosen_seed"]) for n in shot["references"]]
             if gone := [n for n, r in zip(shot["references"], refs) if not cache.fresh(r, ref_inputs(sb, n, sb["references"][n]["chosen_seed"]))]:
                 raise config.PipelineError(f"{shot['id']} needs a character that is not drawn yet, or whose face has changed: {', '.join(gone)}")
+            runlog.progress(made + 1, total, f"shot {sb['shots'].index(shot) + 1}")
             data, report = qa.best_of(sb, shot, ratio, inp, refs, extra)
             keep_version(p)
             cache.store(p, data, inp, qa=report)

@@ -1,0 +1,14 @@
+{
+ "key": "4ec1323b54ec1af37249f8277abdd05112e7210d7d850daf81ee5e1a1f3694b0",
+ "sha256": "4607dd8bb0836e590178580d57fbb4268cec4aeeed95fb78dfbd27e557cf9988",
+ "inputs": {
+  "stage": "wan/1",
+  "model": "wavespeed-ai/wan-2.2/i2v-480p-ultra-fast",
+  "seconds": 5,
+  "seed": 2004,
+  "motion_prompt": "Her lips move softly in prayer, the candle flame flickers, the camera is fixed. Emotion: deep longing and faith, brows slightly drawn, eyes closed",
+  "negative_prompt": "text, letters, subtitles, watermark, extra fingers, deformed hands, distorted face, morphing, flicker, fast motion, camera shake, blurry, low quality",
+  "keyframe": "5bc319aeeba4857b6876fb9b45ab00d0b8b07644c76783beeeaac874488deca5"
+ },
+ "seconds": 5.37
+}

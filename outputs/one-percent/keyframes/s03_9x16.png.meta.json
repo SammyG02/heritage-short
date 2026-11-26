@@ -1,0 +1,36 @@
+{
+ "key": "bf702f7e43504c2476c48bc3c6e4f063e6e54b00d0e105ed657c708ef6c4fe6d",
+ "sha256": "5bc319aeeba4857b6876fb9b45ab00d0b8b07644c76783beeeaac874488deca5",
+ "inputs": {
+  "stage": "keyframe/1",
+  "model": "@cf/black-forest-labs/flux-2-klein-4b",
+  "seed": 2004,
+  "size": [
+   768,
+   1344
+  ],
+  "prompt": "medium close-up shot. The woman seated by candlelight at night, white shawl over her hair, eyes closed, hands pressed together near her chest, quiet prayer, dark room. Visible emotion: deep longing and faith, brows slightly drawn, eyes closed. Reference image 1 is the mother: young Ethiopian woman in her twenties, oval face, warm brown skin, dark centre-parted hair under a thin white netela shawl with a green and gold border, long white cotton dress, small round silver stud earrings. Same face, hair and clothes as reference image 1. tall vertical scene, subject large in the middle third, the painted scene continues down to the bottom edge. 3D animated film frame with a painted look, sculpted rounded characters with expressive faces, hand-painted textures and visible soft brush strokes on 3D forms, painterly background, warm amber and terracotta palette with deep indigo shadows, gentle cinematic light, subject centred in frame, full-bleed picture reaching every edge",
+  "references": [
+   "89f1ae563a0f1565e899379b2fb289bba5d1eb2d2aeddb316e6641c8e73029ce"
+  ]
+ },
+ "qa": {
+  "status": "passed",
+  "seed_used": 2004,
+  "tries": [
+   {
+    "seed": 2004,
+    "check": {
+     "identity": 7.0,
+     "emotion": 7.0,
+     "content": 7.0,
+     "anatomy": 7.0,
+     "style": 7.0,
+     "worst": 7.0,
+     "problem": "none",
+     "model": "gemini-3.6-flash"
+    }
+   }
+  ]
+ }
+}

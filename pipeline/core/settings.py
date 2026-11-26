@@ -3,7 +3,7 @@ import json
 
 from . import config
 
-DEFAULTS = {"writer": "auto", "voice": "addis"}
+DEFAULTS = {"writer": "auto", "voice": "addis", "wavespeed_budget": 1.0}  # USD the studio may spend on WaveSpeed, redos included ($1 of credit, 26 Nov)
 
 
 def file():
@@ -15,7 +15,7 @@ def load():
         saved = json.loads(file().read_text(encoding="utf-8"))
     except (OSError, ValueError):
         saved = {}
-    return {**DEFAULTS, **{k: v for k, v in saved.items() if k in DEFAULTS and isinstance(v, str)}} if isinstance(saved, dict) else dict(DEFAULTS)
+    return {**DEFAULTS, **{k: v for k, v in saved.items() if k in DEFAULTS and (isinstance(v, (int, float)) and not isinstance(v, bool) if isinstance(DEFAULTS[k], float) else isinstance(v, type(DEFAULTS[k])))}} if isinstance(saved, dict) else dict(DEFAULTS)
 
 
 def save(**changes):

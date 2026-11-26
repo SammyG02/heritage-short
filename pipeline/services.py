@@ -126,7 +126,16 @@ def _pictures(sb, now):
 def _motion(sb, now):
     clips = [s.get("motion", "clip") for s in sb["shots"]]
     count = lambda x: f"{clips.count(x)} shot{'s' * (clips.count(x) != 1)}"  # noqa: E731
-    rows = [option("clip", "Real movement", on=all(m == "clip" for m in clips), m=_gpu(now), note=f"{count('clip')}. About {round(budget.clip_seconds() / 60)} minutes a clip")] if _gpu(now) and budget.worked("kaggle", "shots") else []
+    who = sb.get("services", {}).get("animate", "kaggle")
+    rows = [option("clip", "Real movement · Kaggle", on="clip" in clips and who == "kaggle", m=_gpu(now), note=f"{count('clip')}. Free GPU, about {round(budget.clip_seconds() / 60)} minutes a clip")] if _gpu(now) and budget.worked("kaggle", "shots") else []
+    if os.environ.get("WAVESPEED_API_KEY", "").strip():
+        spent = sum(r.get("cost_usd") or 0 for r in budget.rows() if r.get("provider") == "wavespeed")
+        tried = "" if budget.worked("wavespeed") else " Not tried here yet."
+        from . import wavespeed
+        cap, real = float(settings.load()["wavespeed_budget"]), wavespeed.balance()
+        rows.append({**option("wavespeed", "Real movement · WaveSpeed", on=any(s.get("motion", "clip") == "clip" and s.get("animate") == "wavespeed" for s in sb["shots"]),
+                              m=meter(budget.wavespeed_spent(), cap, "dollars"),
+                              note=f"Paid: Fast $0.05 or $0.08 a clip, Standard $0.15 or $0.24, 1 to 3 minutes. Chosen shot by shot on the Shots tab; Kaggle makes the rest. Account balance: {'$%.2f' % real if real is not None else 'not answered'}.{tried}"), "paid": True})
     return rows + [option("camera", "Camera move", on=all(m == "camera" for m in clips), note=f"{count('camera')}. Free")]
 
 

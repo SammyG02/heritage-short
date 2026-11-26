@@ -1,0 +1,50 @@
+{
+ "key": "84dab321892d75c43459cc539bdfb8303e51deb91a0345559a0af0d2625f25ff",
+ "sha256": "5655cd4a0c020b0664facdd5d2ac6eccd14bc91e71c2784c564bdb3f9b969aa6",
+ "inputs": {
+  "stage": "keyframe/1",
+  "model": "@cf/black-forest-labs/flux-2-klein-4b",
+  "seed": 2014,
+  "size": [
+   768,
+   1344
+  ],
+  "prompt": "medium close-up shot. The woman holding a newborn baby wrapped in a white blanket against her chest, the man leaning in beside her, both looking down at the baby with tears of joy, soft golden window light. Visible emotion: overwhelming joy, tears and wide smiles. Reference image 1 is the mother: young Ethiopian woman in her twenties, oval face, warm brown skin, dark centre-parted hair under a thin white netela shawl with a green and gold border, long white cotton dress, small round silver stud earrings. Same face, hair and clothes as reference image 1. Reference image 2 is the father: young Ethiopian man in his late twenties, slim face, warm brown skin, short dark hair, trimmed short beard, white cotton collared shirt. Same face, hair and clothes as reference image 2. tall vertical scene, subject large in the middle third, the painted scene continues down to the bottom edge. 3D animated film frame with a painted look, sculpted rounded characters with expressive faces, hand-painted textures and visible soft brush strokes on 3D forms, painterly background, warm amber and terracotta palette with deep indigo shadows, gentle cinematic light, subject centred in frame, full-bleed picture reaching every edge",
+  "references": [
+   "89f1ae563a0f1565e899379b2fb289bba5d1eb2d2aeddb316e6641c8e73029ce",
+   "46b379832e98df62e85c157d8a20f098bf6bccbb03e7e3b235781b93df2bd875"
+  ]
+ },
+ "qa": {
+  "status": "below target, needs a person to look",
+  "seed_used": 2115,
+  "tries": [
+   {
+    "seed": 2014,
+    "check": {
+     "identity": 7.0,
+     "emotion": 7.0,
+     "content": 7.0,
+     "anatomy": 5.0,
+     "style": 7.0,
+     "worst": 5.0,
+     "problem": "The hands holding the baby are awkwardly merged with distorted fingers.",
+     "model": "gemini-3.6-flash"
+    }
+   },
+   {
+    "seed": 2115,
+    "check": {
+     "identity": 7.0,
+     "emotion": 7.0,
+     "content": 7.0,
+     "anatomy": 6.0,
+     "style": 7.0,
+     "worst": 6.0,
+     "problem": "Minor anatomical clipping around the hands holding the baby.",
+     "model": "gemini-3.6-flash"
+    }
+   }
+  ]
+ }
+}

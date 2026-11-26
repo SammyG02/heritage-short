@@ -30,9 +30,18 @@ class ProviderError(config.PipelineError):
         self.retryable, self.wait = retryable, wait
 
 
+class Flagged(ProviderError):
+    """Cloudflare's safety filter blocked this one picture. The same seed gives the same picture, so retry with another."""
+
+
 def _check(r):
     if r.ok:
         return r
+    if r.status_code == 400 and ('"code":3030' in r.text.replace(" ", "") or "has been flagged" in r.text):
+        raise Flagged("Cloudflare's safety filter blocked this picture")
+    if r.status_code == 429 and "free allocation" in r.text:
+        raise ProviderError("Cloudflare says the free pictures are used up. It counts the last 24 hours, "
+                            "so room comes back as earlier pictures turn a day old.")
     daily = r.status_code == 429 and re.search(r"per ?day|daily", r.text, re.I)
     m = re.search(r"retry in ([\d.]+)s", r.text) or re.search(r'"retryDelay":\s*"([\d.]+)s"', r.text)
     raise ProviderError(f"HTTP {r.status_code}: {r.text[:500]}",

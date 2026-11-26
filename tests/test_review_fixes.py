@@ -283,10 +283,10 @@ def test_a_whole_film_still_goes_through_every_gate_in_order(sb, monkeypatch):
     for s in sb["shots"]:
         ok_voice(sb, s)
     keyframes.run(sb)
-    assert len(drawn) == 24
+    assert len(drawn) == 12  # vertical only: the wide film is made from it
     assert shots.plan(sb)[0] == []
     for s in sb["shots"]:
-        for r in keyframes.SIZES:
+        for r in keyframes.drawn(sb):
             p = keyframes.path(sb, s, r)
             approvals.give(sb, "picture", p.stem, cache.file_sha(p))
     assert shots.plan(sb, hours=8)[0]
@@ -317,7 +317,7 @@ def test_a_stranger_rebuilds_the_film_with_one_command(sb, monkeypatch, tmp_path
     calls = []
     _stranger(sb, monkeypatch, calls)
     assert _command(monkeypatch, tmp_path, sb, "film") == 0
-    assert calls[-1] == ("film", "built") and sum(c[0] == "picture" for c in calls) == 24 + 12
+    assert calls[-1] == ("film", "built") and sum(c[0] == "picture" for c in calls) == 12 + 12
     calls.clear()
     assert _command(monkeypatch, tmp_path, sb, "film") == 0
     assert calls == [("film", "built")]
@@ -325,7 +325,7 @@ def test_a_stranger_rebuilds_the_film_with_one_command(sb, monkeypatch, tmp_path
 
 @pytest.mark.parametrize("change,expected", [
     (lambda s: s["narration"].update(am=s["narration"]["am"] + " አዎ።"), [("voice", "am/s03")]),
-    (lambda s: s.update(image_prompt=s["image_prompt"] + " at dawn"), [("picture", "s03_9x16"), ("picture", "s03_16x9")])])
+    (lambda s: s.update(image_prompt=s["image_prompt"] + " at dawn"), [("picture", "s03_9x16")])])
 def test_changing_one_line_or_picture_remakes_only_that_shot(sb, monkeypatch, tmp_path, change, expected):
     calls = []
     _stranger(sb, monkeypatch, calls)

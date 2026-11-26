@@ -1,7 +1,9 @@
 """runs.jsonl: one line per attempted model call, including failures."""
+import hashlib
 import json
 import os
 import re
+import threading
 import uuid
 from contextlib import contextmanager
 from contextvars import ContextVar
@@ -12,7 +14,26 @@ from . import config
 
 RUN_ID = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ") + "-" + uuid.uuid4().hex[:4]
 _SECRET_NAMES = ("GEMINI_API_KEY", "CLOUDFLARE_API_TOKEN", "CLOUDFLARE_ACCOUNT_ID",
-                 "KAGGLE_API_TOKEN", "KAGGLE_KEY", "HF_TOKEN", "ADDIS_API_KEY", "GROQ_API_KEY")
+                 "KAGGLE_API_TOKEN", "KAGGLE_KEY", "HF_TOKEN", "ADDIS_API_KEY", "GROQ_API_KEY", "WAVESPEED_API_KEY")
+
+
+# A free limit belongs to one account. Each call notes which one, as a short one-way fingerprint, never the key itself.
+_ACCOUNT_OF = {"gemini": "GEMINI_API_KEY", "cloudflare": "CLOUDFLARE_ACCOUNT_ID", "wavespeed": "WAVESPEED_API_KEY"}
+
+
+def progress(k, n, what):
+    """A line the studio turns into its progress bar."""
+    print(f"progress {k} of {n}: {what}", flush=True)
+
+
+def step(what):
+    """What is happening right now, in plain words, shown under the progress bar."""
+    print(f"step: {what}", flush=True)
+
+
+def account(provider):
+    v = os.environ.get(_ACCOUNT_OF.get(provider, ""), "").strip()
+    return hashlib.sha256(v.encode()).hexdigest()[:8] if v else None
 
 
 _private: ContextVar[bool] = ContextVar("private", default=False)
@@ -38,9 +59,12 @@ def redact(text: str) -> str:
     return re.sub(r"AIza[\w-]{20,}|gsk_\w{20,}", "<key>", text)
 
 
+_writing = threading.Lock()
+
+
 def write(record: dict) -> None:
     line = redact(json.dumps(record, ensure_ascii=False))
-    with file().open("a", encoding="utf-8", newline="\n") as f:
+    with _writing, file().open("a", encoding="utf-8", newline="\n") as f:
         f.write(line + "\n")
 
 
@@ -51,6 +75,8 @@ def call(stage, item, provider, model, params, seed=None, attempt=1):
               "stage": stage, "item": item, "provider": provider, "model": model, "params": params,
               "seed": seed, "attempt": attempt, "status": "ok", "latency_s": None, "gpu_s": None,
               "cost_usd": 0.0, "list_price_usd": None, "output": None, "error": None}
+    if account(provider):
+        record["account"] = account(provider)
     start = perf_counter()
     try:
         yield record

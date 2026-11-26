@@ -1,0 +1,12 @@
+{
+ "key": "8c61f6e49cf03bf520d2a1be8158d9d90f2b0c3a346fe7461a8b8d13a586df67",
+ "sha256": "bd9f431b44cc60f18452551d93cb5dc07af3ff07d5d3ad0b561d0b11f8929253",
+ "inputs": {
+  "stage": "narration/1",
+  "model": "gemini-3.8-flash-tts",
+  "text": "ያ አንድ በመቶ እኔ ነበርኩ። ሁላችንም ነን።",
+  "voice": "Algieba",
+  "style": "a young man, warm, calm and unhurried, like telling a family story at night"
+ },
+ "model_used": "gemini-3.8-flash-tts"
+}

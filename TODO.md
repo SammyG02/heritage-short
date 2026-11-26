@@ -67,3 +67,10 @@ Rubric: A1 = codebase and report (100). A2 = film 50, walkthrough 30, post 20.
 - [ ] (You) Submit Assignment 1: repository and report
 - [ ] (You) Submit Assignment 2: vertical MP4, plus horizontal, walkthrough and post attachments
 - [ ] (You) Reread logs and notes; take the AI interview
+
+## After submission
+- [ ] Draw one square picture per shot and cut it twice (vertical and wide), so a wide film fills the screen without drawing twice: about 245 units instead of 334
+- [ ] Free parallax from a depth map for landscape shots (no paid clip)
+- [ ] Cinemagraphs: one 5 s clip, keep one moving area, loop it on the still
+- [ ] Try a 4-step distilled LoRA for faster Kaggle clips, on one clip first
+- [ ] Better slow-down for stretched clips (frame interpolation such as RIFE instead of blending)
