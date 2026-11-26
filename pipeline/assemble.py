@@ -285,6 +285,7 @@ def film(sb, lang, ratios=("9x16", "16x9")):
         graph = (f"[0:v]subtitles=subs_{ratio}.ass:fontsdir=.,fade=t=in:d=0.6,fade=t=out:st={body - 0.5:.3f}:d=0.5[a];"
                  f"[1:v]scale={w}:{h},fade=t=in:d=0.4,format=yuv420p,fps=24[b];[a][b]concat=n=2:v=1:a=0[v]")
         p = folder / f"film_{ratio}.mp4"
+        part = work / f"film_{ratio}.part.mp4"
         source = ["-f", "concat", "-safe", 0, "-i", "list.txt"]
         if moves:
             joined = work / "joined.mp4"
@@ -293,7 +294,8 @@ def film(sb, lang, ratios=("9x16", "16x9")):
         config.run_ffmpeg([*source, "-loop", 1, "-t", card_s, "-framerate", 24, "-i", card,
                            "-i", audio, "-filter_complex", graph, "-map", "[v]", "-map", "2:a", "-r", 24, "-c:v", "libx264",
                            "-preset", "medium", "-crf", 20, "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k", "-ar", 48000,
-                           "-movflags", "+faststart", "-t", f"{total:.3f}", "-metadata", "comment=Made with AI", p], cwd=work)
+                           "-movflags", "+faststart", "-t", f"{total:.3f}", "-metadata", "comment=Made with AI", part], cwd=work)
+        part.replace(p)  # an interrupted build never leaves a half-written film behind
         results.append(p)
     shutil.rmtree(work)
     wan = {r: sum(shots.has_wan(sb, s, r if r in keyframes.drawn(sb) else "9x16") for s in sb["shots"]) for r in ratios}

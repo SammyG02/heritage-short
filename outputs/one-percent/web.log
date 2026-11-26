@@ -1,7 +1,27 @@
-  WaveSpeed balance: $0.74; budget left $0.87
-  motion: 1 clips on WaveSpeed fast, about $0.16
-progress 1 of 1: sending the pictures
-step: WaveSpeed is animating 1 shots at a time, usually 1 to 3 minutes each
-  clip s05_9x16 ready
-progress 1 of 1: 1 of 1 clips back
-  WaveSpeed charged $0.08 for this clip (balance $0.74 -> $0.66)
+  shot s01_9x16 (wan, 8.9s)
+  shot s02_9x16 (ken_burns, 9.1s)
+  shot s03_9x16 (wan, 4.2s)
+  shot s04_9x16 (ken_burns, 8.9s)
+  shot s05_9x16 (wan, 8.9s)
+  shot s06_9x16 (ken_burns, 10.8s)
+  shot s07_9x16 (ken_burns, 5.6s)
+  shot s08_9x16 (ken_burns, 4.8s)
+  shot s09_9x16 (ken_burns, 9.8s)
+  shot s10_9x16 (ken_burns, 6.4s)
+  shot s11_9x16 (ken_burns, 5.8s)
+  shot s12_9x16 (ken_burns, 9.2s)
+  shot s01_16x9 (from the vertical, 8.9s)
+  shot s02_16x9 (from the vertical, 9.1s)
+  shot s03_16x9 (from the vertical, 4.2s)
+  shot s04_16x9 (from the vertical, 8.9s)
+  shot s05_16x9 (from the vertical, 8.9s)
+  shot s06_16x9 (from the vertical, 10.8s)
+  shot s07_16x9 (from the vertical, 5.6s)
+  shot s08_16x9 (from the vertical, 4.8s)
+  shot s09_16x9 (from the vertical, 9.8s)
+  shot s10_16x9 (from the vertical, 6.4s)
+  shot s11_16x9 (from the vertical, 5.8s)
+  shot s12_16x9 (from the vertical, 9.2s)
+  film am: 88.8s, music ace-step, Wan shots {'9x16': 3, '16x9': 3}
+    {'file': 'film_9x16.mp4', 'seconds': 88.83, 'size': '1080x1920', 'fps': 24.0, 'lufs': -14.2, 'true_peak_db': -1.33, 'problems': [], 'sha256': '844272ebb3758eb4'}
+    {'file': 'film_16x9.mp4', 'seconds': 88.83, 'size': '1920x1080', 'fps': 24.0, 'lufs': -14.2, 'true_peak_db': -1.33, 'problems': [], 'sha256': '0869df3ec21c9335'}

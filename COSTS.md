@@ -1,22 +1,33 @@
 # Costs
 
-Money spent: **0**. Measured from `runs.jsonl` up to 23:34 EAT, 25 Nov 2026 (142 lines). To be refreshed before submission.
+**Money spent: $0.34 and 9.50 Birr.** Everything else ran inside free limits. Measured from `runs.jsonl` (280 lines, 25 Nov 15:58 to 26 Nov 15:43 EAT) and from each paid service's own balance on 26 Nov 2026.
 
-| Stage | Model | Successful calls | Median latency | Failed attempts | List-price equivalent |
+| Paid service | Spent | How we know |
+|---|---:|---|
+| WaveSpeed (3 moving clips, Wan 2.2 I2V 480p "ultra fast") | **$0.34** of a $1.00 credit | Its balance API: $1.00 before, $0.66 after. Our log counted $0.29 (see below) |
+| Addis AI (28 voice lines, tried and not used in the film) | **9.50 Birr** of a 500 Birr credit | Its usage API: 490.50 Birr left; price 5 Birr a minute |
+
+**The two counts disagree.** The first WaveSpeed batch took the balance from $1.00 to $0.74 for one 8 s and one 5 s clip, which the listed price ($0.01 a second) puts at $0.13; two other clips in that batch were refused (HTTP 429) and are not supposed to be charged. A later single 8 s clip took it from $0.74 to $0.66, exactly the listed $0.08. The extra $0.13 of the first batch is unexplained. The studio now reads the real balance before every batch and spends at most the lower of the balance and the budget, and paid clips are sent one shot at a time so each charge can be seen.
+
+## Per stage
+
+| Stage | Model, where | Successful calls | Median latency | Failed attempts | List-price equivalent |
 |---|---|---:|---:|---:|---:|
-| Script draft | gemini-3.6-flash (3.8 overloaded) | 1 | 38.1 s | 3 on 3.8 | $0.0203 (a) |
-| Narration | gemini-3.8-flash-tts | 11 | 9.6 s | 1 (daily limit) | $0.0123 |
-| Narration | gemini-3.8-flash-lite-tts | 12 | 6.6 s | 2 (network, daily limit) | $0.0140 (a) |
-| Narration | gemini-3.1-flash-tts-preview | 11 | 5.8 s | 3 (2 per-minute, 1 daily limit) | not priced |
-| Narration | gemini-2.5 flash and pro TTS | 0 | | 2 (limits) | |
-| Reference sheets | FLUX.2 klein 4B | 28 | 12.8 s | 0 | $0.0324 |
-| Keyframes | FLUX.2 klein 4B | 44 | 20.0 s | 0 | $0.0784 |
-| Picture check | gemini-3.8-flash, then 3.6-flash | 2 | 89.9 s and 35.4 s | 4 (overloaded) | $0.0106 (a) |
-| Moving shots | Wan 2.2 TI2V-5B | 2 clips | 1,173 s per 5 s clip at 480x832 (about 830 s denoising) | 1 (out of memory) | see GPU |
-| Score | ACE-Step 1.5 | 3 tracks | 8.0 s per 90 s track | 0 | see GPU |
-| Assembly | FFmpeg | | 759 s for one vertical film with transitions | | no model |
+| Script draft | gemini-3.6-flash (3.8 overloaded) | 1 | 38.1 s | 3 on 3.8 | $0.020 (a) |
+| Narration, both films (the final voice) | gemini-3.8-flash-tts, 3.8-flash-lite-tts and 3.1-flash-tts-preview | 38 | 5.8 to 9.5 s | 8 (daily limits, network) | $0.030 (a) |
+| Narration, tried | Addis AI Voices 2 | 28 | 4.8 s | 0 | 9.50 Birr, paid |
+| Character pictures | FLUX.2 klein 4B, Cloudflare | 30 | 12.7 s | 2 (safety filter, daily limit) | $0.035 |
+| Shot pictures | FLUX.2 klein 4B, Cloudflare | 66 | 18.9 s | 2 (daily limit) | $0.118 |
+| Picture checks | gemini-3.6-flash, 3.8-flash, 3.5-flash-lite | 17 | 15.7 s (3.6) | 60 (3.8: 40 of 41 failed, overloaded) | $0.080 (a) |
+| Moving shots, free | Wan 2.2 TI2V-5B, Kaggle 2 x T4 | 2 clips | 1,173 s per 5 s clip at 480x832 (about 830 s denoising) | 1 (out of memory) | see GPU |
+| Moving shots, paid | Wan 2.2 I2V 480p ultra fast, WaveSpeed | 3 clips | 75 s per clip (about 40 to 51 s of it on WaveSpeed's GPU) | 2 (refused: 2 running at once is the plan's limit) | $0.29 counted, $0.34 charged |
+| Score | ACE-Step 1.5, Kaggle | 3 tracks | 8 to 12 s per 90 s track | 0 | see GPU |
+| Preview video (540x960) | FFmpeg, this laptop | | 85 s for 88.8 s of film | | no model |
+| Final film, both shapes | FFmpeg, this laptop | | about 13 min (file times: mix 16:13, vertical 16:22, wide 16:26) | | no model |
 
-(a) Priced at the 3.8 Flash or 3.8 Flash TTS rate, which is not the model that ran. Approximate.
+(a) Priced at the 3.8 Flash or 3.8 Flash TTS rate where the model that ran has no published price. Approximate.
+
+Moving clips compared: a WaveSpeed clip came back in **about 1 minute for $0.08 to $0.16**, a Kaggle clip in **about 20 minutes for no money**, plus about 5 minutes to load the model once per job and a queue of up to an hour.
 
 ## GPU minutes
 
@@ -27,21 +38,24 @@ Money spent: **0**. Measured from `runs.jsonl` up to 23:34 EAT, 25 Nov 2026 (142
 | ACE-Step, three scores | 342.8 s | 27.7 s for three tracks; the rest is installing and loading |
 | **Total** | **3,302.9 s = 55.0 minutes** | |
 
-Kaggle's own counter said 0.93 hours used at 19:53 on 25 Nov; the job totals above are 0.92 hours. List-price equivalent: two T4s at $0.35 an hour each (Google Cloud on-demand, search result of its GPU pricing page, 26 Nov 2026) is **$0.64**.
+Kaggle's own counter said 0.93 hours used; the job totals above are 0.92 hours. List-price equivalent: two T4s at $0.35 an hour each (Google Cloud on-demand) is **$0.64**.
 
-In `runs.jsonl` the rows named `loaded` and `done` are running totals of a job, not model calls. Four early ones carry the status `ok` (two Wan, two ACE-Step); later ones say `job_event`. Do not add them to the clip rows.
+In `runs.jsonl` the rows named `loaded` and `done` are running totals of a job, not model calls. Do not add them to the clip rows.
 
-Prices used: gemini-3.8-flash $0.75 in and $3.75 out per million tokens; 3.8 Flash TTS $0.50 in and $9.00 out (from a page summary, less certain); klein 4B $0.000059 per input and $0.000287 per output 512 px tile.
-
-A clean clone with no keys rebuilt the earlier sample film in 14 min 40 s with 0 model calls on the same 8 GB laptop; both MP4s had the same SHA-256 prefix as the originals. This will be repeated for the final film.
+Prices used: gemini-3.8-flash $0.75 in and $3.75 out per million tokens; 3.8 Flash TTS $0.50 in and $9.00 out (from a page summary, less certain); klein 4B $0.000059 per input and $0.000287 per output 512 px tile; WaveSpeed ultra fast $0.01 a second, standard $0.03 (model pages, 26 Nov 2026).
 
 ## Free limits found
 
-- Gemini TTS: **10 requests a day for each model** (3.8, 3.8 Lite, 3.1 and 2.5 Flash), by their own error messages; we counted 12, 12 and 11 successes before the first three refused. 3.1 also allows 3 a minute. 2.5 Pro: 0. Reset about 11:00 EAT.
-- Cloudflare Workers AI: 10,000 neurons a day, reset 03:00 EAT. Klein 4B costs 26.05 per output tile and 5.37 per input tile, so 163 to 167 for our pictures and about 63 for the smaller size new films use. By that estimate we reached about 10,100 on 25 Nov; the service never refused a call.
-- Kaggle: 30 GPU hours a week.
-- Gemini text, 3.8 Flash: 10 of 11 attempts failed (9 "high demand", 1 connection timeout). Newer is not more available: 3.6 answered both times it was asked.
+- **Gemini TTS:** 10 requests a day for each model, by its own error messages. 2.5 Pro TTS: 0. Resets at midnight Pacific, 11:00 EAT. One call can now record every missing line at once and be cut into one file per line (experiment 7 and 15), so a 12-line film fits in one call when the cut is safe.
+- **Cloudflare Workers AI:** 10,000 neurons a day, **counted over the last 24 hours, not since midnight** (experiment 11). Klein 4B costs 26.05 per output tile and 5.37 per input tile: 163 to 167 for our pictures, about 104 for a character face.
+- **Kaggle:** 30 GPU hours a week; 29.1 left.
+- **Gemini text, 3.8 Flash:** 1 of 47 attempts succeeded over both days (smoke test, script, picture checks), almost all failures "high demand". 3.6 Flash answered 12 of 32 (experiment 12).
+- **WaveSpeed:** paid; at most 2 clips running at once on this plan.
+
+## Clean-clone rebuild
+
+On 26 Nov at 17:47 EAT a fresh `git clone` of commit `302dc81`, with no `.env` and every key removed from the environment, ran `python -m pipeline film`: **7 min 6 s, exit 0, 0 model calls** (`runs.jsonl` had 280 lines before and after). Both videos came out **identical** to the ones built in the studio: SHA-256 `844272ebb3758eb4...` (vertical) and `0869df3ec21c9335...` (wide), 88.83 s, -14.2 LUFS, true peak -1.33 dB. The earlier sample film was rebuilt the same way on 25 Nov in 14 min 40 s.
 
 ## Frontier comparison
 
-Not run. Frontier models appear in the API listing, but the brief says they need paid billing and no organisation key has been received.
+Not run. Frontier models appear in the API listing, but they need paid billing and no organisation key was received. WaveSpeed hosts the same open Wan 2.2 family, not a frontier model.

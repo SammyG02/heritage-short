@@ -1,6 +1,6 @@
 {
  "id": "one-percent",
- "version": 79,
+ "version": 85,
  "status": "draft",
  "title": {
   "am": "አንድ በመቶ",
@@ -126,7 +126,7 @@
    303
   ],
   "chosen_seed": 101,
-  "reason": "Not chosen yet",
+  "reason": "Chosen by the applicant by ear: they liked it, it went well with the story, it felt warm. It is also the score with the clearest pulse at the asked 72 bpm and the most room for the voice (experiment 10).",
   "cues": [
    {
     "shot": "s01",
@@ -210,7 +210,7 @@
     "seconds": 0.6
    },
    "tts_model": "gemini-3.1-flash-tts-preview",
-   "motion": "clip",
+   "motion": "camera",
    "animate": "wavespeed"
   },
   {
@@ -261,7 +261,7 @@
     "type": "cut",
     "reason": "The news lands without warning"
    },
-   "motion": "clip",
+   "motion": "camera",
    "tts_model": "gemini-3.1-flash-tts-preview",
    "animate": "wavespeed"
   },
@@ -398,7 +398,7 @@
     "seconds": 0.6
    },
    "tts_model": "gemini-3.1-flash-tts-preview",
-   "motion": "clip",
+   "motion": "camera",
    "animate": "wavespeed"
   },
   {
@@ -473,7 +473,7 @@
     "reason": "The light of the birth returns for the viewer",
     "seconds": 0.8
    },
-   "motion": "clip",
+   "motion": "camera",
    "animate": "wavespeed"
   }
  ],

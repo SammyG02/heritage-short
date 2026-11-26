@@ -19,7 +19,7 @@ THEMES = {
     "memory": "Memory and loss: soft rain, muted blues, one warm light",
 }
 # Tried in order: Gemini 3.8 Flash was overloaded (503) in our first smoke test.
-MODELS = ["gemini-3.8-flash", "gemini-3.6-flash", "gemini-3.5-flash-lite"]
+MODELS = ["gemini-3.6-flash", "gemini-3.8-flash", "gemini-3.5-flash-lite"]  # 3.8 answered 1 of 47 calls by 26 Nov; see EXPERIMENTS 12
 
 PROMPT = """You write storyboards for 60-90 second animated short films.
 

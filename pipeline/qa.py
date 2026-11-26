@@ -10,7 +10,7 @@ MAX_TRIES = 2
 EXTRA_PER_RUN = 6  # redraws allowed in one run, whatever the checker thinks
 PASS = 7
 SEED_STEP = 101
-MODELS = ["gemini-3.6-flash", "gemini-3.8-flash", "gemini-3.5-flash-lite"]  # 3.8 answered 1 of 17 by 26 Nov, 3.6 all 3
+MODELS = ["gemini-3.6-flash", "gemini-3.8-flash", "gemini-3.5-flash-lite"]  # 3.8 answered 1 of 41 checks by 26 Nov, 3.6 11 of 31; EXPERIMENTS 12
 GROQ_SEES, GROQ_IMAGES = "qwen/qwen3.8-27b", 3  # Groq's vision page, 26 Nov 2026
 PROMPT = """You check one frame of an animated film before it is used. The first {n} image(s) are the approved character references, in this order: {names}.
 The last image is the new frame. It should show: {shot}

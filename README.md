@@ -4,23 +4,24 @@
 
 You write a story and choose a language and a theme. The program writes a storyboard for you to check, then makes the pictures and the voice, adds music and English subtitles, and gives you a 60-90 second video in two shapes: vertical for phones and wide for TV or YouTube.
 
-It runs on your own computer, needs no graphics card, and uses free services.
+It runs on your own computer, needs no graphics card, and uses free services. One optional service is paid.
 
-> **Status:** work in progress on 26 November 2026. The film in `storyboard.json` is *One Percent* (አንድ በመቶ), the author's family story: nine of twelve voices and one of 24 pictures are made. An earlier invented film, *The Extra Cup*, is complete in `outputs/extra-cup/`.
+> **The film in this repository** is *One Percent* (አንድ በመቶ), the author's true family story, told in Amharic with English subtitles: 12 shots, 88.8 seconds, vertical 1080x1920 and wide 1920x1080, -14.2 LUFS. Three shots are moving clips, nine are slow camera moves over painted pictures, under an ACE-Step score. Every face is invented; the family's consent is in [ETHICS.md](ETHICS.md). An earlier invented film, *The Extra Cup*, is in `outputs/extra-cup/`.
 
-**Contents:** [What happens](#what-happens) · [Install](#1-install) · [See the sample](#2-see-the-sample-film-no-keys-needed) · [Get keys](#3-get-your-free-keys) · [Make your film](#4-make-your-own-film) · [Change it](#5-change-something) · [Problems](#if-something-goes-wrong) · [For developers](#for-developers)
+**Contents:** [What happens](#what-happens) · [Install](#1-install) · [Rebuild the film](#2-rebuild-the-film-no-keys-needed) · [Get keys](#3-get-your-free-keys) · [Make your film](#4-make-your-own-film) · [Change it](#5-change-something) · [Costs](#what-it-costs) · [Problems](#if-something-goes-wrong) · [For developers](#for-developers)
 
 ## What happens
 
 ```text
-Your story
-   |  an AI writes a plan of 9-11 shots
+Your story (and, for a true story, who agreed to what)
+   |  an AI writes a plan of 8-12 shots
    v
 Storyboard   <-- you read it, fix the words, and approve it
    |
-   +-- voice      one recording per shot
-   +-- pictures   painted from the plan, with the same character throughout
-   +-- movement   a slow camera move on each picture (or an AI video clip)
+   +-- voice      one recording per shot (Gemini; Addis AI optional)
+   +-- cast       a face for each character, chosen by you, used in every shot
+   +-- pictures   one per shot, checked automatically, approved by you
+   +-- movement   a slow camera move, or an AI video clip for the shots you choose
    +-- music      lowered automatically while the voice speaks
    v
 Finished film   vertical + wide, English subtitles, "made with AI" end card
@@ -63,28 +64,32 @@ python3 -m venv .venv
 
 From here on, commands are written for Windows. On Mac or Linux, type `.venv/bin/python` instead of `.venv\Scripts\python`.
 
-## 2. See the sample film (no keys needed)
+## 2. Rebuild the film (no keys needed)
 
 ```powershell
 .venv\Scripts\python -m pipeline film
 ```
 
-This rebuilds the sample from the saved pictures and voices, without calling any AI service. It took 4 to 15 minutes on an 8 GB laptop. The videos appear here:
+(`make film` does the same.) This rebuilds *One Percent* from `storyboard.json` and the saved pictures, voices, clips and score, **without calling any AI service**: every one of them is in the repository with a record of the inputs that made it. On our 8 GB laptop a fresh clone with no keys did it in about 7 minutes, and both videos were byte-for-byte the same as the originals. The videos appear here:
 
 ```text
-outputs/extra-cup/film/am/film_9x16.mp4    vertical
-outputs/extra-cup/film/am/film_16x9.mp4    wide
+outputs/one-percent/film/am/film_9x16.mp4    vertical
+outputs/one-percent/film/am/film_16x9.mp4    wide
+outputs/one-percent/film/am/report.json      length, size, loudness, and any problem found
 ```
 
 ## 3. Get your free keys
 
-A key is a password that lets the program use a service. Two services are needed. No payment card is required.
+A key is a password that lets the program use a service. Two are needed to make a new film. No payment card is required.
 
 | Service | Used for | How to get it |
 |---|---|---|
-| **Google Gemini** | Storyboard and voice | Go to [aistudio.google.com/apikey](https://aistudio.google.com/apikey), sign in, create an API key, copy it |
+| **Google Gemini** | Storyboard, voice, picture checks | Go to [aistudio.google.com/apikey](https://aistudio.google.com/apikey), sign in, create an API key, copy it |
 | **Cloudflare** | Pictures | Sign up at [dash.cloudflare.com](https://dash.cloudflare.com). Open **Workers AI** and choose its REST API option. Create a Workers AI API token, and copy the **token** and the **account ID** |
-| **Kaggle** (optional) | AI video and AI music | Sign up at [kaggle.com](https://www.kaggle.com), verify your phone in **Settings**, then create a token in the **API Tokens** tab |
+| **Kaggle** (optional, free) | AI video clips and AI music on a free GPU | Sign up at [kaggle.com](https://www.kaggle.com), verify your phone in **Settings**, then create a token in the **API Tokens** tab |
+| **WaveSpeed** (optional, **paid**) | AI video clips in about a minute instead of twenty | [wavespeed.ai](https://wavespeed.ai), add credit, create an API key. About $0.05 to $0.16 a clip |
+| **Addis AI** (optional, paid in Birr) | Another Amharic and English voice | [addisassistant.com](https://addisassistant.com) |
+| **Groq** (optional, free) | Another model for writing and picture checks | [console.groq.com](https://console.groq.com) |
 
 Copy the file `.env.example` and name the copy `.env`:
 
@@ -92,13 +97,7 @@ Copy the file `.env.example` and name the copy `.env`:
 copy .env.example .env
 ```
 
-(Mac or Linux: `cp .env.example .env`.) Open `.env` in any text editor and paste each key straight after its `=`, with no spaces or quotes:
-
-```text
-GEMINI_API_KEY=paste_here
-CLOUDFLARE_ACCOUNT_ID=paste_here
-CLOUDFLARE_API_TOKEN=paste_here
-```
+(Mac or Linux: `cp .env.example .env`.) Open `.env` in any text editor and paste each key straight after its `=`, with no spaces or quotes. Leave the optional ones empty if you do not use them: a service without its key is simply not offered.
 
 Git ignores `.env`, so it is not uploaded. **Never share it or show it in a screenshot or video.** If a key leaks, delete it on the service's website and make a new one.
 
@@ -108,7 +107,7 @@ Check that the keys work:
 .venv\Scripts\python -m pipeline smoke
 ```
 
-You want `ok` beside Gemini text, Gemini TTS and Cloudflare. `FAIL kaggle` is fine if you did not set it up. Each check makes one real call and counts toward your daily allowance.
+You want `ok` beside Gemini text, Gemini TTS and Cloudflare. Each check makes one real call and counts toward your daily allowance.
 
 ## 4. Make your own film
 
@@ -122,22 +121,21 @@ Or start it yourself and open <http://localhost:8765>:
 .venv\Scripts\python -m pipeline web
 ```
 
-The studio opens on your films. **Services** (top right) shows every voice, picture, motion and writing service, what is left of each limit, and lets you choose. The studio has one page for each step. Nothing runs until you press a button, and each button that uses a free limit first shows what it will use.
+The studio opens on your films. Press **New film**, write your story, choose the language, narrator and theme. If it really happened to real people, tick that box: you then record **who agreed, person by person** (their story told, drawn as a character, their words quoted, their photo used; when and how), and **which AI services** they agreed to. Nothing is sent anywhere until that is filled in, and a service left unticked is never called.
 
-1. **New film:** tell your story, choose the language and theme. You get a draft storyboard.
-2. **Story:** edit every line, picture, emotion and transition. For a true story, record consent here; everything stays locked until you do.
-3. **Characters:** draw four options for each person and choose one. Every shot is drawn from that face. Older versions are drawn from it too.
-4. **Voice:** make, listen to and remake single lines. Build a radio cut to test with people.
-5. **Pictures:** draw them all, one format, or one shot. Each shows the result of its automatic check.
-6. **Motion and music:** send work to the Kaggle GPU, check it, collect it. Optional: without it the film uses slow camera moves and simple music.
-7. **Film:** build both formats, watch and download. This never calls a model.
-8. **Audience:** write down what people said, in their words. **Limits:** what is left today.
+Each film then has five tabs:
 
-**Your films are yours.** Every story you make, with its characters, pictures, voices, music and call log, is saved in `my-films/` on your computer (or the folder named by `HERITAGE_FILMS`). Git ignores it. Nothing is shared between two stories. The film in `storyboard.json` and `outputs/` belongs to this repository's author; `python -m pipeline film` rebuilds it, and the studio shows it only if `SHOW_REPO_FILM=1` is in `.env`.
+1. **Story:** your story, and the consent record. Add to it or withdraw it at any time; withdrawing locks the film.
+2. **Script:** read and change every line, hear each voice, approve it.
+3. **Cast:** two faces for each character; choose one, ask for more, edit a character's description, add or remove one. A face is invented from text, or, only with that person's recorded yes, drawn from a photo.
+4. **Shots:** draw, check, redraw and approve each picture. Under **Motion**, choose for each shot: a free camera move, a clip from the free Kaggle GPU, or a paid WaveSpeed clip. Watch each clip, approve it or animate it again.
+5. **Film:** play a quick preview, **download a draft video** of what exists now (about two minutes, free), and **build the final film** once everything is approved.
 
-Press **Stop** at any time; finished parts are kept. Edits to one shot only make that shot out of date. Files are in `my-films/<film name>/`.
+**Services** (top right) shows every voice, picture, motion and writing service, what is left of each free limit and when it comes back, and lets you choose. A progress bar shows what each job is doing and roughly how long is left. Nothing runs until you press a button, and any button that uses a free limit or money says how much first.
 
-Leave the terminal window open while it works. The page is only reachable from your own computer.
+**Your films are yours.** Every story you make, with its characters, pictures, voices, music and call log, is saved in `my-films/` on your computer (or the folder named by `HERITAGE_FILMS`). Git ignores it. The film in `storyboard.json` belongs to this repository's author; the studio shows it only if `SHOW_REPO_FILM=1` is in `.env`.
+
+Press **Stop** at any time; finished parts are kept. Leave the terminal window open while it works. The page is only reachable from your own computer.
 
 ### In the terminal
 
@@ -151,10 +149,10 @@ It asks the same questions, saves a draft in `storyboards/`, and prints its name
 .venv\Scripts\python -m pipeline -s storyboards\your-story.json film
 ```
 
-### Before you press approve
+### Before you start
 
-- **Leave out real names and private details.** Your text goes to free AI services, and Google says it may use free-tier text to improve its products.
-- **Invented characters only.** The program has no way to upload photos or voices. If your story points to a real living person, ask their permission first.
+- **Leave out real names and private details.** Your text goes to AI services, and free tiers may use it to improve their products.
+- **Real people need their own yes.** For a true story, ask each person first, in person or by phone, and record what they agreed to. Faces are invented unless a person agreed to their photo being used; the photo stays on your computer and out of Git.
 - **You are publishing AI content.** Keep the end card, and switch on the AI label where you post it.
 
 ## 5. Change something
@@ -162,47 +160,42 @@ It asks the same questions, saves a draft in `storyboards/`, and prints its name
 Open your storyboard file, change it, and run the same `film` command again. To see first what would be remade:
 
 ```powershell
-.venv\Scripts\python -m pipeline -s storyboards\your-story.json status
+.venv\Scripts\python -m pipeline status
 ```
 
 | To change | Edit | What is made again |
 |---|---|---|
 | What the voice says | `narration` in that shot | One voice recording. English is also the subtitle text |
-| A picture | `image_prompt` in that shot | That shot's two pictures |
-| Try another version of a picture | `seed` in that shot | That shot's two pictures |
-| How the character looks | `chosen_seed` under `references` (look in `outputs/<name>/references/` first) | Every picture of that character |
+| A picture | `image_prompt` in that shot | That shot's picture (the wide film is made from it) |
+| How the character looks | `look` or `chosen_seed` under `references` | Every picture of that character |
 | The camera move | `ken_burns`: in, out, left, right, up, down | No AI calls |
 
 Picture tip: describe what **is** there. Writing "no cross" put crosses in our pictures.
 
-### Optional: AI video and music
+### Moving clips and music
 
-With Kaggle set up, add `--gpu`:
-
-```powershell
-.venv\Scripts\python -m pipeline -s storyboards\your-story.json film --gpu
-```
-
-Kaggle's free queue can be long. The program waits up to four hours for each job, then finishes with the moving paintings and simple music. Run it again later to pick up what is ready:
+With Kaggle set up, add `--gpu` to send the missing clips and scores to Kaggle's free GPU:
 
 ```powershell
-.venv\Scripts\python -m pipeline -s storyboards\your-story.json gpu fetch wan
-.venv\Scripts\python -m pipeline -s storyboards\your-story.json gpu fetch music
-.venv\Scripts\python -m pipeline -s storyboards\your-story.json film
+.venv\Scripts\python -m pipeline film --gpu
 ```
+
+Kaggle's free queue can be long, and a clip takes about 20 minutes. The program waits up to four hours, then finishes with camera moves and simple music. Run it again later to pick up what is ready (`gpu fetch wan`, `gpu fetch music`, then `film`).
+
+With a WaveSpeed key, `python -m pipeline motion --shot s05` makes one paid clip in about a minute. In the studio, choose WaveSpeed under Motion for a shot and press **Animate this shot**.
 
 ## What it costs
 
-Nothing, within free limits. We spent $0. What we found on 25 November 2026:
+Making *One Percent* cost **$0.34 on WaveSpeed** (three clips) and **9.50 Birr on Addis AI** (voices tried and not used). Everything else ran inside free limits. What we found on 25 and 26 November 2026:
 
 | Service | Free limit | Roughly enough for |
 |---|---|---|
-| Gemini voice, main model | 10 a day | Less than one 11-shot film |
-| Gemini voice, Lite model (used for new stories) | Not published to us; 11 in one run worked | At least one film a day |
-| Cloudflare pictures | 10,000 neurons a day, resets 00:00 UTC | About two films a day (estimate) |
-| Kaggle | 30 GPU hours a week | Not measured yet |
+| Gemini voice | 10 calls a day for each model; one call can record a whole script | One film a day |
+| Cloudflare pictures | 10,000 neurons, counted over the last 24 hours | About 59 pictures, two films |
+| Kaggle | 30 GPU hours a week | About 80 clips |
+| WaveSpeed | Paid: about $0.05 to $0.16 a clip | |
 
-Details: [COSTS.md](COSTS.md).
+Details, measured latency and GPU minutes: [COSTS.md](COSTS.md).
 
 ## If something goes wrong
 
@@ -214,41 +207,44 @@ Nothing already made is lost. Fix the cause and run the same command again; it c
 | `No module named pipeline` | Run the command from inside the project folder |
 | `GEMINI_API_KEY is not set` | Check that the file is named `.env` (not `.env.txt`) and the key is pasted and saved |
 | `HTTP 401` or `403` | The key is wrong or lacks permission. Make a new one |
-| `HTTP 429` ... per day | Today's free allowance is used. Run again tomorrow |
-| `HTTP 503` high demand | The service is busy. The program already retried; wait and run again |
+| `HTTP 429` ... per day, or "used up" | The free allowance is used. The studio shows when it comes back and can start the job then by itself |
+| `HTTP 503` high demand | The service is busy. The program already retried and tried another model; wait and run again |
 | `Storyboard is not valid` | Read the lines below it; each names the part to fix |
 | `The film would be ... s` | Must be 60-90 s. Shorten the narration if too long, raise `duration_s` if too short |
-| Port 8765 already in use | The page is already running in another window. Close that one |
+| "have not agreed to ..." | For a true story, that service is not ticked on the Story tab. Tick it only if the people agreed |
+| Port 8765 already in use | The studio is already running in another window. Close that one |
 | Kaggle stays `queued` | Normal on the free tier. Run without `--gpu` |
 
 ## Languages
 
-Narration in Amharic and English. Afaan Oromo, Tigrinya and Somali are coming soon. Subtitles are always English.
+Narration in Amharic and English. Afaan Oromo, Tigrinya and Somali are listed as coming soon and have not been tested. Subtitles are always English.
 
 ## For developers
 
 | Command (after `python -m pipeline`) | Does |
 |---|---|
-| `film [--gpu]` | Every stage, both formats. `make film` does the same with whichever `python` is active |
+| `film [--gpu] [--review]` | Every stage, both formats. `--review` stops wherever a person has not approved |
 | `-l en film` | English narration instead of the main language |
 | `-s FILE ...` | Use another storyboard |
-| `web` | The studio: every step in the browser |
+| `web` | The studio |
 | `new` | Draft a storyboard in the terminal |
-| `assemble` | Edit the film from what exists; calls no model |
 | `validate`, `status` | Check the storyboard; show what is stale |
 | `narration`, `references`, `keyframes`, `radio` | One stage; `--shot s03` or `--name mother` for one item, `--force` to make it again |
+| `approve script\|voice\|picture` | Approve from the terminal |
 | `gpu submit\|status\|fetch wan\|music` | Kaggle jobs |
+| `motion --shot s05` | One paid WaveSpeed clip |
+| `preview`, `assemble` | A quick draft video, or the final edit from what exists; neither calls a model |
 | `smoke` | Call each provider once |
 
-Run the offline tests with `.venv\Scripts\python -m pytest`.
+Run the offline tests with `.venv\Scripts\python -m pytest` (182 tests, no network).
 
 | Path | Contents |
 |---|---|
 | `storyboard.json` | The film's contract; all stages read only this |
-| `storyboards/` | Drafts made from your stories |
 | `schema/` | Storyboard rules, checked before every run |
-| `pipeline/` | One file per stage; shared code in `core/`, GPU workers in `kaggle_jobs/` |
-| `outputs/` | Everything generated, with a record of the inputs |
+| `pipeline/` | One file per stage; shared code in `core/`, GPU workers in `kaggle_jobs/`, the studio in `web.py` and `web_static/` |
+| `outputs/` | Everything generated, each with a record of its inputs |
 | `runs.jsonl` | One line per AI call, including failures |
+| `storyboards/` | Other storyboards: the earlier sample and test drafts |
 
-More: [DESIGN](DESIGN.md) (audience), [ARCHITECTURE](ARCHITECTURE.md), [EXPERIMENTS](EXPERIMENTS.md), [FAILURES](FAILURES.md), [COSTS](COSTS.md), [ETHICS](ETHICS.md).
+More: [DESIGN](DESIGN.md) (audience and user tests), [ARCHITECTURE](ARCHITECTURE.md), [EXPERIMENTS](EXPERIMENTS.md), [FAILURES](FAILURES.md), [COSTS](COSTS.md), [ETHICS](ETHICS.md).

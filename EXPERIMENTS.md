@@ -2,7 +2,7 @@
 
 Each entry: hypothesis, the one thing changed, result. Image counts below come from the coding agent viewing contact sheets on 25 Nov 2026; the applicant has not yet confirmed them. Every call is in `runs.jsonl`.
 
-**Done: 10. Target: at least 10.** Nothing is listed here until it has been run.
+**Done: 15. Target: at least 10.** Nothing is listed here until it has been run.
 
 ## 1. Negative wording in an image prompt
 
@@ -89,8 +89,47 @@ Each entry: hypothesis, the one thing changed, result. Image counts below come f
 | 303 | 75.0 bpm (0.10) | 0.09 | 55% |
 
 - **Reading:** 101 has a clear pulse at the tempo asked for. 202 leans the same way very weakly. 303 has no pulse we can measure, so "cutting to its beat" would mean nothing. 101 also leaves the voice the most room.
-- **Decision:** the hypothesis held for one track of three. 101 is the measured recommendation; the applicant has not chosen by ear yet. The grid's starting point against the first beat is not checked.
+- **Decision:** the hypothesis held for one track of three. 101 was the measured recommendation, and on 26 Nov the applicant chose it by ear: "I like it, it went well with the story, it was warm." The measurement and the ear agreed. The grid's starting point against the first beat is not checked.
 
-## Planned
+## 11. When does Cloudflare's daily picture allowance reset?
 
-Ken Burns against Wan on one shot; Wan 480p time and quality; motion-only against full-description prompts; three ACE-Step candidates; ducking settings; one-pass against two-pass loudness; style instruction against a different voice.
+- **Hypothesis:** the 10,000-neuron daily allowance resets at 00:00 UTC (03:00 EAT), so the morning of 26 Nov starts with a full allowance.
+- **Change:** none: an observation, read from `runs.jsonl`.
+- **Result:** after 00:00 UTC our log showed only about 220 units used, yet at 05:22 UTC (08:22 EAT) Cloudflare refused a picture: "you have used up your daily free allocation of 10,000 neurons". Counting the 24 hours before that moment instead gives 10,095 units, almost all drawn between 13:01 and 13:24 UTC the day before. The studio had shown "98% left".
+- **Decision:** the hypothesis was wrong: the window behaves as the last 24 hours. The studio now counts a rolling 24 hours, believes the service's refusal over its own count, and shows when room comes back (when the oldest picture turns a day old). Not confirmed by waiting: the applicant switched to a second Cloudflare account that morning (FAILURES.md), so the predicted return at 16:10 EAT was not observed.
+
+## 12. Which model to ask first for picture checks
+
+- **Hypothesis:** the newest model, gemini-3.8-flash, is the best first choice for the face check.
+- **Change:** none at first; then the order was swapped to try gemini-3.6-flash first.
+- **Result:** in the log, 3.8 Flash answered 1 of 41 checks (40 "high demand" or timeouts, each costing up to three attempts with backoff, about 45 s a picture); 3.6 Flash answered 11 of 31; 3.5 Flash-Lite 5 of 5. Drawing 11 pictures took over 30 minutes, mostly waiting on 3.8.
+- **Decision:** newest is not most available. 3.6 is asked first, then 3.8, then 3.5 Lite. If none answers, the picture is kept and marked unchecked for a person to look at.
+
+## 13. Moving shots: free GPU against a paid host of the same model family
+
+- **Hypothesis:** a hosted Wan 2.2 (WaveSpeed, image-to-video, 480p "ultra fast") is fast enough and cheap enough to animate the shots that matter on the last day, where Kaggle cannot.
+- **Change:** the service only; the same approved keyframes and motion prompts.
+- **Result:**
+
+| | Kaggle, Wan 2.2 TI2V-5B, 2 x T4 | WaveSpeed, Wan 2.2 I2V 480p ultra fast |
+|---|---|---|
+| Time per clip | 1,173 s (plus about 5 min loading per job and up to an hour in the queue) | 51 to 79 s from upload to download (40 to 51 s on its GPU) |
+| Cost per clip | free (30 GPU hours a week) | $0.05 for 5 s, $0.08 for 8 s listed; see COSTS.md for what was charged |
+| Running at once | one clip at a time, both cards in one pipeline | 2 (a third and fourth were refused with HTTP 429) |
+| Clips in the film | 0 | 3 (shots 1, 3 and 5) |
+
+- **Decision:** paid clips for a few chosen shots, free Kaggle as the default for the rest, a camera move where neither is worth it. Quality was not compared blind, so this is a decision on time and cost only.
+
+## 14. Listed price against charged price
+
+- **Hypothesis:** WaveSpeed charges its listed price, so a budget counted from our own log is safe.
+- **Change:** read the account balance through WaveSpeed's API before and after paid clips.
+- **Result:** first batch: $1.00 to $0.74 for clips listed at $0.13. Second, a single 8 s clip: $0.74 to $0.66, exactly the listed $0.08. Total $0.34 against $0.29 in our log.
+- **Decision:** the hypothesis held for a single clip and failed for the batch, for a reason not found. The studio now spends at most the lower of the budget and the real balance, asks before every paid clip, and sends one shot at a time.
+
+## 15. Cutting one recording when the pauses are the same length
+
+- **Hypothesis:** when a pause inside a line is as long as the pauses between lines, the lines' text lengths can still tell them apart.
+- **Change:** the cutter from experiment 7 refused a real 3-line recording on 26 Nov (pauses of 0.88, 0.82 and 0.82 s; the last one inside line 12), and three single-line calls were spent instead. A fallback was added: when the pause rule fails, choose the cut points whose pieces best match each line's share of the text, but only if every piece is within 1.4 times its share and the next-best choice is clearly worse (1.35 times).
+- **Result:** on that same recording, kept from the paid call, it now cuts 4.0, 3.9 and 7.8 s; the lines made one by one were 4.7, 4.1 and 8.4 s, which include more silence at the ends. The equal-length case from experiment 7 is still refused.
+- **Decision:** keep the fallback; it would have saved three of the day's ten voice calls.

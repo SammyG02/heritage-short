@@ -2,12 +2,14 @@
 
 ## Consent
 
-**Status: mother, father, sister and brother all agreed, as reported by the applicant. Recorded before anything of the story was generated; voices, character pictures and one shot have been made since.** The pipeline refuses to call a model for it until `people.consent` in `storyboard.json` is `recorded` (`require_consent` in `pipeline/core/storyboard.py`, with a test).
+**Status: mother, father, sister and brother all agreed, as reported by the applicant. Recorded before anything of the story was generated. The film was finished on 26 Nov 2026 within that consent.** The pipeline refuses to call a model for it until `people.consent` in `storyboard.json` is `recorded` (`require_consent` in `pipeline/core/storyboard.py`, with a test).
 
 "One Percent" is the applicant's true family story. It tells private medical history and quotes their mother.
 
+**How consent was asked (the applicant's account).** Before anything was made, the applicant asked their mother, father and both siblings whether they could be used in this AI project. They agreed and said the applicant could do anything with it. To be sure they understood, the applicant then told them specific things: that services such as Google and Addis AI may use what they are sent to train their models. They agreed to that too. Even so, the applicant chose not to show their real appearance: every face in the film is an invented character drawn from text, by the applicant's own choice. A way to draw a character from a photo was added to the studio for future films, gated by each person's own recorded yes to it; it is not used in "One Percent".
+
 - **Faces** are invented and drawn from text only. No photograph is used as input.
-- **Voice** is a stock Gemini voice. No voice is cloned. The narrator is a male stock voice; a female stock voice reads the mother's quoted words, so she must agree to them. Neither imitates a real person.
+- **Voice** is a stock Gemini voice in the film. Addis AI's stock voices were tried for all twelve lines on 26 Nov and not used (DESIGN.md). No voice is cloned. The narrator is a male stock voice; a female stock voice reads the mother's quoted words, so she must agree to them. Neither imitates a real person.
 - **Siblings** are mentioned without names and seen only from behind.
 
 | Person | How they appear | Agreed to the story, the public film and the words | When and how |
@@ -43,9 +45,9 @@ Google states that free-tier Gemini content is used to improve its products. For
 | Wan 2.2 TI2V-5B | Apache 2.0 | Model card, 25 Nov 2026 |
 | ACE-Step 1.5 | MIT | Repository README, 25 Nov 2026 |
 | Gemini 3.1 Flash TTS preview | Google API terms, as above | Model page, 25 Nov 2026 |
-| Addis AI Voices 2 (used for this film's Amharic voices from 26 Nov) | Its terms allow use in your own products, no resale. Its privacy policy says content may be used to train by default, so a true story needs fresh consent before choosing it | Terms and privacy pages, 25 Nov 2026 |
-| Groq (optional, never used) | Terms not checked yet; check them before sending a true story | Model list only, 26 Nov 2026 |
-| WaveSpeed, Wan 2.2 I2V 480p (optional, paid, not used yet) | Receives the approved vertical picture and the movement words, no narration. Keeps uploads and clips up to 7 days (its retention page). Whether it trains on inputs: not stated on the pages read; terms not checked yet | API docs and retention page, 26 Nov 2026 |
+| Addis AI Voices 2 (tried for this film on 26 Nov; not in the final film) | Its terms allow use in your own products, no resale. Its privacy policy says content may be used to train by default, so a true story needs fresh consent before choosing it | Terms and privacy pages, 25 Nov 2026 |
+| Groq (optional, never called) | Terms not checked yet; check them before sending a true story | Model list only, 26 Nov 2026 |
+| WaveSpeed, Wan 2.2 I2V 480p ultra fast (paid; used for shots 1, 3 and 5 on 26 Nov) | Receives the approved vertical picture and the movement words, no narration. Keeps uploads and clips up to 7 days (its retention page). Whether it trains on inputs: not stated on the pages read; terms not checked yet | API docs and retention page, 26 Nov 2026 |
 | OmniVoice Amharic (optional last resort, not used) | Amharic card: Apache 2.0. Base model card: code Apache 2.0, weights CC-BY-NC. Treated as non-commercial. No recording of a person is used | Model cards, 25 Nov 2026 |
 | Geist | SIL Open Font License 1.1 | Bundled in assets/fonts with its licence |
 | Noto Sans Ethiopic | SIL Open Font License 1.1 | Bundled in assets/fonts with its licence |

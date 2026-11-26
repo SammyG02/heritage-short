@@ -86,3 +86,42 @@ What broke, what was tried, what fixed it. Times are EAT, 25 Nov 2026.
 - **Broke:** the first real call (one neutral word) came back `HTTP 422 CLIENT_REQUEST_ID_REQUIRED`. The code had only ever been tested with a stand-in for the service, which accepted anything.
 - **Fixed:** each line now sends one id, the same on every retry, so a retry cannot be charged twice. The second call returned real audio and cost 0.04 Birr.
 - **Lesson:** the studio now offers a service only after it has really produced something.
+
+## 26 November 2026 (times EAT)
+
+### Cloudflare said "used up" while the studio showed 98% left (08:22)
+- **Broke:** a picture was refused with "you have used up your daily free allocation of 10,000 neurons". The studio counted from midnight UTC; Cloudflare counts the last 24 hours (experiment 11).
+- **Tried:** the applicant created a second Cloudflare account and a new Gemini key to carry on drawing that morning. The studio still showed the old account's usage, because it counted every call in one log.
+- **Fixed:** the studio counts a rolling 24 hours, believes the service's own refusal, and counts each account separately (each call records a short one-way fingerprint of the account, never the key).
+
+### Cloudflare's safety filter blocked a harmless picture (08:12)
+- **Broke:** one of two "older mother" faces came back HTTP 400 "Your output has been flagged". The other, with the same words and another seed, was fine.
+- **Fixed:** a blocked picture is tried again with another seed, up to three times; only then does the studio ask for different words.
+
+### The picture checker waited on an overloaded model (09:00 to 10:00)
+- **Broke:** drawing 11 pictures took over 30 minutes; most of it was the check waiting on gemini-3.8-flash (40 of 41 checks failed). The status line said "Google is busy", and the applicant stopped a run that was working.
+- **Fixed:** 3.6 Flash is asked first (experiment 12), and the status line now shows progress ("Picture 4 of 11") and says a slow check is normal.
+
+### The one-call voice recording could not be cut (09:53)
+- **Broke:** one recording of three lines was refused by the cutter, so the same three lines were made again one by one: four calls of the day's ten, not one.
+- **Fixed:** the cutter also uses each line's length when pauses tie (experiment 15). The paid recording was kept and used to test the fix.
+
+### WaveSpeed: refused clips, an unexplained charge, and a page left open (14:50 to 15:45)
+- **Broke:** four clips were sent at once; WaveSpeed refused two ("Concurrency limit reached. Your plan allows up to 2 running"). The balance fell by $0.26 for two clips listed at $0.13 (experiment 14). And a page opened before the shots were switched to WaveSpeed still said "Animate 2 shots"; pressing it animated everything the server held, not the two shown.
+- **Fixed:** at most two at once, and a refused submit (never created, never charged) waits and is sent again. The real balance is read before every batch. Paid clips are made one named shot at a time, after a confirmation that shows the price; the server refuses anything else.
+
+### A budget check that blocked every edit (15:50)
+- **Broke:** with every shot set to WaveSpeed, the planned total ($1.26) passed the money left ($0.74), and the check refused any edit to any shot, even "Redraw" or switching a shot back to the free GPU.
+- **Fixed:** only a change that adds paid clips past the money left is refused. A test covers redraw, switching away, and adding.
+
+### Kaggle did not answer after an upload (16:00)
+- **Broke:** sending one clip to Kaggle failed: the upload finished, then "Connection to api.kaggle.com timed out" when creating the dataset version. Nothing had started on Kaggle.
+- **Fixed:** Kaggle commands are tried again after 20 and 40 s on a connection error, and a final failure says in plain words that nothing was started.
+
+### Pictures that were wrong and nearly shipped
+- **Broke:** the baby's fingers in shot 7 were wrong, and the applicant missed it; a viewer in user test 2 said a picture felt off. Shot 11 showed four children where the story has three. The "older mother" came out about 60 rather than about 40.
+- **Fixed:** shot 7 redrawn and its description rewritten (15:22 to 15:30). The studio gained ways to fix the rest without touching other shots: edit or add a character (so the siblings can be fixed characters), more faces to choose from, and a downloadable draft of the whole film to watch before building it.
+
+### The services page reloaded itself without end (about 08:45)
+- **Broke:** with room left on the new account, the picture "reset" time was "now", so every 20-second check looked like a reset that had just passed and reloaded the page.
+- **Fixed:** the reset time is always in the future, and a countdown can reload the page only once.
