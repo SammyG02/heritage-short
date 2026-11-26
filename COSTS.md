@@ -1,11 +1,11 @@
 # Costs
 
-**Money spent: $0.34 and 9.50 Birr.** Everything else ran inside free limits. Measured from `runs.jsonl` (280 lines, 25 Nov 15:58 to 26 Nov 15:43 EAT) and from each paid service's own balance on 26 Nov 2026.
+**Money spent: none.** Everything ran inside free limits or free sign-up credits. Measured from `runs.jsonl` (280 lines, 25 Nov 15:58 to 26 Nov 15:43 EAT) and from each credit's own balance on 26 Nov 2026.
 
-| Paid service | Spent | How we know |
+| Service with a sign-up credit | Used | How we know |
 |---|---:|---|
-| WaveSpeed (3 moving clips, Wan 2.2 I2V 480p "ultra fast") | **$0.34** of a $1.00 credit | Its balance API: $1.00 before, $0.66 after. Our log counted $0.29 (see below) |
-| Addis AI (28 voice lines, tried and not used in the film) | **9.50 Birr** of a 500 Birr credit | Its usage API: 490.50 Birr left; price 5 Birr a minute |
+| WaveSpeed (3 moving clips, Wan 2.2 I2V 480p "ultra fast") | **$0.34** of its free $1.00 sign-up credit | Its balance API: $1.00 before, $0.66 after. Our log counted $0.29 (see below) |
+| Addis AI (28 voice lines, tried and not used in the film) | **9.50 Birr** of its free 500 Birr sign-up credit | Its usage API: 490.50 Birr left; price 5 Birr a minute |
 
 **The two counts disagree.** The first WaveSpeed batch took the balance from $1.00 to $0.74 for one 8 s and one 5 s clip, which the listed price ($0.01 a second) puts at $0.13; two other clips in that batch were refused (HTTP 429) and are not supposed to be charged. A later single 8 s clip took it from $0.74 to $0.66, exactly the listed $0.08. The extra $0.13 of the first batch is unexplained. The studio now reads the real balance before every batch and spends at most the lower of the balance and the budget, and paid clips are sent one shot at a time so each charge can be seen.
 
@@ -15,7 +15,7 @@
 |---|---|---:|---:|---:|---:|
 | Script draft | gemini-3.6-flash (3.8 overloaded) | 1 | 38.1 s | 3 on 3.8 | $0.020 (a) |
 | Narration, both films (the final voice) | gemini-3.8-flash-tts, 3.8-flash-lite-tts and 3.1-flash-tts-preview | 38 | 5.8 to 9.5 s | 8 (daily limits, network) | $0.030 (a) |
-| Narration, tried | Addis AI Voices 2 | 28 | 4.8 s | 0 | 9.50 Birr, paid |
+| Narration, tried | Addis AI Voices 2 | 28 | 4.8 s | 0 | 9.50 Birr of a free credit |
 | Character pictures | FLUX.2 klein 4B, Cloudflare | 30 | 12.7 s | 2 (safety filter, daily limit) | $0.035 |
 | Shot pictures | FLUX.2 klein 4B, Cloudflare | 66 | 18.9 s | 2 (daily limit) | $0.118 |
 | Picture checks | gemini-3.6-flash, 3.8-flash, 3.5-flash-lite | 17 | 15.7 s (3.6) | 60 (3.8: 40 of 41 failed, overloaded) | $0.080 (a) |

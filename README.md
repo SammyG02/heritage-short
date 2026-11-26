@@ -188,14 +188,14 @@ With a WaveSpeed key, `python -m pipeline motion --shot s05` makes one paid clip
 
 ## What it costs
 
-Making *One Percent* cost **$0.34 on WaveSpeed** (three clips) and **9.50 Birr on Addis AI** (voices tried and not used). Everything else ran inside free limits. What we found on 25 and 26 November 2026:
+Making *One Percent* cost **no money**. Everything ran inside free limits, plus two free sign-up credits: **$0.34** of WaveSpeed's $1.00 (three clips) and **9.50 Birr** of Addis AI's 500 Birr (voices tried and not used). What we found on 25 and 26 November 2026:
 
 | Service | Free limit | Roughly enough for |
 |---|---|---|
 | Gemini voice | 10 calls a day for each model; one call can record a whole script | One film a day |
 | Cloudflare pictures | 10,000 neurons, counted over the last 24 hours | About 59 pictures, two films |
 | Kaggle | 30 GPU hours a week | About 80 clips |
-| WaveSpeed | Paid: about $0.05 to $0.16 a clip | |
+| WaveSpeed | Paid after its free $1.00 sign-up credit: about $0.05 to $0.16 a clip | |
 
 Details, measured latency and GPU minutes: [COSTS.md](COSTS.md).
 
