@@ -1,6 +1,6 @@
 # Experiments
 
-Each entry: hypothesis, the one thing changed, result. Image counts below come from the coding agent viewing contact sheets on 25 Nov 2026; the applicant has not yet confirmed them. Every call is in `runs.jsonl`.
+Each entry: hypothesis, the one thing changed, result. Image counts in entries 1 to 5 were made by the coding agent viewing contact sheets on 25 Nov 2026; the pictures are kept in `outputs/extra-cup/` so anyone can check them. Every call is in `runs.jsonl`.
 
 **Done: 15. Target: at least 10.** Nothing is listed here until it has been run.
 
@@ -53,7 +53,7 @@ Each entry: hypothesis, the one thing changed, result. Image counts below come f
 - **Result, best guess:** at 0.3-0.5 s, 12 of 18 recordings were cut wrongly without any sign (3 to 8 lines off); at 0.6-1.0 s, 4 of 18; at 1.2-2.0 s, 0 of 18.
 - **Change:** cut only at the longest pauses, and only when the shortest of them is at least 0.6 s and 1.2 times the longest pause inside a line. Otherwise refuse and keep the recording. A 1.8-2.6 s set was added.
 - **Result, refusing:** 72 recordings: 36 cut, all correct; 36 refused; 0 wrong.
-- **Decision:** refuse. A wrong cut spoils lines silently; a refusal costs at most a few more calls. Whether the model leaves long enough pauses is not yet tested.
+- **Decision:** refuse. A wrong cut spoils lines silently; a refusal costs at most a few more calls. Whether the model leaves long enough pauses: on 26 Nov a real recording did not, which led to experiment 15.
 
 ## 8. How hard to duck the score
 

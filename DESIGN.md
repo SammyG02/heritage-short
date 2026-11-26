@@ -58,7 +58,7 @@ These are the applicant's account, not recordings. Listeners' ages and exact Amh
 
 Written before any image, voice, music or video was generated.
 
-> **Status: sample story.** "The Extra Cup" is an invented story used to build and test the pipeline. The applicant has not yet replaced it or adopted it as their own. No user test has been run yet.
+> **Status: replaced.** "The Extra Cup" is an invented story used to build and test the pipeline. On 25 November the applicant replaced it with their own family's story, "One Percent" (above). No user test was run on it.
 
 ## Audience
 
