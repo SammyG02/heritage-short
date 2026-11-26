@@ -1,76 +1,23 @@
-# To do
+# Next
 
-**(You)** needs the applicant personally. Claude can build the rest with your review.
-Rubric: A1 = codebase and report (100). A2 = film 50, walkthrough 30, post 20.
+What we would build next, in order of value. Each comes from something that broke or was missing while making *One Percent* (see FAILURES.md and EXPERIMENTS.md).
 
-## 0. Unblock (Wednesday afternoon)
-- [ ] (You) Choose the story, whose it is, and the narration language
-- [ ] (You) Choose the audience and one ending feeling
-- [x] (You) Decided: invented characters only, no real people shown
-- [ ] Confirm stock TTS voice only and story does not identify a real person; otherwise get consent
-- [ ] (You) Line up five testers for tonight and tomorrow afternoon
-- [x] (You) Gemini API key
-- [x] (You) Cloudflare account ID and Workers AI token
-- [x] (You) Phone-verified Kaggle account and API token
-- [ ] (You) Confirm whether the frontier lane is available
-- [ ] (You) Choose where the MP4s, walkthrough and post will be hosted
-- [x] Install FFmpeg; Python environment with pinned dependencies
-- [ ] .gitignore, .env.example; verify live model names, limits and licences
-- [x] Smoke test each provider, logged to runs.jsonl
+## Film quality
+- [ ] **One square picture per shot, cut twice** (vertical and wide), so the wide film fills the screen instead of showing the vertical one over a blurred copy: about 245 units a shot instead of 334 for two pictures.
+- [ ] **Free depth (parallax)** for landscape shots: a depth map gives a still picture layers that move at different speeds, with no paid clip.
+- [ ] **Cinemagraphs:** one short clip, keep only one moving area (a face, a candle flame), loop it over the still picture to any length.
+- [ ] **Smoother slow motion** when a clip is stretched to fill a shot (frame interpolation such as RIFE instead of blending frames).
+- [ ] **A face check across shots,** not only against the reference, to catch drift like the "older mother" who came out twenty years too old.
 
-## 1. Story and radio cut
-- [x] DESIGN.md audience and intent, committed before generation
-- [x] ETHICS.md consent record, committed before generation
-- [x] JSON Schema and validator
-- [x] Shared core: hash cache, retries, logger, atomic writes, tests
-- [x] Story intake command: story, language, theme, audience, feeling -> draft storyboard
-- [x] storyboard.json v1: 8-12 shots, each with a reason
-- [ ] (You) Edit and approve the script; check language and facts
-- [x] Narration per shot; measure durations; total film 60-90 s
-- [ ] (You) Listen for pronunciation errors
-- [x] Radio cut with placeholder music
-- [ ] (You) Test 1 with at least three people; collect their actual words
-- [ ] Record test 1; commit storyboard v2 with visible changes
+## Speed and cost
+- [ ] **A 4-step distilled LoRA for Wan on Kaggle,** tried on one clip first: denoising could fall from about 14 minutes to 1 or 2.
+- [ ] **Show the real charge of each paid clip** on the Services page, from the balance before and after.
 
-## 2. Pictures and music
-- [ ] Reference candidates and style block; (You) approve the golden reference
-- [x] Keyframes for every shot; check faces, hands, cultural and period details
-- [x] Ken Burns for every shot (complete fallback film)
-- [x] Kaggle Wan worker works (two test clips); batch waits for the applicant's go
-- [ ] Spotting list; three ACE-Step candidates; (You) choose with a reason
-- [ ] Rough cut
-- [ ] EXPERIMENTS.md and FAILURES.md kept current
+## The studio
+- [ ] **Go back to an earlier clip** (they are kept; pictures can already be restored).
+- [ ] **Edit the story text** on the Story tab.
+- [ ] **Choose each shot's motion when the script is written,** before its picture is drawn, since moving and still shots are drawn at different sizes.
+- [ ] **Watch a non-coder use it** from story to film, and fix where they get stuck.
 
-## 3. Edit
-- [ ] Cut to the music, duck, subtitles, loudness, end card, both exports
-- [x] Automatic check: 60-90 s, dimensions, 24 fps, about -14 LUFS, peak at or below -1 dB
-- [ ] (You) Check on a phone speaker and headphones
-- [ ] (You) Test 2 with at least three people
-- [ ] Record test 2; apply changes; re-export
-- [ ] Ceiling: story web form (if on schedule), tried by a non-coder
-
-## 4. Documents and reproducibility
-- [ ] README, ARCHITECTURE, COSTS
-- [ ] At least ten real experiments; real failures; licence table complete
-- [ ] Every model call in runs.jsonl
-- [ ] Report: what and for whom, audience learning, hardest problem, practice that helped, practice that did not, ceiling, next
-- [ ] (You) Revise the report in your own voice
-- [ ] Secret scan including git history
-- [ ] Fresh-clone run; edit one shot and prove only its dependents regenerate
-
-## 5. Release and submit (target Thu 21:00, hard limit 23:59 EAT)
-- [ ] Public GitHub repository
-- [ ] Upload both MP4s
-- [ ] (You) Write and publish the post with the AI label on
-- [ ] (You) Record walkthrough, at most five minutes
-- [ ] Open every link logged out
-- [ ] (You) Submit Assignment 1: repository and report
-- [ ] (You) Submit Assignment 2: vertical MP4, plus horizontal, walkthrough and post attachments
-- [ ] (You) Reread logs and notes; take the AI interview
-
-## After submission
-- [ ] Draw one square picture per shot and cut it twice (vertical and wide), so a wide film fills the screen without drawing twice: about 245 units instead of 334
-- [ ] Free parallax from a depth map for landscape shots (no paid clip)
-- [ ] Cinemagraphs: one 5 s clip, keep one moving area, loop it on the still
-- [ ] Try a 4-step distilled LoRA for faster Kaggle clips, on one clip first
-- [ ] Better slow-down for stretched clips (frame interpolation such as RIFE instead of blending)
+## Languages
+- [ ] **Test Afaan Oromo, Tigrinya and Somali** end to end (voice, subtitles, picture prompts) and record where each fails.
